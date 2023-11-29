@@ -16,7 +16,7 @@ namespace xtaro::parser
     class GDSXY
     {
     public:
-        GDSXY(std::size_t coordinatesSize) : _coordinates{coordinatesSize} {}
+        GDSXY(int coordinatesSize) : _coordinates{coordinatesSize} {}
         ~GDSXY() = default;
 
         // Getter

@@ -160,7 +160,9 @@
 
 ## 2023/11/26
 
-- emmm，在 `get_lib_values` 方法中，会对所有 slew 与 load 组合计算出一个延时对象，然后把值加入数据结构保持。但是好像每算出的延时都加入一个结构中，前面计算得到的值会被覆盖？？：
+- 在 `get_lib_values` 方法中，会对所有 slew 与 load 组合各计算出一个延时对象，然后把值加入数据结构保存。
+
+  只计算一个 port，但是计算延时对所有的都使用；
 
   ````python
   for load,slew in load_slews:
@@ -181,4 +183,18 @@
 
 - 计算得到一个延时对象 `delay_data`，即为一个 slew 与一个 delay。一个 slew 表示上升、下降的 slew（rise_transition、fall_transition）；一个 delay 打表示上升、下降的 delay（cell_rise、cell_fall）；
 
-- 并且用这个 `delay_data` 对象填入一个 lut 的所有表项。
+
+
+## 2023/11/27
+
+- 每次计算延时得到：`char_results = self.d.analyze(probe_address, probe_data, self.load_slews)` 或 `char_results = m.get_lib_values(self.load_slews)`。
+
+  再拆开：`self.char_sram_results, self.char_port_results = char_results`。
+
+  `self.char_port_results` 的类型是：`dict[int, dict[str, list[float]]]`。
+
+  第一层查找的是端口号，第二层是计算的名称（delay_lh、delay_hl、power 等），再得到一个列表，列表中的每个值对应由一个 slew/load 计算得到的值。
+
+- `setup_hold` 计算建立时间：通过不断仿真一次寄存器的采样过程，观察施加激励与时钟有效边沿的间隔，尝试不断缩小间隔，得到建立时间；
+
+- `setup_hold` 计算建立时间：通过不断仿真一次寄存器的采样过程，观察撤去激励与时钟有效边沿的间隔，尝试不断缩小间隔，得到保持时间；

@@ -64,9 +64,11 @@ namespace xtaro::parser
 
     struct GDSRecord
     {
-        GDSRecordType _type;
-        std::int16_t  _size;
-        void*         _content;
+        GDSRecord(GDSRecordType t, std::int16_t s, void* c) :
+            type{t}, size{s}, content{c} {}
+        GDSRecordType type;
+        std::int16_t  size;
+        void*         content;
     };
 
 }

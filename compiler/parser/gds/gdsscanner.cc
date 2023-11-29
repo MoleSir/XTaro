@@ -1,6 +1,6 @@
 #include "gdsscanner.hh"
 #include "gdsrecord.hh"
-#include "gdsvalue.hh"
+#include "./value/gdsvalue.hh"
 #include <list>
 
 namespace xtaro::parser
@@ -93,7 +93,7 @@ namespace xtaro::parser
             this->_ptr + 4, size
         );
 
-        this->_records.emplace_back(size, type, instance);
+        this->_records.emplace_back(type, size, instance);
 
         this->_index += size;
         this->_ptr += size;

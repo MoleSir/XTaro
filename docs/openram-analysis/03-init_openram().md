@@ -1,5 +1,7 @@
 # `openram.init_openram()`
 
+[toc]
+
 配置好 OpenRAM 选项后，调用 `init_openram`，第一个参数为命令行中的第一个参数，即为用户自定义的 config 文件。
 
 ````python
@@ -156,7 +158,7 @@ def init_openram(config_file, is_unit_test=False):
 根据 `OPTS` 中的选项，使用导入的工艺库，重新配置一些选项：
 
 ````python
-    # Set some default options now based on the technology...
+def set_default_corner():
     if (OPTS.process_corners == ""):
         if OPTS.nominal_corner_only:
             OPTS.process_corners = ["TT"]
@@ -175,14 +177,18 @@ def init_openram(config_file, is_unit_test=False):
         else:
             OPTS.temperatures = tech.spice["temperatures"]
 
-    # Load scales are fanout multiples of the DFF input cap
     if (OPTS.load_scales == ""):
         OPTS.load_scales = [0.25, 1, 4]
 
-    # Load scales are fanout multiples of the default spice input slew
     if (OPTS.slew_scales == ""):
         OPTS.slew_scales = [0.25, 1, 8]
 ````
+
+1. 如果 `process_corners` 没有被设置，在 `OPTS.nominal_corner_only` 的情况下，只有一个工艺角 "TT"；
+2. 如果 `supply_voltages` 没有被设置，就使用 `tech.spice["supply_voltages"]` 列表定义的电压列表。在 `OPTS.nominal_corner_only` 的情况下只使用第二个电压值；
+3. 如果 `temperatures` 没有被设置，就使用 `tech.spice["temperatures"]` 列表定义的电压列表。在 `OPTS.nominal_corner_only` 的情况下只使用第二个温度值；
+4. 如果 `load_scales` 没有被设置，就使用 `[0.25, 1, 4]`；
+5. 如果 `slew_scales` 没有被设置，就使用 `[0.25, 1, 8]`；
 
 
 

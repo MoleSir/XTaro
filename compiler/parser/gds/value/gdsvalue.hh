@@ -25,6 +25,10 @@ namespace xtaro::parser
     using GDSNodeType = std::int16_t;
     using GDSBoxType = std::int16_t;
     using GDSString = std::string;
+    using GDSStructureName = std::string;
+    using GDSPresentation = std::int16_t;
+    using GDSFormat = std::int16_t;
+    using GDSAttrtable = std::string;
 
     enum class GDSPathType
     {
