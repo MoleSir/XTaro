@@ -3,4 +3,4 @@ project(global)
 
 set(LIBRARY_OUTPUT_PATH ${LIB_PATH})
 
-add_library(global STATIC ./allocator/allocator.cc ./log/log.cc ./global.cc)
+add_library(global STATIC ./allocator/allocator.cc ./log/log.cc ./config/config.cc ./util/util.cc)

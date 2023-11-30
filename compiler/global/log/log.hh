@@ -12,7 +12,7 @@ namespace xtaro
     public:
         enum 
         {
-            MAX_BUFFER_SIZE = 128,
+            MAX_BUFFER_SIZE = 256,
         };
 
         enum Level
