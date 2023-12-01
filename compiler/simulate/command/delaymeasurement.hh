@@ -8,18 +8,15 @@
 namespace xtaro::simulate
 {
 
-    // .meas tran delay_lh0 TRIG v(clk0) VAL=2.5 FALL=1 TD=0n TARG v(dout0_1) VAL=2.5 RISE=1 TD=0n
+    enum EdgeDirection
+    {
+        FALL = 0,
+        RISE,
+        COUNT,
+    };
 
     class DelayMeasurement : public Measurement
     {
-    public:
-        enum EdgeDirection
-        {
-            FALL = 0,
-            RISE,
-            COUNT,
-        };
-
     public:
         DelayMeasurement(std::string name,
                          std::string trigName, EdgeDirection trigDirection, float trigVoltage, float trigTimeDelay,

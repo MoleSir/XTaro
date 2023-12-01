@@ -17,9 +17,9 @@ namespace xtaro
                 Type* instance = new Type(std::forward<Args>(args)...);
                 return instance;
             }
-            catch (std::bad_alloc e) 
+            catch (const std::exception& e) 
             {
-                std::cout << "Allocate memory error!" << std::endl;
+                std::cout << "Allocate memory error!: " << e.what() << std::endl;
                 exit(11);
             }
         }

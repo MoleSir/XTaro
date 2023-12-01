@@ -60,7 +60,8 @@ namespace xtaro::simulate
     void Simulator::addPWLSupply(const std::string& supplyName, 
                                  const std::string& portName, 
                                  const std::vector<double>& times,
-                                 const std::vector<double>& voltages)
+                                 const std::vector<double>& voltages,
+                                 double slew)
     {
         if (!this->checkWritable()) return;
 
@@ -76,16 +77,21 @@ namespace xtaro::simulate
         // Vclk clk 0 PWL (0n 0.0v 1n 0.0v 3n 5v 9n 5V 11n 0v 19n 0v 21n 5v) 
         this->_simulationFile << util::format("V%s %s 0 PWL (", supplyName.c_str(), portName.c_str());
         
-        for (std::size_t i = 0; i < times.size(); ++i)
+        if (times.size() == 0)
         {
-            this->_simulationFile << util::format("%fn %fv", times[i], voltages[i]);
-            if (i != times.size() - 1)
-                this->_simulationFile << ' ';
-            else
-                this->_simulationFile << ')';
+            this->_simulationFile << ")\n";
+            return;
         }
 
-        this->_simulationFile << '\n';
+        this->_simulationFile << util::format("%fn %fv ", times[0], voltages[0]);
+
+        for (std::size_t i = 1; i < times.size(); ++i)
+        {
+            this->_simulationFile << util::format("%fn %fv ", times[i] - slew, voltages[i - 1]);
+            this->_simulationFile << util::format("%fn %fv ", times[i] + slew, voltages[i]);
+        }
+
+        this->_simulationFile << ")\n";
     }
 
     void Simulator::addDCSupply(const std::string& supplyName,
@@ -102,6 +108,17 @@ namespace xtaro::simulate
         this->_simulationFile << util::format(".TRAN %fp %fn 0n %fp UIC\n", interval, endTime, interval);
     }
 
+    void Simulator::addCapacitance(const std::string& name, 
+                                   const std::string& portName1, 
+                                   const std::string& protName2,
+                                   double value)
+    {
+        // CD00 dout0_0 0 0f
+        if (!this->checkWritable()) return;
+        this->_simulationFile << util::format(
+            "C%s %s %s %ff", name.c_str(), portName1.c_str(), protName2.c_str(), value);
+    }
+    
     void Simulator::run()
     {
         this->_simulationFile.close();
@@ -113,7 +130,7 @@ namespace xtaro::simulate
         ));
     }
 
-    void Simulator::getResult(Measurement* measurement)
+    bool Simulator::getResult(Measurement* measurement)
     {
         // Read output file
         this->_outputFile.open(this->_outputFilename);
@@ -125,8 +142,9 @@ namespace xtaro::simulate
         this->_outputFile.read(content.data(), size);
 
         // Get result 
-        if (measurement->getMeasureResult(content))
-            std::cout << measurement->result() << '\n';
+        bool result = measurement->getMeasureResult(content);
+        this->_outputFile.close();
+        return result;
     }
 
     bool Simulator::checkWritable() const

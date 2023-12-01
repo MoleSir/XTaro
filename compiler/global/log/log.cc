@@ -1,6 +1,7 @@
 #include "log.hh"
 
 #include <ctime>
+#include <cstdlib>
 #include <cstring>
 #include <string>
 #include <fstream>
@@ -15,13 +16,12 @@ namespace xtaro
     Logger* logger = Logger::instance();
 
     const char* Logger::_levelStrings[Level::COUNT] = {
-        "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+        "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"
     };
 
     Logger* Logger::_instance = nullptr;
 
     char Logger::_buffer[Logger::MAX_BUFFER_SIZE] = {0};
-
 
     Logger::Logger() noexcept:
         _fileOut{}, _level{Logger::Level::DEBUG} {}
@@ -142,6 +142,7 @@ namespace xtaro
         va_start(args, format);
         this->log(Logger::Level::ERROR, format, args);
         va_end(args);
+        exit(-1);
     }
 
     void Logger::fatal(const char* format, ...)

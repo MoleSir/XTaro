@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <list>
 
 namespace xtaro::simulate
 {
@@ -24,15 +25,20 @@ namespace xtaro::simulate
         void addPWLSupply(const std::string& supplyName, 
                           const std::string& portName, 
                           const std::vector<double>& times,
-                          const std::vector<double>& voltages);
+                          const std::vector<double>& voltages,
+                          double slew = 0.0);
         void addDCSupply(const std::string& supplyName,
                          const std::string& portName,
                          double voltage);
         void addTrans(double interval, double endTime);
+        void addCapacitance(const std::string& name, 
+                            const std::string& portName1, 
+                            const std::string& protName2,
+                            double value);
 
         void run();
 
-        void getResult(Measurement* measurement);
+        bool getResult(Measurement* measurement);
 
     private:
         bool checkWritable() const;

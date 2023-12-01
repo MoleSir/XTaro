@@ -1,5 +1,6 @@
 #include "./measurement.hh"
 #include "log/log.hh"
+#include "util/util.hh"
 #include <regex>
 
 namespace xtaro::simulate
@@ -20,14 +21,15 @@ namespace xtaro::simulate
             std::regex_search(context, nameResultMatch, Measurement::_nameResultRegex);
         if (success == false)
         {
-            logger->warning("Geg .meas result failed, no 'name = result' found!");
+            logger->warning(util::format(
+                "Get '%s'.meas result failed, no 'name = result' found!", this->_name.c_str()));
             return false;
         }
         
         // Find 'result'
         std::string nameValue{nameResultMatch[0].str()};
         std::smatch resultMatch;
-        // Note: If the 'context' pass the first regex_search, it must can pass this one
+        //! \note If the 'context' pass the first regex_search, it must can pass this one
         std::regex_search(nameValue, resultMatch, Measurement::_resultRegex);
 
         // Get value

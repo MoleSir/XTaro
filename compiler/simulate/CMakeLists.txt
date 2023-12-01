@@ -4,6 +4,7 @@ project(simulate)
 set(LIBRARY_OUTPUT_PATH ${LIB_PATH})
 
 include_directories(${GLOBAL_PATH}/)
+include_directories(${GLOBAL_PATH}/)
 
 file(GLOB COMMAND_SRC ${CMAKE_CURRENT_SOURCE_DIR}/command/*.cc)
 set(SRC ${COMMAND_SRC} ./simulator/simulator.cc )
