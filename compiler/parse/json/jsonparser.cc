@@ -1,0 +1,119 @@
+#include "jsonparser.hh"
+#include "json.hh"
+#include "jsonexception.hh"
+
+#include <iostream>
+
+namespace xtaro::parse
+{
+
+    Json JsonParser::parse() 
+    {
+        JsonToken& token = this->advanceToken();
+     
+        switch (token.type())
+        {
+        case JsonTokenType::LEFT_BRACE:
+            return this->parseObject();
+            break;
+        case JsonTokenType::LEFT_BRACKET:
+            return this->parseArray();
+            break;
+        case JsonTokenType::STRING:
+            return Json(std::move(token.string()));
+            break;
+        case JsonTokenType::NONE:
+            return Json();
+            break;
+        case JsonTokenType::BOOLEAN:
+            return Json(token.boolean());
+            break;
+        case JsonTokenType::INTEGER:
+            return Json(token.integer());
+            break;
+        case JsonTokenType::DECIMAL:
+            return Json(token.decimal());
+            break;
+        default:
+            throw JsonParseException("Not an valid json value");
+            break;
+        }
+    }
+
+    Json JsonParser::parseObject()
+    {
+        Json json(JsonType::OBJECT);
+
+        // First "key" : value 
+        if (this->checkTokenType(JsonTokenType::STRING))
+        {
+            // Get Key
+            JsonToken& keyToken = this->advanceToken();
+            this->ensureTokenType(JsonTokenType::COLON, "Except ':'");
+            json[keyToken.string()] = this->parse();
+        }
+
+        // "key" : value paris
+        while (true)
+        {
+            if (this->checkTokenType(JsonTokenType::COMMA) == false)
+                break;
+            this->jumpToken(); 
+
+            // Must be string
+            JsonToken& keyToken = this->ensureTokenType(JsonTokenType::STRING, "Except a string as key");
+            this->ensureTokenType(JsonTokenType::COLON, "Except ':'");
+            json[keyToken.string()] = this->parse();
+        }
+
+        this->ensureTokenType(JsonTokenType::RIGHT_BRACE, "Except '}'");
+        return json;
+    }
+
+    Json JsonParser::parseArray()
+    {
+        Json json(JsonType::ARRAY);
+
+        // First json value
+        if (this->checkTokenType(JsonTokenType::LEFT_BRACKET) == false)
+            json.append(this->parse());
+        
+        // Json values
+        while (true)
+        {
+            if (this->checkTokenType(JsonTokenType::COMMA) == false)
+                break;
+            this->jumpToken();
+
+            json.append(this->parse());
+        }
+
+        this->ensureTokenType(JsonTokenType::RIGHT_BRACKET, "Except ']'");
+        return json;
+    }
+
+    bool JsonParser::checkTokenType(JsonTokenType type)
+    {
+        if (this->isEnd())
+            throw JsonParseException("Tokens ended prematurely");
+        return this->_iterator->type() == type;
+    }
+
+    JsonToken& JsonParser::ensureTokenType(JsonTokenType type, const char* message)
+    {
+        if (this->isEnd())
+            throw JsonParseException("Tokens ended prematurely");
+        
+        if (this->_iterator->type() == type)
+            return *(this->_iterator++);
+        else
+            throw JsonParseException(message);
+    }
+
+    JsonToken& JsonParser::advanceToken()
+    {
+        if (this->isEnd())
+            throw JsonParseException("Tokens ended prematurely");
+        return *(this->_iterator++);
+    }
+}

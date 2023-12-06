@@ -2,6 +2,8 @@
 #include "../global/global.hh"
 #include "../character/setuphold.hh"
 
+#include "../parse/json/json.hh"
+
 using namespace xtaro;
 
 int main()

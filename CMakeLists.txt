@@ -11,5 +11,6 @@ add_subdirectory(compiler/app)
 add_subdirectory(compiler/global)
 add_subdirectory(compiler/simulate)
 add_subdirectory(compiler/character)
+add_subdirectory(compiler/parse)
 
 
