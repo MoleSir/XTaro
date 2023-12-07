@@ -1,4 +1,5 @@
 #include "json.hh"
+#include "jsonexception.hh"
 #include "jsonscanner.hh"
 #include "jsonparser.hh"
 
@@ -13,6 +14,10 @@
 namespace xtaro::parse
 {
 
+    const char* Json::_jsonTypeString[JsonType::COUNT] = {
+        "Null", "Boolean", "Integer", "Decimal", "String", "Array", "Object",
+    };
+
     Json Json::loadFromFile(const std::string& filepath)
     {
         // Read json file content
@@ -24,7 +29,7 @@ namespace xtaro::parse
         std::string content(fileSize + 1, '\0');
         content.resize(fileSize);
         file.read(const_cast<char*>(content.data()), fileSize);
-        // std::cout << content.c_str() << '\n';
+        file.close();
 
         // Scan file
         std::list<JsonToken> tokens = JsonScanner{std::move(content)}.scan();
@@ -33,184 +38,229 @@ namespace xtaro::parse
         return JsonParser(std::move(tokens)).parse();
     }
 
-    Json::Json() noexcept 
-        : _type(JsonType::NONE), _value{}, _isClear(true) {}
+    Json::Json() noexcept : 
+        _type(JsonType::NIL), _value{}, _invalid(false) {}
 
-    Json::Json(const bool value) noexcept
-        : _type(JsonType::BOOL), _value{}, _isClear(false)
+    Json::Json(const bool value) noexcept : 
+        _type(JsonType::BOOLEAN), _value{}, _invalid(false)
     {
         this->_value._bool = value;
     }
 
-    Json::Json(const int value) noexcept
-        : _type(JsonType::INT), _value{}, _isClear(false)
+    Json::Json(const int value) noexcept : 
+        _type(JsonType::INTEGER), _value{}, _invalid(false)
     {
         this->_value._int = value;
     }
 
-    Json::Json(const double value) noexcept
-        : _type(JsonType::DOUBLE), _value{}, _isClear(false)
+    Json::Json(const double value) noexcept : 
+        _type(JsonType::DECIMAL), _value{}, _invalid(false)
     {
         this->_value._double = value;
     }
 
-    Json::Json(const char* value) noexcept
-        : _type(JsonType::STRING), _value{}, _isClear(false)
+    Json::Json(const char* value) : 
+        _type(JsonType::STRING), _value{}, _invalid(true)
     {
-        try
-        {
-            this->_value._string = new std::string(value);
-        }
-        catch (std::bad_alloc exception)
-        {
-            std::cout << exception.what() << std::endl;
-            this->_type = JsonType::NONE;
-            this->_isClear = true; 
-        }
+        this->_value._string = new std::string(value);
+        this->_invalid = false;
     }
 
-    Json::Json(std::string value) noexcept
-        : _type(JsonType::STRING), _value{}, _isClear(false)
-    {  
-        try
-        {
-            this->_value._string = new std::string(std::move(value));
-        }
-        catch (std::bad_alloc exception)
-        {
-            std::cout << exception.what() << std::endl;
-            this->_type = JsonType::NONE;
-            this->_isClear = true; 
-        } 
+    Json::Json(std::string value) : 
+        _type(JsonType::STRING), _value{}, _invalid(true)
+    {
+        this->_value._string = new std::string(std::move(value));
+        this->_invalid = false;
     }
 
-    Json::Json(const JsonType type) noexcept
-        : _type(type), _value{}, _isClear(false)
+    Json::Json(const JsonType type) : 
+        _type(type), _value{}, _invalid(true)
     {
-        try
+        switch (type)
         {
-            switch (type)
-            {
-            case JsonType::NONE:
-            case JsonType::BOOL:
-            case JsonType::INT:
-            case JsonType::DOUBLE:
-                this->_value._value = 0x0;
-                break;
-            case JsonType::STRING:
-                this->_value._string = new std::string("");
-                break;
-            case JsonType::ARRAY:
-                this->_value._array = new std::vector<Json>();
-                break;
-            case JsonType::OBJECT:
-                this->_value._object = new std::map<std::string, Json>();
-            default:
-                break;
-            }
+        case JsonType::NIL:
+            this->_value._value = 0x0ULL;
+            break;
+        case JsonType::BOOLEAN:
+            this->_value._bool = false;
+            break;
+        case JsonType::INTEGER:
+            this->_value._int = 0;
+            break;
+        case JsonType::DECIMAL:
+            this->_value._double = 0.0;
+            break;
+        case JsonType::STRING:
+            this->_value._string = new std::string();
+            break;
+        case JsonType::ARRAY:
+            this->_value._array = new std::vector<Json>();
+            break;
+        case JsonType::OBJECT:
+            this->_value._object = new std::map<std::string, Json>();
+            break;
+        default:
+            break;
         }
-        catch (std::bad_alloc exception)
-        {
-            std::cout << exception.what() << std::endl;
-            this->_type = JsonType::NONE;
-            this->_isClear = true;
-        }
+        this->_invalid = false;
     }
 
-    Json& Json::operator = (const Json& other) noexcept
+    Json::Json(const Json& other) : 
+        _type(other._type), _value{}, _invalid(true)        
     {
-        if (other._isClear == true) return *this;
+        // Copy as Move
+        this->move(other);
+    }
+
+    Json::Json(Json&& other) :
+        _type(other._type), _value{}, _invalid(true)   
+    {
+        this->move(other);
+    }
+
+    Json& Json::operator = (const Json& other)
+    {
+        other.ensureValid();
+        if (this == &other) return *this;
 
         this->clear();
-        this->copy(other);
+        this->move(other);
         return *this;
     }
 
-    Json::Json(const Json& other) noexcept
-        : _type(other._type), _value{}
+    Json& Json::operator = (Json&& other)
     {
-        if (other._isClear == true) return;
-        this->copy(other);
+        other.ensureValid();
+        if (this == &other) return *this;
+
+        this->clear();
+        this->move(other);
+        return *this;
     }
 
-    //! \brief conversion
-    bool Json::asBool() const
+    bool Json::operator == (const Json& other) const
     {
-        // check type
-        if (this->_type != JsonType::BOOL) 
-            throw std::logic_error("type error, not bool value");
+        this->ensureValid();
+        other.ensureValid();
+        if (this->_type != other._type) return false;
+
+        switch (this->_type)
+        {
+        case JsonType::NIL:
+            return true;
+            break;
+        case JsonType::BOOLEAN:
+            return this->_value._bool == other._value._bool;
+            break;
+        case JsonType::INTEGER:
+            return this->_value._int == other._value._int;
+            break;
+        case JsonType::DECIMAL:
+            return this->_value._double == other._value._double;
+            break;
+        case JsonType::STRING:
+            return *(this->_value._string) == *(other._value._string);
+            break;
+        case JsonType::ARRAY:
+            return *(this->_value._array) == *(other._value._array);
+            break;
+        case JsonType::OBJECT:
+            return *(this->_value._object) == *(other._value._object);
+            break;
+        default:
+            break;
+        }  
+        return false;
+    }
+
+    bool Json::operator != (const Json& other) const 
+    { return !(*this == other); }
+
+    //! \brief conversion
+    bool Json::asBoolean() const
+    {
+        this->ensureJsonTyep(JsonType::BOOLEAN);
         return this->_value._bool;
     }
 
-    int Json::asInt() const
+    int Json::asInteger() const
     {
-        if (this->_type != JsonType::INT)
-            throw std::logic_error("tyep error, not int value");
+        this->ensureJsonTyep(JsonType::INTEGER);
         return this->_value._int;
     }
 
-    double Json::asDouble() const
+    double Json::asDecimal() const
     {
-        if (this->_type != JsonType::DOUBLE)
-            throw std::logic_error("type error, not double value");
+        this->ensureJsonTyep(JsonType::DECIMAL);
         return this->_value._double;
     }
 
     std::string Json::asString() const
     {
-        if (this->_type != JsonType::STRING)
-            throw std::logic_error("type error, not std::string value");
+        this->ensureJsonTyep(JsonType::STRING);
         return *(this->_value._string);
     }
 
-    void Json::copy(const Json& other) noexcept
+    void Json::move(const Json& other)
     {
+        other.ensureValid();
+
         this->_type = other._type;
+        this->_value = other._value;
+
+        this->_invalid = false;
+        other._invalid = true;
+    }
+
+    Json Json::clone() const
+    {
+        this->ensureValid();
+
         switch (this->_type)
         {
-        case JsonType::NONE:
-            break;
-        case JsonType::BOOL:
-            this->_value._bool = other._value._bool;
-            break;
-        case JsonType::INT:
-            this->_value._int = other._value._int;
-            break;
-        case JsonType::DOUBLE:
-            this->_value._double = other._value._double;
-            break;
+        case JsonType::NIL:
+            return Json();
+        case JsonType::BOOLEAN:
+            return Json(this->_value._bool);
+        case JsonType::INTEGER:
+            return Json(this->_value._int);
+        case JsonType::DECIMAL:
+            return Json(this->_value._double); 
         case JsonType::STRING:
-            this->_value._string = other._value._string;
-            break;
+            return Json(this->_value._string);
         case JsonType::ARRAY:
-            this->_value._array = other._value._array;
-            break;
-        case JsonType::OBJECT:
-            this->_value._object = other._value._object;
-        default:
-            break;
-        }
+        {
+            Json json(JsonType::ARRAY);
+            for (int i = 0; i < this->size(); ++i)
+                json.append(this->_value._array->at(i).clone());
 
-        this->_isClear = false;
-        other._isClear = true;
+            return json;
+        }
+        case JsonType::OBJECT:
+        {
+            Json json(JsonType::OBJECT);
+            for (auto iter = this->_value._object->begin(); 
+                 iter != this->_value._object->end(); 
+                 ++iter)
+                json.insert(iter->first, iter->second);
+
+            return json;
+        }
+        default:
+            return Json();
+        }
     }
 
     void Json::clear() noexcept
     {
-        if (this->_isClear == true) return;
+        if (this->_invalid == true) return;
 
         switch (this->_type)
         {
-        case JsonType::NONE:
-            break;
-        case JsonType::BOOL:
-            this->_value._bool = false;
-            break;
-        case JsonType::INT:
-            this->_value._int = 0;
-            break;
-        case JsonType::DOUBLE:
-            this->_value._double = 0.0;
+        case JsonType::NIL:
+        case JsonType::BOOLEAN:
+        case JsonType::INTEGER:
+        case JsonType::DECIMAL:
             break;
         case JsonType::STRING:
             delete this->_value._string;
@@ -225,159 +275,62 @@ namespace xtaro::parse
             break;
         }   
 
-        this->_isClear = true;
-        this->_type = JsonType::NONE;
+        this->_invalid = true;
     }
 
     Json& Json::operator [] (const int index)
     {
-        if (this->_type != JsonType::ARRAY)
-            throw std::logic_error("TODO");
-
+        this->ensureJsonTyep(JsonType::ARRAY);
         if (index < 0) 
-            throw std::logic_error("array[] index < 0");
+            throw JsonException("Array index < 0.");
         
         return (this->_value._array)->at(index);
     }
 
     void Json::append(const Json& other)
     {
-        // must be a array type
-        if (this->_type != JsonType::ARRAY)
-            return;
-        this->_value._array->push_back(other);
-    }
-
-    std::string Json::toString() const noexcept
-    {
-        std::stringstream ss;
-    
-        switch (this->_type)
-        {
-        case JsonType::NONE:
-            ss << "null";
-            break;
-        case JsonType::BOOL:
-            ss << (this->_value._bool == true ? "true" : "false"); 
-            break;
-        case JsonType::INT:
-            ss << this->_value._int;
-            break;
-        case JsonType::DOUBLE:
-            ss << this->_value._double;
-            break;
-        case JsonType::STRING:
-            ss << '\"' << *(this->_value._string) << '\"';
-            break;
-        case JsonType::ARRAY:
-            ss << '[';
-            for (auto iter = (this->_value._array)->cbegin(); iter != (this->_value._array)->cend(); ++iter)
-            {
-                if (iter != (this->_value._array->cbegin()))
-                    ss << ", ";
-                ss << iter->toString();
-            }
-            ss << ']';
-            break;
-        case JsonType::OBJECT:
-            ss << '{';
-            for (auto iter = (this->_value._object)->cbegin(); iter != (this->_value._object)->cend(); ++iter)
-            {
-                if (iter != (this->_value._object)->cbegin())
-                    ss << ", ";
-                ss << '\"' << iter->first << '\"' << ": " << iter->second.toString();
-            }
-            ss << '}';
-            break;
-        default:
-            break;
-        }
-
-        return ss.str();
-    }
-
-    Json& Json::operator [] (const char* key)
-    {
-        std::string keyStr{key};
-        return (*this)[keyStr];
+        this->ensureJsonTyep(JsonType::ARRAY);
+        this->_value._array->emplace_back(other);
     }
 
     Json& Json::operator [] (const std::string& key)
     {
-        if (this->_type != JsonType::OBJECT)
-        {
-            this->clear();
-            this->_type = JsonType::OBJECT;
-            this->_value._object = new std::map<std::string, Json>();
-        }
-        // return a reference
+        this->ensureJsonTyep(JsonType::OBJECT);
         return (*(this->_value)._object)[key];
     }
 
-    bool Json::operator == (const Json& other) const noexcept
+    void Json::insert(std::string key, const Json& value)
     {
-        if (this->_type != other._type) return false;
-
-        switch (this->_type)
-        {
-        case JsonType::NONE:
-            return true;
-            break;
-        case JsonType::BOOL:
-            return this->_value._bool == other._value._bool;
-            break;
-        case JsonType::INT:
-            return this->_value._int == other._value._int;
-            break;
-        case JsonType::DOUBLE:
-            return this->_value._double == other._value._double;
-            break;
-        case JsonType::STRING:
-            return *(this->_value._string) == *(other._value._string);
-            break;
-        case JsonType::ARRAY:
-            return this->_value._array == other._value._array;
-            break;
-        case JsonType::OBJECT:
-            return this->_value._object == other._value._object;
-            break;
-        default:
-            break;
-        }  
-        return false;
+        this->ensureJsonTyep(JsonType::OBJECT);
+        this->_value._object->emplace(std::move(key), value);
     }
-
-    bool Json::operator != (const Json& other) const noexcept 
-    { return !(*this == other); }
 
     bool Json::has(int index) const
     {
+        this->ensureJsonTyep(JsonType::ARRAY);
+
         if (this->_type != JsonType::ARRAY) return false;
         return (index >= 0 && index < this->_value._array->size());
     }
 
-    bool Json::has(const char* key) const
-    {
-        std::string keyStr{key};
-        return this->has(keyStr);
-    }
-
     bool Json::has(const std::string& key) const
     {
-        if (this->_type != JsonType::OBJECT) return false;
+        this->ensureJsonTyep(JsonType::OBJECT);
         return ((this->_value._object->find(key)) != this->_value._object->end());
     }
 
     int Json::size() const
     {
+        this->ensureValid();
+
         if (this->isObject()) return this->_value._object->size();
         if (this->isArray()) return this->_value._array->size();
-        return -1;
+        throw JsonException(util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
     }
 
-    void Json::remove(int index)  noexcept
+    void Json::remove(int index)
     {
-        if (this->_type != JsonType::ARRAY) return;
+        this->ensureJsonTyep(JsonType::ARRAY);
 
         int size = (this->_value._array)->size();
         if (index < 0 || index >= size) return;
@@ -387,14 +340,10 @@ namespace xtaro::parse
         (this->_value._array)->erase((this->_value._array)->begin() + index);
     }
 
-    void Json::remove(const char* key) noexcept
+    void Json::remove(const std::string& key)
     {
-        std::string keyStr{key};
-        this->remove(keyStr);
-    }
+        this->ensureJsonTyep(JsonType::OBJECT);
 
-    void Json::remove(const std::string& key) noexcept
-    {
         auto iter = (this->_value._object)->find(key);
         if (iter != (this->_value._object)->end())
         {
@@ -403,5 +352,101 @@ namespace xtaro::parse
             (this->_value._object)->erase(iter);
         }
     }
+    
+    void Json::writeToFile(const std::string& filename) const
+    {
+        this->ensureValid();
+        std::ofstream file(filename);
+        file << this->toString();
+        file.close();
+    }
 
+    void Json::ensureValid() const
+    {
+        if (this->_invalid)
+            throw JsonException("Use an invalid json.");
+    }
+
+    void Json::ensureJsonTyep(JsonType type) const
+    {
+        this->ensureValid();
+
+        if (type != this->_type)
+            throw JsonException(util::format(
+                "Json Type mismatch, excepted %s but got %s",
+                Json::_jsonTypeString[type], 
+                Json::_jsonTypeString[this->_type]));
+    }
+
+    std::string Json::doToString(std::size_t indent, bool hasName, bool isObjectValue) const
+    {
+        this->ensureValid();
+
+        std::stringstream ss;
+
+        auto printSpace = [&ss] (std::size_t indent) {
+            for (std::size_t i = 0; i < indent; ++i)
+                ss << "    ";
+        };
+
+        switch (this->_type)
+        {
+        case JsonType::NIL:
+            ss << "null";
+            break;
+        case JsonType::BOOLEAN:
+            ss << (this->_value._bool == true ? "true" : "false"); 
+            break;
+        case JsonType::INTEGER:
+            ss << this->_value._int;
+            break;
+        case JsonType::DECIMAL:
+            ss << this->_value._double;
+            break;
+        case JsonType::STRING:
+            ss << '\"' << *(this->_value._string) << '\"';
+            break;
+        case JsonType::ARRAY:
+            if (!hasName)  printSpace(indent);
+            ss << '[' << '\n';
+
+            for (auto iter = (this->_value._array)->cbegin(); 
+                iter != (this->_value._array)->cend(); 
+                ++iter)
+            {
+                if (iter != (this->_value._array->cbegin()))
+                    ss << ',' << '\n';
+                printSpace(indent + 1);
+                ss << iter->doToString(indent + 1, true, false);
+            }
+
+            ss << '\n';
+            printSpace(indent);
+            ss << ']';
+            break;
+        case JsonType::OBJECT:
+            if (!hasName) printSpace(indent);
+            ss << '{' << '\n';
+
+            for (auto iter = (this->_value._object)->cbegin(); 
+                iter != (this->_value._object)->cend(); 
+                ++iter)
+            {
+                if (iter != (this->_value._object)->cbegin())
+                    ss << ',' << '\n';
+                printSpace(indent + 1);
+                ss << '\"' << iter->first << '\"' << " : " 
+                   << iter->second.doToString(indent + 1, true, true);
+            }
+
+            ss << '\n';
+            printSpace(indent);
+            ss << '}';
+            break;
+        default:
+            break;
+        }
+
+        return ss.str();
+    }
 }

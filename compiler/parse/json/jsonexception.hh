@@ -6,6 +6,20 @@
 
 namespace xtaro::parse
 {
+    class JsonException : public std::exception
+    {
+    public:
+        JsonException(const char* message) noexcept:
+            std::exception(),
+            _message{message} {}
+
+        virtual const char* what() const noexcept
+        { return util::format("Json excetopn: %s", this->_message.c_str()); }
+
+    private:
+        std::string _message;
+    };
+
     class JsonScanException : public std::exception
     {
     public:

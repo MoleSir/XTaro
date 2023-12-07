@@ -10,8 +10,11 @@ int main()
 {
     logger->open("/mnt/e/XTaro/temp/xtrao.log");
 
-    character::SetupHoldCharacterizer sh("/mnt/e/XTaro/temp/dff.sp", 10);
-    std::cout << sh.getSetupLHTime() << '\n';
-    
+    // character::SetupHoldCharacterizer sh("/mnt/e/XTaro/temp/dff.sp", 10);
+    // std::cout << sh.getSetupLHTime() << '\n';
+
+    parse::Json json = parse::Json::loadFromFile("./temp/config.json");
+    json.writeToFile("./temp/copy.json");
+
     return 0;
 }

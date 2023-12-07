@@ -71,14 +71,12 @@ namespace xtaro::parse
     void JsonScanner::scanNumberToken()
     {
         // Search until '.' or not digit
-        char ch;
-        int afterDotIndex;
         while (true)
         {
-            ch = this->advanceChar();
+            char ch = this->advanceChar();
             if (ch >= '0' && ch <= '9')
                 continue;
-
+            
             if (ch != '.')
             {
                 this->_currentIndex -= 1;
@@ -87,18 +85,13 @@ namespace xtaro::parse
                 int value = std::atoi( this->startPointer() );
                 return this->addToken(value);
             }
-            else
-            {
-                afterDotIndex = this->_currentIndex;
-                break;
-            }
-
+            else break;
         }
 
         // Search until not digit
         while (true)
         {
-            ch = this->advanceChar();
+            char ch = this->advanceChar();
             if (ch >= '0' && ch <= '9')
                 continue;
             this->_currentIndex -= 1;

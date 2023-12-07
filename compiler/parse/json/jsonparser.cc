@@ -50,7 +50,7 @@ namespace xtaro::parse
             // Get Key
             JsonToken& keyToken = this->advanceToken();
             this->ensureTokenType(JsonTokenType::COLON, "Except ':'");
-            json[keyToken.string()] = this->parse();
+            json.insert(std::move(keyToken.string()), this->parse());
         }
 
         // "key" : value paris
@@ -63,7 +63,7 @@ namespace xtaro::parse
             // Must be string
             JsonToken& keyToken = this->ensureTokenType(JsonTokenType::STRING, "Except a string as key");
             this->ensureTokenType(JsonTokenType::COLON, "Except ':'");
-            json[keyToken.string()] = this->parse();
+            json.insert(std::move(keyToken.string()), this->parse());
         }
 
         this->ensureTokenType(JsonTokenType::RIGHT_BRACE, "Except '}'");
@@ -75,7 +75,7 @@ namespace xtaro::parse
         Json json(JsonType::ARRAY);
 
         // First json value
-        if (this->checkTokenType(JsonTokenType::LEFT_BRACKET) == false)
+        if (this->checkTokenType(JsonTokenType::RIGHT_BRACKET) == false)
             json.append(this->parse());
         
         // Json values
