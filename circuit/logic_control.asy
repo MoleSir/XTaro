@@ -23,3 +23,6 @@ PINATTR SpiceOrder 6
 PIN 64 -128 BOTTOM 8
 PINATTR PinName wl_en
 PINATTR SpiceOrder 7
+PIN 0 -128 BOTTOM 8
+PINATTR PinName rbl
+PINATTR SpiceOrder 8

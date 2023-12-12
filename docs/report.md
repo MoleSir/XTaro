@@ -46,4 +46,4 @@
 
 ## Report 5
 
-- 
+- 使用 replica 方法进行读写控制的 16x4 [SRAM](../circuit)；
