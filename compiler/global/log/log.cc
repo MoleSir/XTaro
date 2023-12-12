@@ -10,6 +10,7 @@
 #include <cstdarg>
 
 #include "../allocator/allocator.hh"
+#include "../util/util.hh"
 
 namespace xtaro
 {
