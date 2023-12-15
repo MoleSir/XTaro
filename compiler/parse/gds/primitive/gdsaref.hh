@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../value/gdsvalue.hh"
+#include "../value/gdsvalues.hh"
 #include "gdselement.hh"
 
 namespace xtaro::parser
@@ -8,7 +8,7 @@ namespace xtaro::parser
     class GDSArrayReference : public GDSElement
     {
     public:
-        GDSArrayReference() noexcept : GDSElement() {}
+        GDSArrayReference() noexcept : GDSElement(GDSElementType::AREF) {}
         virtual ~GDSArrayReference() noexcept
         {
             delete this->_sname;

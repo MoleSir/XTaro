@@ -1,6 +1,6 @@
 #include "gdsscanner.hh"
 #include "gdsrecord.hh"
-#include "./value/gdsvalue.hh"
+#include "./value/gdsvalues.hh"
 #include <list>
 
 namespace xtaro::parser
@@ -89,7 +89,7 @@ namespace xtaro::parser
         // Read type
         GDSRecordType type = static_cast<GDSRecordType>(GDSScanner::scanInt16(this->_ptr + 2));
         // Read content
-        void* instance = this->_convertor[type](
+        GDSValue* instance = this->_convertor[type](
             this->_ptr + 4, size
         );
 
@@ -117,29 +117,22 @@ namespace xtaro::parser
         return 0.0;
     }
 
-
-    void* GDSScanner::getInt16(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getInt16(const std::uint8_t* content, const std::int16_t size)
     {
-        std::int16_t* instance = new std::int16_t;
-        *instance = GDSScanner::scanInt16(content);
-        return instance;
+        return new GDSInt16(GDSScanner::scanInt16(content));
     }
 
-    void* GDSScanner::getInt32(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getInt32(const std::uint8_t* content, const std::int16_t size)
     {
-        std::int32_t* instance = new std::int32_t;
-        *instance = GDSScanner::scanInt32(content);
-        return instance;
+        return new GDSInt32(GDSScanner::scanInt32(content));
     }
 
-    void* GDSScanner::getDouble(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getDouble(const std::uint8_t* content, const std::int16_t size)
     {
-        double* instance = new double;
-        *instance = GDSScanner::scanDouble(content);
-        return instance;
+
     }
 
-    void* GDSScanner::getTimestamp(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getTimestamp(const std::uint8_t* content, const std::int16_t size)
     {
         return new GDSTimestamp(
             scanInt16(content),      scanInt16(content + 2),  scanInt16(content + 4),
@@ -149,18 +142,18 @@ namespace xtaro::parser
         );
     }
 
-    void* GDSScanner::getString(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getString(const std::uint8_t* content, const std::int16_t size)
     {
-        return new std::string( reinterpret_cast<const char*>(content) );
+        return new GDSString( reinterpret_cast<const char*>(content) );
     }
 
-    void* GDSScanner::getRefencelibs(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getRefencelibs(const std::uint8_t* content, const std::int16_t size)
     {
         const char* strptr = reinterpret_cast<const char*>(content);
         return new GDSRefenceLibs(strptr, strptr + REFLIBS_STRING_SIZE);
     }
 
-    void* GDSScanner::getFonts(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getFonts(const std::uint8_t* content, const std::int16_t size)
     {
         const char* strptr = reinterpret_cast<const char*>(content);
         return new GDSFonts(
@@ -169,14 +162,14 @@ namespace xtaro::parser
         );
     }
 
-    void* GDSScanner::getUints(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getUints(const std::uint8_t* content, const std::int16_t size)
     {
         double userUnits = GDSScanner::scanDouble(content);
         double unitMeters = GDSScanner::scanDouble(content + 8);
         return new GDSUnits(userUnits, unitMeters);
     }
 
-    void* GDSScanner::getXY(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getXY(const std::uint8_t* content, const std::int16_t size)
     {
         const std::size_t coordinatesSize = size / 8;
         GDSXY* gdsxy = new GDSXY(coordinatesSize);
@@ -191,19 +184,19 @@ namespace xtaro::parser
         return gdsxy;
     }
 
-    void* GDSScanner::getColumnRow(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getColumnRow(const std::uint8_t* content, const std::int16_t size)
     {
         return new GDSColumnRow(
             GDSScanner::scanInt16(content), GDSScanner::scanInt16(content + 2)
         );
     }
 
-    void* GDSScanner::getElementFLags(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getElementFLags(const std::uint8_t* content, const std::int16_t size)
     {
         return new GDSElementFlags(GDSScanner::scanInt16(content));
     }
 
-    void* GDSScanner::getNull(const std::uint8_t* content, const std::int16_t size)
+    GDSValue* GDSScanner::getNull(const std::uint8_t* content, const std::int16_t size)
     {
         return nullptr;
     }

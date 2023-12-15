@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gdsvalues.hh"
 #include <cstdint>
 
 namespace xtaro::parser
@@ -64,11 +65,17 @@ namespace xtaro::parser
 
     struct GDSRecord
     {
-        GDSRecord(GDSRecordType t, std::int16_t s, void* c) :
-            type{t}, size{s}, content{c} {}
+        GDSRecord(GDSRecordType t, std::int16_t s, GDSValue* v) noexcept :
+            type{t}, size{s}, value{v} {}
+
+        ~GDSRecord() noexcept
+        {
+            delete this->value;
+        }
+
         GDSRecordType type;
         std::int16_t  size;
-        void*         content;
+        GDSValue*     value;
     };
 
 }

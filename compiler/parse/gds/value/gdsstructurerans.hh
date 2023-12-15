@@ -5,7 +5,7 @@
 namespace xtaro::parser
 {   
 
-    class GDSStructureTrans
+    class GDSStructureTrans : public GDSValue
     {
     public:
         union FlagsValue
@@ -22,7 +22,9 @@ namespace xtaro::parser
         };
 
     public:
-        GDSStructureTrans() : _value{0}, _magnification{0.0}, _angle{0.0} {}
+        GDSStructureTrans() noexcept : 
+            GDSValue(), _value{0}, _magnification{0.0}, _angle{0.0} {}
+        ~GDSStructureTrans() noexcept {}
 
         // Check
         bool isMirrorX() const noexcept

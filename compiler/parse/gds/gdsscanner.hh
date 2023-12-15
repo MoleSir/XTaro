@@ -1,13 +1,13 @@
 #pragma once
 
+#include "gdsrecord.hh"
+
 #include <fstream>
 #include <string>
 #include <vector>
 #include <list>
 #include <map>
 #include <functional>
-
-#include "gdsrecord.hh"
 
 namespace xtaro::parser
 {
@@ -35,20 +35,20 @@ namespace xtaro::parser
             FONTS_STRING_SIZE = 44,
         };
 
-        using GDSRecordConvert = std::function<void*(const std::uint8_t*, const std::int16_t)>;
+        using GDSRecordConvert = std::function<GDSValue*(const std::uint8_t*, const std::int16_t)>;
 
-        static void* getInt16(const std::uint8_t* content, const std::int16_t size);
-        static void* getInt32(const std::uint8_t* content, const std::int16_t size);
-        static void* getDouble(const std::uint8_t* content, const std::int16_t size);
-        static void* getTimestamp(const std::uint8_t* content, const std::int16_t size);
-        static void* getString(const std::uint8_t* content, const std::int16_t size);
-        static void* getRefencelibs(const std::uint8_t* content, const std::int16_t size);
-        static void* getFonts(const std::uint8_t* content, const std::int16_t size);
-        static void* getUints(const std::uint8_t* content, const std::int16_t size);
-        static void* getXY(const std::uint8_t* content, const std::int16_t size);
-        static void* getColumnRow(const std::uint8_t* content, const std::int16_t size);
-        static void* getElementFLags(const std::uint8_t* content, const std::int16_t size);
-        static void* getNull(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getInt16(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getInt32(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getDouble(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getTimestamp(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getString(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getRefencelibs(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getFonts(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getUints(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getXY(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getColumnRow(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getElementFLags(const std::uint8_t* content, const std::int16_t size);
+        static GDSValue* getNull(const std::uint8_t* content, const std::int16_t size);
 
     private:
         std::vector<std::uint8_t>  _bytes;

@@ -1,15 +1,17 @@
 #pragma once
 
+#include "gdsvalue.hh"
 #include <cstdint>
 
 namespace xtaro::parser
 {
 
-    class GDSColumnRow
+    class GDSColumnRow : public GDSValue
     {
     public:
-        GDSColumnRow(std::int16_t column, std::int16_t row) :
-            _column{column}, _row{row} {}
+        GDSColumnRow(std::int16_t column, std::int16_t row) noexcept :
+            GDSValue(),  _column{column}, _row{row} {}
+        ~GDSColumnRow() noexcept {}
 
         std::int16_t column() const noexcept
         { return this->_column; }

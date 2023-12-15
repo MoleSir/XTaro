@@ -1,16 +1,18 @@
 #pragma once
 
+#include "gdsvalue.hh"
 #include <string>
 #include <array>
 
 namespace xtaro::parser
 {
 
-    class GDSRefenceLibs
+    class GDSRefenceLibs : public GDSValue
     {
     public:
         GDSRefenceLibs(const char* lib1, const char* lib2) : 
-            _libs{lib1, lib2} {}
+            GDSValue(), _libs{lib1, lib2} {}
+        ~GDSRefenceLibs() noexcept {}
 
         const std::string& lib1() const noexcept
         { return this->_libs[0]; }

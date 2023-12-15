@@ -5,7 +5,7 @@
 namespace xtaro::parser 
 {
 
-    class GDSElementFlags 
+    class GDSElementFlags : public GDSValue
     {
     public:
         union FlagsValue
@@ -21,7 +21,9 @@ namespace xtaro::parser
         };
         
     public:
-        GDSElementFlags(std::uint16_t value = 0) : _value{value} {}
+        GDSElementFlags(std::uint16_t value = 0) noexcept : 
+            GDSValue(), _value{value} {}
+        ~GDSElementFlags() noexcept {}
 
         // Getter
         bool isExternal() const noexcept 

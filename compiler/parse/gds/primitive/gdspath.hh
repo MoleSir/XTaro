@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../value/gdsvalue.hh"
+#include "../value/gdsvalues.hh"
 #include "gdselement.hh"
 
 namespace xtaro::parser

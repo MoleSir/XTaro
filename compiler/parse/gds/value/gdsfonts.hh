@@ -1,16 +1,18 @@
 #pragma once
 
+#include "gdsvalue.hh"
 #include <string>
 #include <array>
 
 namespace xtaro::parser
 {
 
-    class GDSFonts
+    class GDSFonts : public GDSValue
     {
     public:
         GDSFonts(const char* font1, const char* font2, const char* font3, const char* font4) : 
             _fonts{font1, font2, font3, font4} {}
+        ~GDSFonts() noexcept {}
 
         const std::string& font1() const noexcept
         { return this->_fonts[0]; }

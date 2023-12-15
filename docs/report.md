@@ -46,4 +46,6 @@
 
 ## Report 5
 
-- 使用 replica 方法进行读写控制的 16x4 [SRAM](../circuit)；
+- tsmc 产生的 SRAM 电路；
+- *CMOS SRAM Circuit Design and Parametric Test in Nano-Scaled Technologies*，学习 SRAM 具体电路实现，特别是 replica 逻辑控制原理；
+- 使用 replica 方法进行读写控制的 16x4 [SRAM](../circuit)，[文档](./sram-circuit/SRAM电路实现.md)；

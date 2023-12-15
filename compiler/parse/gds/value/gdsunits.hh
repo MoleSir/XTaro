@@ -1,13 +1,19 @@
 #pragma once
 
+#include "gdsvalue.hh"
+
 namespace xtaro::parser 
 {
 
-    class GDSUnits
+    class GDSUnits : public GDSValue
     {
     public:
-        GDSUnits(double userUnits = 0.0, double unitMeters = 0.0) :
-            _userUnits{userUnits}, _unitMeters{unitMeters} {}
+        GDSUnits(double userUnits = 0.0, double unitMeters = 0.0) noexcept :
+            GDSValue(),
+            _userUnits{userUnits}, 
+            _unitMeters{unitMeters} {}
+
+        ~GDSUnits() noexcept {}
 
         // Getter
         double userUnits() const noexcept

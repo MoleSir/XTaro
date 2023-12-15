@@ -1,41 +1,59 @@
 #pragma once
 
-#include "gdselementflags.hh"
-#include "gdstimestamp.hh"
-#include "gdsunits.hh"
-#include "gdsstructurerans.hh"
-#include "gdsreflibs.hh"
-#include "gdsfonts.hh"
-#include "gdsxy.hh"
-#include "gdscolrow.hh"
-
 #include <cstdint>
 #include <string>
 
 namespace xtaro::parser
 {
 
-    using GDSHeader = std::int16_t;
-    using GDSGenerations = std::int16_t;
-    using GDSPlex = std::int32_t;
-    using GDSLayer = std::int16_t;
-    using GDSDataType = std::int16_t;
-    using GDSWidth = std::int16_t;
-    using GDSTextType = std::int16_t;
-    using GDSNodeType = std::int16_t;
-    using GDSBoxType = std::int16_t;
-    using GDSString = std::string;
-    using GDSStructureName = std::string;
-    using GDSPresentation = std::int16_t;
-    using GDSFormat = std::int16_t;
-    using GDSAttrtable = std::string;
+    class GDSValue {};
 
-    enum class GDSPathType
+    class GDSInt16 : public GDSValue
     {
-        SQUARE_END = 0,
-        ROUND_END = 1,
-        EXTEND_SQUARE_END = 2,
+    public:
+        GDSInt16(std::int16_t value) noexcept :
+            GDSValue(), _value{value} {}
+        ~GDSInt16() noexcept {}
+
+        std::int16_t value() const noexcept
+        { return this->_value; }
+
+        void setValue(std::int16_t v) noexcept
+        { this->_value = v; }
+    
+    private:
+        std::int16_t _value;
     };
 
+    class GDSInt32 : public GDSValue
+    {
+    public:
+        GDSInt32(std::int32_t value) noexcept :
+            GDSValue(), _value{value} {}
+        ~GDSInt32() noexcept {}
+
+        std::int32_t value() const noexcept
+        { return this->_value; }
+
+        void setValue(std::int32_t v) noexcept
+        { this->_value = v; }
     
+    private:
+        std::int32_t _value;
+    };
+
+    class GDSString : public GDSValue
+    {
+    public:
+        GDSString(const char* value) :
+            GDSValue(), _value{value} {}
+        ~GDSString() noexcept {}
+
+        const std::string& value() const noexcept
+        { return this->_value; }
+    
+    private:
+        std::string _value;
+    };
+
 }
