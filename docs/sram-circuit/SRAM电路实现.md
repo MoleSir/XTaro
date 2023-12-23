@@ -64,7 +64,7 @@ we 为低电平，br 与 bl 相对输出为高阻。否则 br 与 bl 连接到�
 
 
 
-## Logic Control
+## Logic Control 1
 
 SRAM 控制线逻辑控制模块（rbl 表示电压已经下降到足够被敏感放大器检测）：
 
@@ -115,7 +115,70 @@ $$
 
 
 
-## Question
+## Logic Control 2
 
-- SRAM 电路模块实现是否完备、合理。
-- 在前仿出现 Delay 问题时，需要修改哪个电路模块进行改进。
+对第一种实现方式，很明显存在的问题：
+
+- 读操作：上半周期完全用于预充电，导致读延时很大。实际上充电过程是很快就可以完成；
+- 写操作：在 BL 与 BLB 没有充电（放电）到对应的电平，而直接开启 WL 信号是一种浪费。
+
+### 理想时序
+
+对读操作，最理想的时序应该是：
+
+1. BL、BLB 预充电至 VDD；
+2. 开启 WL；
+3. BL、BLB 电压差达到敏感放大器阈值，开启放大器，输出读取的数字量。
+
+三者之间不存在间隔，是理论上最快的读时序。对 2、3 步骤，使用 replica 技术尽可能满足要求。但是对 1、2 步骤使用 replica 是不现实的。可以使用反相器链的方法处理。
+
+对写操作：
+
+1. BL、BLB 预充电到期望值；
+2. 开启 WL；
+
+### Delay Chain
+
+希望的是在 CLK 从 0 到 1 变化时，预充电开启一段时间，而非半个周期，可以采用以下电路实现：
+
+<img src="pics/SRAM电路实现.assets/image-20231223135955376.png" alt="image-20231223135955376" style="zoom:43%;" />
+
+其中 delay chain 使用多个反相器级联组成：
+
+![image-20231223140040165](pics/SRAM电路实现.assets/image-20231223140040165.png)
+
+Z 与 A 逻辑上是取反的。每级间增加扇出是为了增加延时。
+
+1. 当 clk 稳定为 0 时，nand2 输入分别为 1、0，输出 iclk 为 1；
+2. 当 clk 升沿到来，nand2 B 端口输入为 1，而由于 delay chain，A 端口也为 1，输出 iclk 为 0；
+3. 延时时间到，nand2 A 端口变为 0，输出 iclk 为 1；
+
+每次 clk 从 0 到 1，iclk 出现一小段时间的 0，用于启动预充电。并且这个电路在 clk 从 1 到 0 时是不会变化的。
+
+### 电路实现
+
+使用 delay chain 与 replica 技术，可得四个控制信号的逻辑表达式：
+$$
+wl\_en = (iclk * we)  + (rbl * iclk * we')= iclk * (we + rbl)
+$$
+
+$$
+sa\_en = we' * rbl' * iclk * csb' 
+           = ( we + rbl )' * ( iclk' + csb )'
+$$
+
+$$
+p\_bar\_en = csb + iclk + we
+$$
+
+$$
+we\_en = csb' * we * iclk
+$$
+
+电路实现如下：
+
+<img src="pics/SRAM电路实现.assets/image-20231223141241477.png" alt="image-20231223141241477" style="zoom:50%;" />
+
+### TODO
+
+- 逻辑控制信号驱动能力不足，特别是 p_bar_en。
