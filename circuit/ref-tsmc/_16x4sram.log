@@ -1366,6 +1366,10 @@ Ignoring BSIM parameter XL
 Ignoring BSIM parameter XW
 Ignoring BSIM parameter XL
 Ignoring BSIM parameter XW
+Ignoring BSIM parameter XL
+Ignoring BSIM parameter XW
+Ignoring BSIM parameter XL
+Ignoring BSIM parameter XW
 WARNING: Less than two connections to node x74:x1:vdd.  This node is used by v:x74:x1:dd.
 WARNING: Less than two connections to node x74:x2:vdd.  This node is used by v:x74:x2:dd.
 WARNING: Less than two connections to node x74:x3:vdd.  This node is used by v:x74:x3:dd.
@@ -1375,6 +1379,10 @@ WARNING: Less than two connections to node x80:vdd.  This node is used by v:x80:
 WARNING: Less than two connections to node x81:vdd.  This node is used by v:x81:dd.
 WARNING: Less than two connections to node x82:vdd.  This node is used by v:x82:dd.
 WARNING: Less than two connections to node x94:vdd.  This node is used by v:x94:dd.
+Warning: Pd = 0 is less than W.
+Warning: Ps = 0 is less than W.
+Warning: Pd = 0 is less than W.
+Warning: Ps = 0 is less than W.
 Warning: Pd = 0 is less than W.
 Warning: Ps = 0 is less than W.
 Warning: Pd = 0 is less than W.
@@ -3097,21 +3105,21 @@ Gmin = 0
 Gmin stepping succeeded in finding the operating point.
 
 
-Date: Sat Dec 23 14:13:49 2023
-Total elapsed time: 6.064 seconds.
+Date: Sun Dec 24 19:21:39 2023
+Total elapsed time: 3.434 seconds.
 
 tnom = 27
 temp = 27
 method = modified trap
-totiter = 6730
-traniter = 6167
-tranpoints = 1875
-accept = 1563
-rejected = 312
-matrix size = 1160
-fillins = 786
+totiter = 6811
+traniter = 6228
+tranpoints = 1892
+accept = 1567
+rejected = 325
+matrix size = 1163
+fillins = 872
 solver = Normal
-Avg thread counts: 5.8/4.0/4.1/1.7
-Matrix Compiler1:   11611 opcodes  81.3/[55.0]/70.9
-Matrix Compiler2: 129.11 KB object code size  65.2/31.9/[13.9]
+Avg thread counts: 10.8/8.1/4.0/1.6
+Matrix Compiler1:   12574 opcodes  41.7/[24.8]/32.9
+Matrix Compiler2: 130.78 KB object code size  17.4/16.3/[15.0]
 

@@ -1,10 +1,8 @@
-#pragma
+#pragma once
 
 #include "./allocator/allocator.hh"
 #include "./log/log.hh"
 #include "./util/util.hh"
-
-namespace xtaro
-{
-
-}
+#include "./exception/msgexception.hh"
+#include "./tech/tech.hh"
+#include "./config/config.hh"

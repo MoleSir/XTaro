@@ -17,8 +17,6 @@
 
 [输出 SRAM 的结构](./sram-circuit/SRAM电路实现.md)
 
-软件如何产生电路（TODO）：
-
 ### 1.2 .lib 文件的生成
 
 目前需要仿真的 .lib 文件信息：

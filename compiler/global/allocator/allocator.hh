@@ -14,7 +14,7 @@ namespace xtaro
         {
             try 
             {
-                Type* instance = new Type(std::forward<Args>(args)...);
+                Type* instance = new Type{std::forward<Args>(args)...};
                 return instance;
             }
             catch (const std::exception& e) 

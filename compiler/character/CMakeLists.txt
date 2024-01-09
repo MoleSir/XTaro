@@ -6,7 +6,11 @@ set(LIBRARY_OUTPUT_PATH ${LIB_PATH})
 include_directories(${GLOBAL_PATH}/)
 include_directories(${SIMULATE_PATH}/)
 
-file(GLOB SRC ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
+file(GLOB DELAY_SRC ${CMAKE_CURRENT_SOURCE_DIR}/delay/*.cc)
+file(GLOB FUNCTION_SRC ${CMAKE_CURRENT_SOURCE_DIR}/function/*.cc)
+file(GLOB SETUPHOLD_SRC ${CMAKE_CURRENT_SOURCE_DIR}/setuphold/*.cc)
+file(GLOB SIMULATOR ${CMAKE_CURRENT_SOURCE_DIR}/simulator/*.cc)
+set(SRC ${DELAY_SRC} ${FUNCTION_SRC} ${SETUPHOLD_SRC} ${SIMULATOR})
 
 add_library(character STATIC ${SRC})
-target_link_libraries(character global simulate)
+link_libraries(character global simulate)

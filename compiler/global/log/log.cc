@@ -14,13 +14,11 @@
 
 namespace xtaro
 {
-    Logger* logger = Logger::instance();
+    Logger& logger = Logger::instance();
 
     const char* Logger::_levelStrings[Level::COUNT] = {
         "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"
     };
-
-    Logger* Logger::_instance = nullptr;
 
     char Logger::_buffer[Logger::MAX_BUFFER_SIZE] = {0};
 
@@ -29,22 +27,10 @@ namespace xtaro
 
     Logger::~Logger() noexcept {}
  
-    Logger* Logger::instance() noexcept
+    Logger& Logger::instance() noexcept
     {
-        if (Logger::_instance == nullptr)
-        {
-            try
-            {
-                Logger::_instance = new Logger();
-            }
-            catch (const std::exception& e)
-            {
-                std::cerr << "Create logger object failed: " << e.what() << '\n';
-                exit(11);
-            }
-        }
-            
-        return Logger::_instance;
+        static Logger _logger;
+        return _logger;
     }
 
     void Logger::open(const std::string& fileName) noexcept
@@ -80,32 +66,32 @@ namespace xtaro
             return;
 
         // Current time to string
-        time_t current_ticks = time(NULL);
-        struct tm* time = localtime(&current_ticks);
+        time_t current_ticks = std::time(NULL);
+        struct tm* time = std::localtime(&current_ticks);
 
         char timeStr[32] = {0};
-        memset(timeStr, 0, sizeof(timeStr));
-        strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", time);
+        std::memset(timeStr, 0, sizeof(timeStr));
+        std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", time);
 
         // Format data time and file stringF
         const char* formatContext = "[%s] %s > ";
-        int size = snprintf(Logger::_buffer, 128, formatContext, timeStr, Logger::_levelStrings[level]);
+        int size = std::snprintf(Logger::_buffer, 128, formatContext, timeStr, Logger::_levelStrings[level]);
         if (size < 0)
         {
             this->_fileOut << "Log failed.\n";
             return;
         }
-        Logger::_buffer[size] = 0;
+        Logger::_buffer[size] = '\0';
         this->_fileOut << Logger::_buffer;
 
         // Format mutable params: infomation
-        size = vsnprintf(Logger::_buffer, 128, format, args);
+        size = std::vsnprintf(Logger::_buffer, 128, format, args);
         if (size < 0)
         {
             this->_fileOut << "Log failed.\n";
             return;
         }
-        Logger::_buffer[size] = 0;
+        Logger::_buffer[size] = '\0';
         this->_fileOut << Logger::_buffer;
 
         // Flush file

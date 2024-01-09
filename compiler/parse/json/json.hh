@@ -8,6 +8,7 @@ namespace xtaro::parse
 {
     enum JsonType
     {
+        EMPTY,
         NIL,
         BOOLEAN,
         INTEGER,
@@ -55,7 +56,7 @@ namespace xtaro::parse
         double asDecimal() const;
         operator double() const { return this->asDecimal(); }
         
-        std::string asString() const;
+        std::string& asString() const;
         operator std::string() const { return this->asString(); }
 
         // Operator of [], for array type Json
@@ -73,6 +74,9 @@ namespace xtaro::parse
         // Functions and operators of Object Type
         Json& operator [] (const std::string& key);
 
+        // If no 'key', return a cleared json
+        Json get(const std::string& key);
+
         void insert(std::string key, const Json& value);
 
         // Check wether the key is in the map<string, Json>
@@ -85,7 +89,9 @@ namespace xtaro::parse
         int size() const;
 
         // Check json type
-        // TODO: May check invalid??
+        bool invalid() const noexcept
+        { return this->_invalid; }
+
         bool isNull() const noexcept 
         { return !this->_invalid && this->_type == JsonType::NIL; }
         

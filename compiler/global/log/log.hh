@@ -25,7 +25,7 @@ namespace xtaro
             COUNT,
         };
     
-        static Logger* instance() noexcept;
+        static Logger& instance() noexcept;
         void open(const std::string& fileName) noexcept;
         void close() noexcept;
 
@@ -49,9 +49,8 @@ namespace xtaro
 
     private:
         static const char* _levelStrings[Level::COUNT];
-        static Logger * _instance;
         static char _buffer[MAX_BUFFER_SIZE];
     };
 
-    extern Logger* logger;
+    extern Logger& logger;
 }

@@ -11,13 +11,10 @@ namespace xtaro::circuit
     class Net
     {
     public:
-        Net();
-
-        const std::list<Port*> ports() const noexcept
-        { return this->_ports; }
-        
+        Net(std::string name);
+                
     private:
-        std::list<Port*> _ports;    
+        std::string _name;
     };
 
 }

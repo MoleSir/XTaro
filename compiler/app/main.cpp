@@ -1,20 +1,27 @@
+#include <log/log.hh>
+#include <config/config.hh>
+#include <tech/tech.hh>
 #include <iostream>
-#include "../global/global.hh"
-#include "../character/setuphold.hh"
-
-#include "../parse/json/json.hh"
 
 using namespace xtaro;
 
 int main()
 {
-    logger->open("/mnt/e/XTaro/temp/xtrao.log");
+    logger.open("/mnt/e/XTaro/temp/xtrao.log");
+    std::cout << "Hello World Xtaro!!" << std::endl;
 
-    // character::SetupHoldCharacterizer sh("/mnt/e/XTaro/temp/dff.sp", 10);
-    // std::cout << sh.getSetupLHTime() << '\n';
+    config.load("./temp/config.json");
 
-    parse::Json json = parse::Json::loadFromFile("./temp/config.json");
-    json.writeToFile("./temp/copy.json");
+    std::cout << config.wordWidth << std::endl;
+    std::cout << config.addressWidth << std::endl;
+    std::cout << config.techName << std::endl;
+    std::cout << config.techPath << std::endl;
+    std::cout << config.outputPath << std::endl;
+
+    tech.load();
+
+    std::cout << tech.spice.nmos << std::endl;
+    std::cout << tech.spice.pmos << std::endl;
 
     return 0;
 }

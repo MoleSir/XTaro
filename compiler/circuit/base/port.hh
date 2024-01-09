@@ -29,30 +29,15 @@ namespace xtaro::circuit
 
         Net* net() const noexcept
         { return this->_net; }
-
-        Circuit* circuit() const noexcept
-        { return this->_circuit; }
-
+        
     public:
         void setNet(Net* net) noexcept
         { this->_net = net; } 
-
-        void setCircuit(Circuit* circuit) noexcept
-        { this->_circuit = circuit; }
-
-        void setInstance(Instance* instance) noexcept
-        { this->_instance = instance; }
 
     private:
         std::string _name;
         PortType _type;
         Net* _net;
-
-        union
-        {
-            Circuit* _circuit;
-            Instance* _instance;
-        };
     };
 
 }

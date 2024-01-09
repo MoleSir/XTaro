@@ -12,7 +12,7 @@ PIN -128 32 LEFT 8
 PINATTR PinName we
 PINATTR SpiceOrder 3
 PIN -64 -128 BOTTOM 8
-PINATTR PinName p_bar_en
+PINATTR PinName p_bar_en1
 PINATTR SpiceOrder 4
 PIN 128 -112 RIGHT 8
 PINATTR PinName sa_en
@@ -26,3 +26,6 @@ PINATTR SpiceOrder 7
 PIN 0 -128 BOTTOM 8
 PINATTR PinName rbl
 PINATTR SpiceOrder 8
+PIN -96 -128 TOP 8
+PINATTR PinName p_bar_en0
+PINATTR SpiceOrder 9

@@ -2,6 +2,9 @@
 
 namespace xtaro::circuit
 {
-    Net::Net():
-        _ports{} {}
+    Net::Net(std::string name):
+        _name{std::move(name)}
+    {}
+
+    
 }

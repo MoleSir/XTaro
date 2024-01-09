@@ -1,7 +1,9 @@
 #include "json.hh"
-#include "jsonexception.hh"
 #include "jsonscanner.hh"
 #include "jsonparser.hh"
+
+#include <exception/msgexception.hh>
+#include <allocator/allocator.hh>
 
 #include <string>
 #include <vector>
@@ -39,7 +41,7 @@ namespace xtaro::parse
     }
 
     Json::Json() noexcept : 
-        _type(JsonType::NIL), _value{}, _invalid(false) {}
+        _type(JsonType::EMPTY), _value{}, _invalid(true) {}
 
     Json::Json(const bool value) noexcept : 
         _type(JsonType::BOOLEAN), _value{}, _invalid(false)
@@ -62,14 +64,16 @@ namespace xtaro::parse
     Json::Json(const char* value) : 
         _type(JsonType::STRING), _value{}, _invalid(true)
     {
-        this->_value._string = new std::string(value);
+        // this->_value._string = new std::string(value);
+        this->_value._string = Allocator::alloc<std::string>(value);
         this->_invalid = false;
     }
 
     Json::Json(std::string value) : 
         _type(JsonType::STRING), _value{}, _invalid(true)
     {
-        this->_value._string = new std::string(std::move(value));
+        // this->_value._string = new std::string(std::move(value));
+        this->_value._string = Allocator::alloc<std::string>(std::move(value));
         this->_invalid = false;
     }
 
@@ -91,13 +95,16 @@ namespace xtaro::parse
             this->_value._double = 0.0;
             break;
         case JsonType::STRING:
-            this->_value._string = new std::string();
+            // this->_value._string = new std::string();
+            this->_value._string = Allocator::alloc<std::string>();
             break;
         case JsonType::ARRAY:
-            this->_value._array = new std::vector<Json>();
+            // this->_value._array = new std::vector<Json>();
+            this->_value._array = Allocator::alloc<std::vector<Json>>();
             break;
         case JsonType::OBJECT:
-            this->_value._object = new std::map<std::string, Json>();
+            // this->_value._object = new std::map<std::string, Json>();
+            this->_value._object = Allocator::alloc<std::map<std::string, Json>>();
             break;
         default:
             break;
@@ -195,7 +202,7 @@ namespace xtaro::parse
         return this->_value._double;
     }
 
-    std::string Json::asString() const
+    std::string& Json::asString() const
     {
         this->ensureJsonTyep(JsonType::STRING);
         return *(this->_value._string);
@@ -263,13 +270,13 @@ namespace xtaro::parse
         case JsonType::DECIMAL:
             break;
         case JsonType::STRING:
-            delete this->_value._string;
+            Allocator::free(this->_value._string);
             break;
         case JsonType::ARRAY:
-            delete this->_value._array;
+            Allocator::free(this->_value._array);
             break;
         case JsonType::OBJECT:
-            delete this->_value._object;
+            Allocator::free(this->_value._object);
             break;
         default:
             break;
@@ -282,7 +289,7 @@ namespace xtaro::parse
     {
         this->ensureJsonTyep(JsonType::ARRAY);
         if (index < 0) 
-            throw JsonException("Array index < 0.");
+            throw MessageException("Json array", "Array index < 0.");
         
         return (this->_value._array)->at(index);
     }
@@ -297,6 +304,15 @@ namespace xtaro::parse
     {
         this->ensureJsonTyep(JsonType::OBJECT);
         return (*(this->_value)._object)[key];
+    }
+
+    Json Json::get(const std::string& key)
+    {
+        this->ensureJsonTyep(JsonType::OBJECT);
+        auto iter{ this->_value._object->find(key) };
+        if (iter == this->_value._object->end())
+            return Json{};
+        return iter->second;
     }
 
     void Json::insert(std::string key, const Json& value)
@@ -325,7 +341,7 @@ namespace xtaro::parse
 
         if (this->isObject()) return this->_value._object->size();
         if (this->isArray()) return this->_value._array->size();
-        throw JsonException(util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
+        throw MessageException("Json type", util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
     }
 
     void Json::remove(int index)
@@ -364,7 +380,7 @@ namespace xtaro::parse
     void Json::ensureValid() const
     {
         if (this->_invalid)
-            throw JsonException("Use an invalid json.");
+            throw MessageException("Json", "Use an invalid json.");
     }
 
     void Json::ensureJsonTyep(JsonType type) const
@@ -372,10 +388,12 @@ namespace xtaro::parse
         this->ensureValid();
 
         if (type != this->_type)
-            throw JsonException(util::format(
-                "Json Type mismatch, excepted %s but got %s",
-                Json::_jsonTypeString[type], 
-                Json::_jsonTypeString[this->_type]));
+            throw MessageException(
+                "Json type",
+                util::format("Json Type mismatch, excepted %s but got %s",
+                             Json::_jsonTypeString[type], 
+                             Json::_jsonTypeString[this->_type])
+            );
     }
 
     std::string Json::doToString(std::size_t indent, bool hasName, bool isObjectValue) const

@@ -74,16 +74,12 @@ SRAM 控制线逻辑控制模块（rbl 表示电压已经下降到足够被敏�
 
 ### 写操作
 
-<img src="pics/SRAM电路实现.assets/image-20231212203123890.png" alt="image-20231212203123890" style="zoom:50%;" />
-
 - p_en_bar：始终关闭；
 - we_en：始终开启。将 bl、br 设置到高/低电平；
 - sa_en：始终关闭；
 - wl_en：始终开启。开始对 Bitcell 进行设置；
 
 ### 读操作
-
-<img src="pics/SRAM电路实现.assets/image-20231212203122153.png" alt="image-20231212203122153" style="zoom:50%;" />
 
 - p_en_bar：上半周期开启、下半周期关闭。将 bl、br 设置位高电平；
 - we_en：始终关闭；
@@ -178,7 +174,3 @@ $$
 电路实现如下：
 
 <img src="pics/SRAM电路实现.assets/image-20231223141241477.png" alt="image-20231223141241477" style="zoom:50%;" />
-
-### TODO
-
-- 逻辑控制信号驱动能力不足，特别是 p_bar_en。

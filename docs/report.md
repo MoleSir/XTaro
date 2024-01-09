@@ -48,4 +48,22 @@
 
 - tsmc 产生的 SRAM 电路；
 - *CMOS SRAM Circuit Design and Parametric Test in Nano-Scaled Technologies*，学习 SRAM 具体电路实现，特别是 replica 逻辑控制原理；
-- 使用 replica 方法进行读写控制的 16x4 [SRAM](../circuit)，[文档](./sram-circuit/SRAM电路实现.md)；
+- 使用 replica 方法进行读写控制的 16x4 [SRAM](../circuit/ref-openram)，[文档](./sram-circuit/SRAM电路实现.md)；
+
+
+
+## Report 6
+
+- 修复 BLB、BL 需要外加电容的问题；
+- 学习 MBIST，实现 March C- 算法；
+- DAC review；
+- 更新 SRAM [逻辑控制电路结构](../circuit/ref-tsmc)，[文档](./sram-circuit/SRAM电路实现.md)；
+
+
+
+## Report 7
+
+- tsmc SRAM 网标
+- tsmc SRAM verilog
+
+[TSMC](E:\XTaro\reference\tsmc\16x8m2f)
