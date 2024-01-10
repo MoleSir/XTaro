@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <fstream>
 
 namespace xtaro::util
 {
@@ -14,6 +15,8 @@ namespace xtaro::util
         r.resize(static_cast<size_t>(len));
         return r;
     }
+
+    std::size_t filesize(std::ifstream& file);
 
     int execute(const std::string& command) noexcept;
     int execute(const char* command) noexcept;

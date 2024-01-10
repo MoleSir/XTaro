@@ -1,31 +1,35 @@
 #pragma once
 
 #include <string>
+#include <json/json.hh>
 
 namespace xtaro
 {
     class Tech 
     {
     public:
-        struct 
-        {
-            std::string nmos{};
-            std::string pmos{};
-        } spice;
+        std::string techpath{};
+        parse::Json spice{};
 
         void load();
 
     public:
-        static Tech& instance();
+        static Tech* instance();
 
     private:
-        Tech();
+        Tech() = default;
         ~Tech() noexcept = default;
         Tech(const Tech&) = delete;
         Tech(Tech&&) = delete;
         Tech& operator = (const Tech&) = delete;
         Tech& operator = (Tech&&) = delete;
+
+        void checkSpiceMessage() const;
+        void checkTechFiles() const;
+
+        static bool fileExists(const std::string& filePath);
+        static bool directoryExists(const std::string& dirPath);
     };
 
-    extern Tech& tech;
+    extern Tech* tech;
 }

@@ -14,7 +14,7 @@
 
 namespace xtaro
 {
-    Logger& logger = Logger::instance();
+    Logger* logger = Logger::instance();
 
     const char* Logger::_levelStrings[Level::COUNT] = {
         "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"
@@ -22,15 +22,13 @@ namespace xtaro
 
     char Logger::_buffer[Logger::MAX_BUFFER_SIZE] = {0};
 
-    Logger::Logger() noexcept:
+    Logger::Logger():
         _fileOut{}, _level{Logger::Level::DEBUG} {}
-
-    Logger::~Logger() noexcept {}
- 
-    Logger& Logger::instance() noexcept
+         
+    Logger* Logger::instance() noexcept
     {
         static Logger _logger;
-        return _logger;
+        return &_logger;
     }
 
     void Logger::open(const std::string& fileName) noexcept

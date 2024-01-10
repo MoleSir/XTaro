@@ -7,11 +7,7 @@
 
 namespace xtaro
 {
-    Config& config{Config::instance()};
-
-    Config::Config()
-    {
-    }
+    Config* config{Config::instance()};
 
     void Config::load(const std::string& configFile)
     {
@@ -42,9 +38,9 @@ namespace xtaro
             this->outputPath.assign( std::move(json[outputPathName].asString()) );
     }
 
-    Config& Config::instance()
+    Config* Config::instance()
     {
         static Config _config{};
-        return _config;
+        return &_config;
     }   
 }

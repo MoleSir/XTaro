@@ -306,6 +306,11 @@ namespace xtaro::parse
         return (*(this->_value)._object)[key];
     }
 
+    Json& Json::operator [] (const char* key)
+    {
+        return this->operator[](std::string(key));
+    }
+
     Json Json::get(const std::string& key)
     {
         this->ensureJsonTyep(JsonType::OBJECT);

@@ -67,7 +67,7 @@ namespace xtaro::simulate
 
         if (times.size() != voltages.size())
         {
-            logger.error(
+            logger->error(
                 "Write PWL failed! times' size '%lu' is not equal to voltages' size '%lu'",
                 times.size(), voltages.size()
             );
@@ -151,7 +151,7 @@ namespace xtaro::simulate
     {
         if (this->_simulationFile.is_open() == false)
         {
-            logger.error("Write .sp file failed! %s is not open", this->_simulationFilename.c_str());
+            logger->error("Write .sp file failed! %s is not open", this->_simulationFilename.c_str());
             return -1;
         }
         return true;

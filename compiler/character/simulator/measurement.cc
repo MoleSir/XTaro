@@ -21,7 +21,7 @@ namespace xtaro::simulate
             std::regex_search(context, nameResultMatch, Measurement::_nameResultRegex);
         if (success == false)
         {
-            logger.warning(util::format(
+            logger->warning(util::format(
                 "Get '%s'.meas result failed, no 'name = result' found!", this->_name.c_str()).c_str());
             return false;
         }

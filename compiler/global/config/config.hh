@@ -20,10 +20,10 @@ namespace xtaro
         void load(const std::string& configFile);
 
     public:
-        static Config& instance();
+        static Config* instance();
 
     private:
-        Config();
+        Config() = default;
         ~Config() noexcept = default;
         Config(const Config&) = delete;
         Config(Config&&) = delete;
@@ -31,5 +31,5 @@ namespace xtaro
         Config& operator = (Config&&) = delete;
     };
 
-    extern Config& config;
+    extern Config* config;
 }

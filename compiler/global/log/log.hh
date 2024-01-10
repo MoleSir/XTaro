@@ -25,7 +25,9 @@ namespace xtaro
             COUNT,
         };
     
-        static Logger& instance() noexcept;
+        static Logger* instance() noexcept;
+    
+    public:
         void open(const std::string& fileName) noexcept;
         void close() noexcept;
 
@@ -40,8 +42,12 @@ namespace xtaro
         void fatal(const char* format, ...);
 
     private:
-        Logger() noexcept;
-        ~Logger() noexcept;
+        Logger();
+        ~Logger() noexcept = default;
+        Logger(const Logger&) = delete;
+        Logger(Logger&&) = delete;
+        Logger& operator = (const Logger&) = delete;
+        Logger& operator = (Logger&&) = delete;
 
     private:
         std::ofstream _fileOut;
@@ -52,5 +58,5 @@ namespace xtaro
         static char _buffer[MAX_BUFFER_SIZE];
     };
 
-    extern Logger& logger;
+    extern Logger* logger;
 }

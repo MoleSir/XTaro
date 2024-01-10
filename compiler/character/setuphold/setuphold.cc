@@ -36,18 +36,18 @@ namespace xtaro::character
         double idealClkQ = 
             this->simulate(direction, mode, feasibleBound, success);
         if (success == false)
-            logger.error("Get setup/hold failed.");
+            logger->error("Get setup/hold failed.");
 
         double setupholdTime = (feasibleBound - 2 * this->_period);
         double passingSetupHoldTime = 
             mode == TimeMode::SETUP ? (-1 * setupholdTime) : setupholdTime;
         
-        logger.debug("Ideal time: %f", passingSetupHoldTime);
+        logger->debug("Ideal time: %f", passingSetupHoldTime);
 
         while (true)
         {
             double dataArriveTime = (feasibleBound + infeasibleBound) / 2.0;
-            logger.debug("Data arrive time: %f", dataArriveTime);
+            logger->debug("Data arrive time: %f", dataArriveTime);
             double clkToQ = this->simulate(direction, mode, dataArriveTime, success);
 
             setupholdTime = (dataArriveTime - 2.0 * this->_period);
@@ -56,18 +56,18 @@ namespace xtaro::character
 
             if (success == true && (clkToQ < 1.1 * idealClkQ))
             {
-                logger.debug("PASS Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
+                logger->debug("PASS Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
                 feasibleBound = dataArriveTime;
             }
             else
             {
-                logger.debug("FAIL Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
+                logger->debug("FAIL Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
                 infeasibleBound = dataArriveTime;
             }
 
             double maxBound = infeasibleBound > feasibleBound ? infeasibleBound : feasibleBound;
             double relativeRatio = fabs(infeasibleBound - feasibleBound) / fabs(maxBound);
-            logger.debug("Relative ratio: %f", relativeRatio);
+            logger->debug("Relative ratio: %f", relativeRatio);
             if (relativeRatio < 0.001)
                 break;
         };

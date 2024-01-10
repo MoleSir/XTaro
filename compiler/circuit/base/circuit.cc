@@ -15,7 +15,7 @@
 
 namespace xtaro::circuit
 {
-    Circuit::Circuit(std::string name) :
+    Circuit::Circuit(std::string name, const std::string& spicefile) :
         _name{std::move(name)},
         _ports{},
         _circuits{},
@@ -24,7 +24,23 @@ namespace xtaro::circuit
         _isMetaCircuit{false},
         _metaSpice{}
     {
-        
+        if (spicefile.empty())
+        {
+            this->createNetlist();
+            return;
+        }
+
+        std::ifstream file{spicefile};
+        file.seekg(0, std::ios::end);
+        std::size_t len = static_cast<std::size_t>(file.tellg());
+        file.seekg(0, std::ios::beg);
+
+        this->_metaSpice.resize(len + 1);
+        file.read(this->_metaSpice.data(), len);
+        this->_metaSpice.resize(len);
+        file.close();
+
+        this->_isMetaCircuit = true;
     }
 
     Circuit::~Circuit() noexcept
@@ -111,7 +127,7 @@ namespace xtaro::circuit
     void Circuit::createNetlist()
     {
         this->createPorts();
-        this->createSubckts();
+        this->createCircuits();
         this->createInstances();
     }
 

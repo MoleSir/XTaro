@@ -4,6 +4,9 @@ project(global)
 set(LIBRARY_OUTPUT_PATH ${LIB_PATH})
 
 include_directories(${GLOBAL_PATH}/)
+include_directories(${SIMULATE_PATH}/)
+include_directories(${CIRCUIT_PATH}/)
+include_directories(${CHARACTER_PATH}/)
 include_directories(${PARSE_PATH}/)
 
 file(GLOB ALLOC_SRC ${CMAKE_CURRENT_SOURCE_DIR}/allocator/*.cc)

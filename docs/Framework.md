@@ -40,7 +40,7 @@
 
 ### base
 
-存放表示各个电路模块所需要的类：Circuit、instance、net、port；
+存放表示各个电路模块所需要的类：Circuit、Instance、Net、Port；
 
 ### module
 
@@ -48,7 +48,7 @@
 
 ### factory
 
-总是使用 circuitfactory 创建各个模块类的对象
+总是使用 CircuitFactory 创建各个模块类的对象
 
 
 

@@ -73,6 +73,7 @@ namespace xtaro::parse
 
         // Functions and operators of Object Type
         Json& operator [] (const std::string& key);
+        Json& operator [] (const char* key);
 
         // If no 'key', return a cleared json
         Json get(const std::string& key);

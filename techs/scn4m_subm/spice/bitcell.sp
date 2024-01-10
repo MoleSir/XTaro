@@ -1,6 +1,6 @@
 
 *********************** "cell_1rw" ******************************
-.SUBCKT cell_1rw bl br wl vdd gnd
+.SUBCKT bitcell bl br wl vdd gnd
 * SPICE3 file created from cell_1rw.ext - technology: scmos
 
 * Inverter 1
