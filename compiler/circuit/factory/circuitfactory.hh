@@ -1,8 +1,6 @@
 #pragma once
 
 #include <base/circuit.hh>
-#include <module/bitcell.hh>
-#include <allocator/allocator.hh>
 
 #include <string>
 #include <map>
@@ -12,6 +10,7 @@ namespace xtaro::circuit
     enum class CircuitType
     {
         BITCELL,
+        BITCELL_ARRAY,
     };
     
     class CircuitFactory
@@ -28,23 +27,9 @@ namespace xtaro::circuit
         static CircuitFactory* instance();
 
     public:
-        template<typename... Args>
-        Circuit* create(CircuitType circuitType, std::string circuitName, Args... args)
-        {
-            Circuit* circuit{this->findCircuit(circuitName)};
-            if (circuit != nullptr)
-                return circuit;
-
-            switch (circuitType) 
-            {
-            case CircuitType::BITCELL:
-                circuit = Allocator::alloc<Bitcell>(circuitName); break;
-            default: circuit = nullptr;
-            }   
-
-            this->_circuits.emplace(std::move(circuitName), circuit);
-            return circuit;
-        }
+        Circuit* create(CircuitType circuitType, 
+                        std::string circuitName, 
+                        CircuitArguments* arguments = nullptr);
 
     private:
         Circuit* findCircuit(const std::string& circuitName) const;

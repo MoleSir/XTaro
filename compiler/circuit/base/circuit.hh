@@ -1,18 +1,18 @@
 #pragma once
 
+#include "instance.hh"
+#include "net.hh"
+#include "port.hh"
+
 #include <string>
 #include <map>
 #include <set>
 #include <vector>
 #include <fstream>
 
-#include "instance.hh"
-#include "net.hh"
-#include "port.hh"
-
 namespace xtaro::circuit
 {
-    class Instance;
+    struct CircuitArguments { };
 
     /*
         Create a new Circuit:
@@ -24,10 +24,12 @@ namespace xtaro::circuit
     {
     public:
         Circuit(std::string name, const std::string& spicefile = "");
-        ~Circuit() noexcept;
+        virtual ~Circuit() noexcept;
 
     public:
-        void addPort(std::string name, PortType type);
+        void addPort(std::string portName, PortType portType);
+        void addPorts(std::vector<std::string> portsName, PortType portType);
+
         Instance* addInstance(std::string instanceName, Circuit* circuit);
         std::vector<const char*> portsName() const;
         void connectWith(Instance* instance, const std::vector<std::string>& nets);
@@ -36,7 +38,7 @@ namespace xtaro::circuit
         void writeSpice(const std::string& filename);
         void createNetlist();
 
-    private:
+    protected:
         void doWriteSpice(std::ofstream& file, std::set<Circuit*>& visited);
 
         virtual void createPorts() = 0;
@@ -56,11 +58,11 @@ namespace xtaro::circuit
         const std::vector<Instance*>& instances() const noexcept
         { return this->_instances; }
 
-    private:
+    protected:
         std::string _name;
-        std::vector<Port*> _ports;
         std::set<Circuit*> _circuits;
         std::vector<Instance*> _instances;
+        std::vector<Port*> _ports;
         std::map<std::string, Net*> _nets;
 
         bool _isMetaCircuit;

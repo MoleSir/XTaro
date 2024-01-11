@@ -1,7 +1,5 @@
 # Framework
 
-整体软件分为以下基本部分
-
 ## app
 
 存放 main 函数的模块

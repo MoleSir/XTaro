@@ -1,6 +1,7 @@
 #include "xtaro.hh"
 #include <global.hh>
 #include <factory/circuitfactory.hh>
+#include <module/bitcellarray.hh>
 
 namespace xtaro
 {
@@ -18,13 +19,13 @@ namespace xtaro
             std::cout << err.what() << std::endl;
             std::exit(12);
         }
-
     }
 
     void createSRAM()
     {
+        circuit::BitcellArrayArguments argument{config->wordWidth, config->addressWidth};
         circuit::Circuit* c = 
-            circuit::factory->create(circuit::CircuitType::BITCELL, "bitcell");
+            circuit::factory->create(circuit::CircuitType::BITCELL_ARRAY, "bitcell_array", &argument);
         c->writeSpice("./temp/output/sram.sp");
     }
 

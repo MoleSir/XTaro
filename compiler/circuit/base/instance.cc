@@ -33,13 +33,19 @@ namespace xtaro::circuit
     {
         Port* port = this->port(portName);
         if (port != nullptr)
+        {
             port->setNet(net);
+            this->_connectCount += 1;
+        }
     }
 
     void Instance::connectNets(const std::vector<Net*>& nets)
     {
         for (std::size_t i = 0; i < this->_ports.size(); ++i)
+        {
             this->_ports[i]->setNet(nets[i]);
+            this->_connectCount += 1;
+        }
     }
 
     std::string Instance::spiceCommand() const
@@ -51,7 +57,7 @@ namespace xtaro::circuit
         std::stringstream ss;
         ss << 'X' << this->_name;
         for (auto iter = this->_ports.begin(); iter != this->_ports.end(); ++iter)
-            ss << ' ' << (*iter)->name();
+            ss << ' ' << (*iter)->net()->name();
         ss << ' ' << this->_circuit->name();
 
         return ss.str();

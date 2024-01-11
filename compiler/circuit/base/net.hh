@@ -12,6 +12,8 @@ namespace xtaro::circuit
     {
     public:
         Net(std::string name);
+        const std::string& name() const noexcept
+        { return this->_name; }
                 
     private:
         std::string _name;

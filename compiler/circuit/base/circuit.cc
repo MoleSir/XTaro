@@ -25,10 +25,7 @@ namespace xtaro::circuit
         _metaSpice{}
     {
         if (spicefile.empty())
-        {
-            this->createNetlist();
             return;
-        }
 
         std::ifstream file{spicefile};
         file.seekg(0, std::ios::end);
@@ -44,10 +41,7 @@ namespace xtaro::circuit
     }
 
     Circuit::~Circuit() noexcept
-    {
-        for (Circuit* circuit : this->_circuits)
-            Allocator::free<Circuit>(circuit);
-        
+    {        
         for (Instance* instance : this->_instances)
             Allocator::free<Instance>(instance);
 
@@ -62,6 +56,12 @@ namespace xtaro::circuit
     {
         Port* port = Allocator::alloc<Port>(std::move(name), type);
         this->_ports.push_back(port);
+    }
+
+    void Circuit::addPorts(std::vector<std::string> portsName, PortType portType)
+    {
+        for (auto& portName : portsName)
+            this->addPort(std::move(portName), portType);
     }
 
     Instance* Circuit::addInstance(std::string instanceName, Circuit* circuit)
@@ -84,7 +84,7 @@ namespace xtaro::circuit
     void Circuit::connectWith(Instance* instance, const std::vector<std::string>& netsName)
     {
         if (instance->ports().size() != netsName.size())
-            throw MessageException("Connet Instance", "Port size != Net size");
+            throw MessageException("Connect Instance", "Port size != Net size");
 
         std::vector<Net*> nets = this->createNets(netsName);
         instance->connectNets(nets);
@@ -168,7 +168,7 @@ namespace xtaro::circuit
             }
 
             // Write .END
-            file << ".END " << this->_name << '\n'; 
+            file << ".ENDS " << this->_name << '\n'; 
         }
         else
         {
