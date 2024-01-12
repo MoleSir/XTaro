@@ -12,18 +12,23 @@
 
 namespace xtaro::circuit
 {
-    struct CircuitArguments { };
-
+    struct CircuitArguments 
+    {
+        virtual ~CircuitArguments() noexcept = default;
+        virtual std::string toString() const = 0; 
+    };
+    
     /*
         Create a new Circuit:
         - Add ports
         - Create Sub Circuits
         - Create and connect instance
     */
+
     class Circuit
     {
     public:
-        Circuit(std::string name, const std::string& spicefile = "");
+        Circuit(std::string name, DeviceType type, const std::string& spicefile = "");
         virtual ~Circuit() noexcept;
 
     public:
@@ -44,10 +49,17 @@ namespace xtaro::circuit
         virtual void createPorts() = 0;
         virtual void createCircuits() = 0;
         virtual void createInstances() = 0;
+        
+    public:
+        virtual std::string argumentsList() const 
+        { return ""; }
 
     public:
         const std::string& name() const noexcept
         { return this->_name; }
+
+        DeviceType type() const noexcept
+        { return this->_type; }
         
         const std::vector<Port*>& ports() const noexcept
         { return this->_ports; } 
@@ -60,6 +72,8 @@ namespace xtaro::circuit
 
     protected:
         std::string _name;
+        DeviceType  _type;
+
         std::set<Circuit*> _circuits;
         std::vector<Instance*> _instances;
         std::vector<Port*> _ports;

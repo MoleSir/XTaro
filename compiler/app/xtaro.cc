@@ -2,6 +2,7 @@
 #include <global.hh>
 #include <factory/circuitfactory.hh>
 #include <module/bitcellarray.hh>
+#include <module/mos.hh>
 
 namespace xtaro
 {
@@ -23,9 +24,13 @@ namespace xtaro
 
     void createSRAM()
     {
-        circuit::BitcellArrayArguments argument{config->wordWidth, config->addressWidth};
+        // circuit::BitcellArrayArguments argument{config->wordWidth, config->addressWidth};
+        // circuit::Circuit* c = 
+        //     circuit::factory->create(circuit::ModuleType::BITCELL_ARRAY, &argument);
+
+        circuit::MOSArguments argument{0.4, 0.8};
         circuit::Circuit* c = 
-            circuit::factory->create(circuit::CircuitType::BITCELL_ARRAY, "bitcell_array", &argument);
+            circuit::factory->create(circuit::ModuleType::NMOS, &argument);
         c->writeSpice("./temp/output/sram.sp");
     }
 

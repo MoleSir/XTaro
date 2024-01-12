@@ -7,14 +7,22 @@
 
 namespace xtaro::circuit
 {
-    enum class CircuitType
-    {
+    enum class ModuleType
+    { 
         BITCELL,
         BITCELL_ARRAY,
+        NMOS,
+        PMOS,
+        SIZE,
     };
+
+    #define MODULESIZE static_cast<int>(ModuleType::SIZE)
     
     class CircuitFactory
     {
+        using CircuitMap = std::map<std::string, Circuit*>;
+        static const std::array<const char*, MODULESIZE> modulesName;
+
     private:
         CircuitFactory() = default;
         ~CircuitFactory() noexcept;
@@ -27,15 +35,20 @@ namespace xtaro::circuit
         static CircuitFactory* instance();
 
     public:
-        Circuit* create(CircuitType circuitType, 
-                        std::string circuitName, 
-                        CircuitArguments* arguments = nullptr);
+        Circuit* create(ModuleType circuitType,
+                        CircuitArguments* arguments,
+                        std::string circuitName = "");
 
     private:
-        Circuit* findCircuit(const std::string& circuitName) const;
+        Circuit* findCircuit(ModuleType circuitType, const std::string& argsList) const;
+        std::string getDefaultCircuitName(ModuleType circuitType) const;
+        Circuit* createNewCircuit(ModuleType circuitType, 
+                                  CircuitArguments* arguments,
+                                  std::string circuitName) const;
+        void collectCircuit(ModuleType circuitType, std::string argsList, Circuit* circuit);
 
     private:
-        std::map<std::string, Circuit*> _circuits{};
+        std::array<CircuitMap, MODULESIZE>_circuits{};
     };
 
     extern CircuitFactory* factory;

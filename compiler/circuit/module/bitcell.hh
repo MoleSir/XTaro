@@ -6,6 +6,9 @@ namespace xtaro::circuit
 {
     struct BitcellArguments : public CircuitArguments
     {
+        virtual ~BitcellArguments() noexcept override {}
+        virtual std::string toString() const override 
+        { return ""; }
     };
 
     /*

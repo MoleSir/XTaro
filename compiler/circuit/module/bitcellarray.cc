@@ -10,9 +10,13 @@
 
 namespace xtaro::circuit
 {
+    std::string BitcellArrayArguments::toString() const
+    {
+        return util::format("array_w%d_a%d", this->wordWidth, this->addressWidth);
+    }
 
     BitcellArray::BitcellArray(std::string name, BitcellArrayArguments* arguments) :
-        Circuit{std::move(name)},
+        Circuit{std::move(name), DeviceType::SUBCKT},
         _wordWidth{ arguments->wordWidth },
         _addressWidth{ arguments->addressWidth },
         _rowSize{0},
@@ -52,7 +56,7 @@ namespace xtaro::circuit
     void BitcellArray::createCircuits()
     {
         // Create 'bitcell' circuit
-        this->_bitcell = factory->create(CircuitType::BITCELL, "bitcell");
+        this->_bitcell = factory->create(ModuleType::BITCELL, nullptr);
         this->_circuits.insert(this->_bitcell);
     }
 

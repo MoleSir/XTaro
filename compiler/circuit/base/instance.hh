@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <array>
 
 namespace xtaro::circuit
 {
@@ -12,8 +13,21 @@ namespace xtaro::circuit
     class Port;
     class Net;
 
+    enum class DeviceType
+    {
+        MOS = 0,
+        RESISTANCE,
+        CAPACITANCE,
+        DIODE,
+        SUBCKT,
+        SIZE,
+    };
+    #define DEVICE_SIZE static_cast<int>(DeviceType::SIZE)
+
     class Instance
     {
+        static const std::array<char, DEVICE_SIZE> deviceKeywords;
+
     public:
         Instance(std::string name, Circuit* circuit);
         ~Instance() noexcept;

@@ -8,6 +8,11 @@ namespace xtaro::circuit
     {
         BitcellArrayArguments(std::int32_t w, std::int32_t a) :
             wordWidth{w}, addressWidth{a} {}
+
+        virtual ~BitcellArrayArguments() noexcept override {};
+
+        virtual std::string toString() const override;
+
         std::int32_t wordWidth;
         std::int32_t addressWidth;
     };

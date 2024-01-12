@@ -15,8 +15,10 @@
 
 namespace xtaro::circuit
 {
-    Circuit::Circuit(std::string name, const std::string& spicefile) :
+
+    Circuit::Circuit(std::string name, DeviceType type, const std::string& spicefile) :
         _name{std::move(name)},
+        _type{type},
         _ports{},
         _circuits{},
         _instances{},
@@ -149,7 +151,8 @@ namespace xtaro::circuit
             // Output sub circuits in 'this'
             for (Circuit* circuit : this->_circuits)
             {
-                if (visited.find(circuit) != visited.end())
+                if (visited.find(circuit) != visited.end() || 
+                    circuit->type() != DeviceType::SUBCKT)
                     continue;
                 circuit->doWriteSpice(file, visited);
             }

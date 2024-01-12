@@ -15,6 +15,11 @@
 
 namespace xtaro::circuit
 {
+    #define INT(t) static_cast<int>(t)
+    const std::array<char, DEVICE_SIZE> Instance::deviceKeywords {
+        'M', 'R', 'C', 'D', 'X', 
+    };
+
     Instance::Instance(std::string name, Circuit* circuit) :
         _name{std::move(name)},
         _circuit{circuit},
@@ -55,10 +60,20 @@ namespace xtaro::circuit
 
         // Xins A B C D cir
         std::stringstream ss;
-        ss << 'X' << this->_name;
+
+        // Instance name
+        char deviceKeyword{ Instance::deviceKeywords[INT(this->_circuit->type())] }; 
+        ss << deviceKeyword << this->_name;
+        
+        // Ports
         for (auto iter = this->_ports.begin(); iter != this->_ports.end(); ++iter)
             ss << ' ' << (*iter)->net()->name();
+        
+        // Circuit name
         ss << ' ' << this->_circuit->name();
+
+        // Arguments list
+        ss << this->_circuit->argumentsList();
 
         return ss.str();
     }
