@@ -8,6 +8,9 @@
 #include <module/mos.hh>
 #include <module/inv.hh>
 #include <module/nand.hh>
+#include <module/and.hh>
+#include <module/nor.hh>
+#include <module/or.hh>
 
 #include <util/util.hh>
 
@@ -22,6 +25,9 @@ namespace xtaro::circuit
         "", // MOS name is special!!!
         "inv",
         "nand",
+        "and",
+        "nor",
+        "or",
     };
 
 #define NDEBUG
@@ -110,7 +116,12 @@ namespace xtaro::circuit
             return Allocator::alloc<INV>(std::move(circuitName), dynamic_cast<INVArguments*>(arguments));
         case ModuleType::NAND:
             return Allocator::alloc<NAND>(std::move(circuitName), dynamic_cast<NANDArguments*>(arguments));
-
+        case ModuleType::AND:
+            return Allocator::alloc<AND>(std::move(circuitName), dynamic_cast<ANDArguments*>(arguments));
+        case ModuleType::NOR:
+            return Allocator::alloc<NOR>(std::move(circuitName), dynamic_cast<NORArguments*>(arguments));
+        case ModuleType::OR:
+            return Allocator::alloc<OR>(std::move(circuitName), dynamic_cast<ORArguments*>(arguments));
         }
         return nullptr;
     }

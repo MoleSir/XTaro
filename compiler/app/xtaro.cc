@@ -5,6 +5,9 @@
 #include <module/mos.hh>
 #include <module/inv.hh>
 #include <module/nand.hh>
+#include <module/and.hh>
+#include <module/nor.hh>
+#include <module/or.hh>
 
 namespace xtaro
 {
@@ -30,9 +33,9 @@ namespace xtaro
         // circuit::Circuit* c = 
         //     circuit::factory->create(circuit::ModuleType::BITCELL_ARRAY, &argument);
 
-        circuit::NANDArguments argument{circuit::DriveCapability::NORMAL, 2};
+        circuit::ORArguments argument{circuit::DriveCapability::NORMAL, 3};
         circuit::Circuit* c = 
-            circuit::factory->create(circuit::ModuleType::NAND, &argument);
+            circuit::factory->create(circuit::ModuleType::OR, &argument);
         c->writeSpice("./temp/output/sram.sp");
     }
 

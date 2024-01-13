@@ -14,6 +14,9 @@ namespace xtaro::circuit
         MOS,
         INV,
         NAND,
+        AND,
+        NOR,
+        OR,
         SIZE,
     };
 
