@@ -8,6 +8,7 @@
 #include <module/and.hh>
 #include <module/nor.hh>
 #include <module/or.hh>
+#include <module/decoder.hh>
 
 namespace xtaro
 {
@@ -29,14 +30,18 @@ namespace xtaro
 
     void createSRAM()
     {
-        // circuit::BitcellArrayArguments argument{config->wordWidth, config->addressWidth};
-        // circuit::Circuit* c = 
-        //     circuit::factory->create(circuit::ModuleType::BITCELL_ARRAY, &argument);
-
-        circuit::ORArguments argument{circuit::DriveCapability::NORMAL, 3};
-        circuit::Circuit* c = 
-            circuit::factory->create(circuit::ModuleType::OR, &argument);
-        c->writeSpice("./temp/output/sram.sp");
+        try
+        {
+            circuit::DecoderArguments argument{10};
+            circuit::Circuit* c = 
+                circuit::factory->create(circuit::ModuleType::DECODER, &argument);
+            c->writeSpice("./temp/output/sram.sp");
+        }
+        catch (const std::exception& err)
+        {
+            std::cout << err.what() << std::endl;
+            std::exit(12);
+        }
     }
 
     void saveFiles()

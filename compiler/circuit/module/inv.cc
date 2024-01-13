@@ -78,10 +78,8 @@ namespace xtaro::circuit
     void INV::createInstances() 
     {
         // Create instances
-        Instance* nmos{ Allocator::alloc<Instance>("inv_nmos", this->_nmos) };
-        Instance* pmos{ Allocator::alloc<Instance>("inv_pmos", this->_pmos) };
-        this->_instances.push_back(nmos);
-        this->_instances.push_back(pmos);
+        Instance* nmos{ this->addInstance("inv_nmos", this->_nmos) };
+        Instance* pmos{ this->addInstance("inv_pmos", this->_pmos) };
 
         // Connect
         this->connectWith(pmos, {"Z", "A", "vdd", "vdd"});

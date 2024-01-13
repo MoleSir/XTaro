@@ -89,10 +89,8 @@ namespace xtaro::circuit
 
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* pmos{ Allocator::alloc<Instance>(
-                util::format("nor_pmos%d", i), this->_nmos
-            )};
-            this->_instances.emplace_back(pmos);
+            Instance* pmos{ this->addInstance(util::format("nor_pmos%d", i), this->_nmos)};
+
             if (i == 0)
                 this->connectWith(pmos, {"Z", util::format("A%d", i), net[0], "vdd"});
             else if (i == this->_inputSize - 1)
@@ -104,10 +102,7 @@ namespace xtaro::circuit
         // NMOS
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* nmos{ Allocator::alloc<Instance>( 
-                util::format("nor_nmos%d", i), this->_nmos
-            )};
-            this->_instances.emplace_back(nmos);
+            Instance* nmos{this->addInstance(util::format("nor_nmos%d", i), this->_nmos)};
             this->connectWith(nmos, {"Z", util::format("A%d", i), "gnd", "gnd"});
         }
     }

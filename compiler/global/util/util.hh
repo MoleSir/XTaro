@@ -18,6 +18,8 @@ namespace xtaro::util
 
     std::size_t filesize(std::ifstream& file);
 
+    int power(int base, unsigned int exponent);
+
     int execute(const std::string& command) noexcept;
     int execute(const char* command) noexcept;
 }

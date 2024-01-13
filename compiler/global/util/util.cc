@@ -13,6 +13,14 @@ namespace xtaro::util
         return size;
     }
 
+    int power(int base, unsigned int exponent)
+    {
+        int value = 1;
+        for (unsigned int i = 0; i < exponent; ++i)
+            value *= base;
+        return value;
+    }
+
     int execute(const std::string& command) noexcept
     {
         return system(command.c_str());

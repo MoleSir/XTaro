@@ -17,6 +17,7 @@ namespace xtaro::circuit
         AND,
         NOR,
         OR,
+        DECODER,
         SIZE,
     };
 

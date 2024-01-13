@@ -69,7 +69,7 @@ namespace xtaro::circuit
     Instance* Circuit::addInstance(std::string instanceName, Circuit* circuit)
     {
         Instance* instance = Allocator::alloc<Instance>(std::move(instanceName), circuit);
-        this->_instances.push_back(instance);
+        this->_instances.emplace_back(instance);
         return instance;
     }
 
@@ -151,8 +151,8 @@ namespace xtaro::circuit
             // Output sub circuits in 'this'
             for (Circuit* circuit : this->_circuits)
             {
-                if (visited.find(circuit) != visited.end() || 
-                    circuit->type() != DeviceType::SUBCKT)
+                if (circuit->type() != DeviceType::SUBCKT ||
+                    visited.find(circuit) != visited.end())
                     continue;
                 circuit->doWriteSpice(file, visited);
             }
@@ -172,6 +172,8 @@ namespace xtaro::circuit
 
             // Write .END
             file << ".ENDS " << this->_name << '\n'; 
+
+            visited.emplace(this);
         }
         else
         {

@@ -55,16 +55,15 @@ namespace xtaro::circuit
         std::vector<std::string> nets{};
         for (int i = 0; i < this->_inputSize; ++i)
             nets.emplace_back( util::format("A%d", i) );
-        nets.emplace_back("Z_int");
+        nets.emplace_back("Z_bar");
         nets.emplace_back("vdd");
         nets.emplace_back("gnd");
         
-        Instance* nand{ Allocator::alloc<Instance>("nand", this->_nand) };
-        this->_instances.emplace_back(nand);
+
+        Instance* nand{ this->addInstance("nand", this->_nand) };
         this->connectWith(nand, std::move(nets));
 
-        Instance* inv{ Allocator::alloc<Instance>("inv", this->_inv) };
-        this->_instances.emplace_back(inv);
-        this->connectWith(inv, {"Z_int", "Z", "vdd", "gnd"});
+        Instance* inv{ this->addInstance("inv", this->_inv) };
+        this->connectWith(inv, {"Z_bar", "Z", "vdd", "gnd"});
     }
 }

@@ -66,11 +66,11 @@ namespace xtaro::circuit
         {
             for (std::int32_t c = 0; c < this->_columnSize; ++c)
             {
-                Instance* instance{ Allocator::alloc<Instance>(
+                Instance* instance{ this->addInstance(
                     util::format("bitcell_%d_%d", r, c),
                     this->_bitcell
                 ) };
-                this->_instances.emplace_back(instance);
+                
                 this->connectWith(instance, {
                     util::format("bl%d", c),
                     util::format("br%d", c),

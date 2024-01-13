@@ -11,6 +11,7 @@
 #include <module/and.hh>
 #include <module/nor.hh>
 #include <module/or.hh>
+#include <module/decoder.hh>
 
 #include <util/util.hh>
 
@@ -28,6 +29,7 @@ namespace xtaro::circuit
         "and",
         "nor",
         "or",
+        "decoder",
     };
 
 #define NDEBUG
@@ -51,6 +53,9 @@ namespace xtaro::circuit
 #ifndef NDEBUG
         std::cout << 2 << std::endl;
 #endif
+        // TODO:
+        // Well, if a module needs to the same module as its reference circuit.
+        // Such as Decoder, the default name will be not right...
         if (circuitName.empty())
             circuitName = this->getDefaultCircuitName(circuitType);
 
@@ -104,6 +109,9 @@ namespace xtaro::circuit
                                 CircuitArguments* arguments,
                                 std::string circuitName) const
     {
+#ifndef NDEBUG
+        std::cout << "create new circuit" << std::endl;
+#endif
         switch (circuitType)
         {
         case ModuleType::BITCELL:
@@ -122,6 +130,8 @@ namespace xtaro::circuit
             return Allocator::alloc<NOR>(std::move(circuitName), dynamic_cast<NORArguments*>(arguments));
         case ModuleType::OR:
             return Allocator::alloc<OR>(std::move(circuitName), dynamic_cast<ORArguments*>(arguments));
+        case ModuleType::DECODER:
+            return Allocator::alloc<Decoder>(std::move(circuitName), dynamic_cast<DecoderArguments*>(arguments));
         }
         return nullptr;
     }
