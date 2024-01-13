@@ -6,6 +6,8 @@
 #include <module/bitcell.hh>
 #include <module/bitcellarray.hh>
 #include <module/mos.hh>
+#include <module/inv.hh>
+#include <module/nand.hh>
 
 #include <util/util.hh>
 
@@ -18,7 +20,11 @@ namespace xtaro::circuit
         "bitcell", 
         "bitcell_array",
         "", // MOS name is special!!!
+        "inv",
+        "nand",
     };
+
+#define NDEBUG
 
     CircuitFactory* factory{CircuitFactory::instance()};
 
@@ -27,21 +33,36 @@ namespace xtaro::circuit
                                     std::string circuitName)
     {
         // Is target circuit exits
+#ifndef NDEBUG
+        std::cout << 1 << std::endl;
+#endif
         std::string argsList{ arguments == nullptr ? "" : arguments->toString() };
         Circuit* circuit{this->findCircuit(circuitType, argsList)};
         if (circuit != nullptr)
             return circuit;
 
         // Get circuit's name
+#ifndef NDEBUG
+        std::cout << 2 << std::endl;
+#endif
         if (circuitName.empty())
             circuitName = this->getDefaultCircuitName(circuitType);
 
         // Create a new circuit'
+#ifndef NDEBUG
+        std::cout << 3 << std::endl;
+#endif
         circuit = this->createNewCircuit(circuitType, arguments, std::move(circuitName));
 
         // Collect circuit
+#ifndef NDEBUG
+        std::cout << 4 << std::endl;
+#endif
         this->collectCircuit(circuitType, argsList, circuit);
 
+#ifndef NDEBUG
+        std::cout << 5 << std::endl;
+#endif
         return circuit;
     }
 
@@ -66,9 +87,6 @@ namespace xtaro::circuit
     {
         const auto& circuits{ this->_circuits[INT(circuitType)] };
 
-        if (circuitType == ModuleType::PMOS) return tech->spice["pmos"].asString();
-        if (circuitType == ModuleType::NMOS) return tech->spice["nmos"].asString();
-
         if (circuits.empty())
             return std::string( CircuitFactory::modulesName[INT(circuitType)] );
         return util::format("%s_%d", 
@@ -86,9 +104,13 @@ namespace xtaro::circuit
             return Allocator::alloc<Bitcell>(std::move(circuitName), dynamic_cast<BitcellArguments*>(arguments));
         case ModuleType::BITCELL_ARRAY:
             return Allocator::alloc<BitcellArray>(std::move(circuitName), dynamic_cast<BitcellArrayArguments*>(arguments));
-        case ModuleType::NMOS:
-        case ModuleType::PMOS:
+        case ModuleType::MOS:
             return Allocator::alloc<MOS>(std::move(circuitName), dynamic_cast<MOSArguments*>(arguments));
+        case ModuleType::INV:
+            return Allocator::alloc<INV>(std::move(circuitName), dynamic_cast<INVArguments*>(arguments));
+        case ModuleType::NAND:
+            return Allocator::alloc<NAND>(std::move(circuitName), dynamic_cast<NANDArguments*>(arguments));
+
         }
         return nullptr;
     }

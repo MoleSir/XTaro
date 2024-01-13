@@ -10,6 +10,7 @@ namespace xtaro
     public:
         std::string techpath{};
         parse::Json spice{};
+        parse::Json drc{};
 
         void load();
 

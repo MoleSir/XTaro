@@ -11,8 +11,9 @@ namespace xtaro::circuit
     { 
         BITCELL,
         BITCELL_ARRAY,
-        NMOS,
-        PMOS,
+        MOS,
+        INV,
+        NAND,
         SIZE,
     };
 

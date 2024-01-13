@@ -1,5 +1,7 @@
 #pragma once
 
+#include "circuitenum.hh"
+
 #include <string>
 #include <map>
 #include <list>
@@ -12,17 +14,6 @@ namespace xtaro::circuit
     class Circuit;
     class Port;
     class Net;
-
-    enum class DeviceType
-    {
-        MOS = 0,
-        RESISTANCE,
-        CAPACITANCE,
-        DIODE,
-        SUBCKT,
-        SIZE,
-    };
-    #define DEVICE_SIZE static_cast<int>(DeviceType::SIZE)
 
     class Instance
     {

@@ -73,7 +73,7 @@ namespace xtaro::circuit
         ss << ' ' << this->_circuit->name();
 
         // Arguments list
-        ss << this->_circuit->argumentsList();
+        ss << ' ' << this->_circuit->argumentsList();
 
         return ss.str();
     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "circuitenum.hh"
 #include "instance.hh"
 #include "net.hh"
 #include "port.hh"

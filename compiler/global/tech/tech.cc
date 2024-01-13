@@ -47,7 +47,11 @@ namespace xtaro
         if (this->spice.invalid())
             throw MessageException("Load tech", "No spice tech message.");
 
-        this->checkSpiceMessage();        
+        this->drc = json.get("drc");
+        if (this->drc.invalid())
+            throw MessageException("Load tech", "No drc tech message.");
+
+        this->checkSpiceMessage();    
     }
     
     void Tech::checkSpiceMessage() const

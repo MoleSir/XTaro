@@ -10,14 +10,22 @@ namespace xtaro::circuit
 {
     std::string MOSArguments::toString() const
     {
-        return util::format("w%.2fu_l%.2fu", this->width, this->length);
+        return util::format("t%d_w%.2fu_l%.2fu", 
+                            static_cast<int>(this->type), 
+                            this->width, 
+                            this->length);
     }
 
     MOS::MOS(std::string name, MOSArguments* arguments):
-        Circuit{std::move(name), DeviceType::MOS},
+        Circuit{"", DeviceType::MOS},
+        _type{arguments->type},
         _width{arguments->width},
         _length{arguments->length}
     {
+        if (this->_type == MOSType::NMOS)
+            this->_name = tech->spice["nmos"].asString();
+        else
+            this->_name = tech->spice["pmos"].asString();
         this->createNetlist();
     }
 

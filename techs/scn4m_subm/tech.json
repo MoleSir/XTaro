@@ -10,5 +10,9 @@
         "period" : 10,
         "supply_voltages" : [4.5, 5.0, 5.5],
         "temperatures" : [0, 25, 100]
+    },
+
+    "drc" : {
+        "minwidth_poly" : 0.4
     }
 }
