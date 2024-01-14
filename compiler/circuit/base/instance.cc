@@ -66,8 +66,27 @@ namespace xtaro::circuit
         ss << deviceKeyword << this->_name;
         
         // Ports
-        for (auto iter = this->_ports.begin(); iter != this->_ports.end(); ++iter)
-            ss << ' ' << (*iter)->net()->name();
+        if (this->_circuit->type() == DeviceType::SUBCKT)
+        {
+            ss << '\n';
+            int netsSize{0};
+            for (Port* port : this->_ports)
+            {
+                if (netsSize == 0) ss << '+';
+                ss << ' ' << port->name();
+                if (++netsSize == 15)
+                {
+                    ss << '\n';
+                    netsSize = 0;
+                }
+            }
+            ss << '\n' << '+';
+        }
+        else
+        {
+            for (auto iter = this->_ports.begin(); iter != this->_ports.end(); ++iter)
+                ss << ' ' << (*iter)->net()->name();
+        }
         
         // Circuit name
         ss << ' ' << this->_circuit->name();

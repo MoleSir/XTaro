@@ -114,7 +114,7 @@ namespace xtaro::circuit
     std::vector<Port*> Circuit::copyPort() const
     {
         std::vector<Port*> ports(this->_ports.size(), nullptr);
-        std::size_t index = 0;
+        std::size_t index{0};
         
         for (Port* port : this->_ports)
         {
@@ -136,8 +136,8 @@ namespace xtaro::circuit
     void Circuit::writeSpice(const std::string& filename)
     {
         // Create spice output file and visited set
-        std::ofstream file(filename);
-        std::set<Circuit*> visited;
+        std::ofstream file{filename};
+        std::set<Circuit*> visited{};
         // Do write spice
         this->doWriteSpice(file, visited);
         file.close();
@@ -158,15 +158,25 @@ namespace xtaro::circuit
             }
 
             // Write .SUBCKT line
-            file << "\n.SUBCKT " << this->_name;
+            file << "\n.SUBCKT " << this->_name << '\n';
+            // Write ports, each line has 15 ports
+            int portsSize{0};
             for (Port* port : this->_ports)
+            {
+                if (portsSize == 0) file << '+';
                 file << ' ' << port->name();
+                if (++portsSize == 15)
+                {
+                    file << '\n';
+                    portsSize = 0;
+                }
+            }
             file << '\n';
 
             // Write Instances
             for (Instance* instance : this->_instances)
             {
-                std::string spiceCommand = instance->spiceCommand();
+                std::string spiceCommand{instance->spiceCommand()};
                 file << spiceCommand << '\n';
             }
 

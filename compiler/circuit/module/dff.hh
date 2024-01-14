@@ -4,22 +4,22 @@
 
 namespace xtaro::circuit
 {
-    struct BitcellArguments : public CircuitArguments
+    struct DFFArguments : public CircuitArguments
     {
-        BitcellArguments() noexcept = default;
-        virtual ~BitcellArguments() noexcept override {}
+        DFFArguments() noexcept = default;
+        virtual ~DFFArguments() noexcept override {}
         virtual std::string toString() const override 
         { return ""; }
     };
 
     /*
-        - Ports sequency: bl br wl vdd gnd;
+        - Ports sequency: D Q clk vdd gnd
     */
-    class Bitcell : public Circuit
+    class DFF : public Circuit
     {
     public:
-        Bitcell(std::string name, BitcellArguments* arguments);
-        virtual ~Bitcell() noexcept override = default;
+        DFF(std::string name, DFFArguments* arguments);
+        virtual ~DFF() noexcept override = default;
 
     private:
         virtual void createPorts() override;

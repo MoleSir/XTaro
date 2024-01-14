@@ -12,11 +12,11 @@ namespace xtaro::circuit
 
     void Bitcell::createPorts()
     {
-        this->addPort("bl", PortType::INPUT );
-        this->addPort("br", PortType::INPUT );
+        this->addPort("bl", PortType::INOUT );
+        this->addPort("br", PortType::INOUT );
         this->addPort("wl", PortType::INPUT );
-        this->addPort("vdd", PortType::INPUT );
-        this->addPort("gnd", PortType::INPUT );
+        this->addPort("vdd", PortType::INOUT );
+        this->addPort("gnd", PortType::INOUT );
     }
 
     void Bitcell::createCircuits()
