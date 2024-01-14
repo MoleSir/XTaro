@@ -113,15 +113,14 @@ namespace xtaro::circuit
 
     std::vector<Port*> Circuit::copyPort() const
     {
-        std::vector<Port*> ports(this->_ports.size(), nullptr);
-        std::size_t index{0};
-        
+        std::vector<Port*> ports{};        
         for (Port* port : this->_ports)
         {
-            ports[index++] = Allocator::alloc<Port>(
-                port->name(),
+            ports.emplace_back(Allocator::alloc<Port>(
+                // TAG: Do not copy port
+                "",
                 port->type()
-            );
+            ));
         }
         return ports;
     }

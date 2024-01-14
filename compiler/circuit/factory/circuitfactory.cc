@@ -4,6 +4,11 @@
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>
+#include <module/dff.hh>
+#include <module/precharge.hh>
+#include <module/senseamp.hh>
+#include <module/trigate.hh>
+#include <module/writedriver.hh>
 #include <module/bitcellarray.hh>
 #include <module/mos.hh>
 #include <module/inv.hh>
@@ -12,6 +17,7 @@
 #include <module/nor.hh>
 #include <module/or.hh>
 #include <module/decoder.hh>
+#include <module/rowdecoder.hh>
 
 #include <util/util.hh>
 
@@ -22,6 +28,11 @@ namespace xtaro::circuit
     const std::array<const char*, MODULESIZE> CircuitFactory::modulesName 
     {   
         "bitcell", 
+        "dff",
+        "precharge",
+        "sense_amp",
+        "tri_gate",
+        "write_driver",
         "bitcell_array",
         "", // MOS name is special!!!
         "inv",
@@ -30,6 +41,7 @@ namespace xtaro::circuit
         "nor",
         "or",
         "decoder",
+        "row_decoder",
     };
 
 #define NDEBUG
@@ -109,29 +121,29 @@ namespace xtaro::circuit
                                 CircuitArguments* arguments,
                                 std::string circuitName) const
     {
+#define ALLOCATE_MODULE(ModuleClass)\
+Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));
+
 #ifndef NDEBUG
         std::cout << "create new circuit" << std::endl;
 #endif
         switch (circuitType)
         {
-        case ModuleType::BITCELL:
-            return Allocator::alloc<Bitcell>(std::move(circuitName), dynamic_cast<BitcellArguments*>(arguments));
-        case ModuleType::BITCELL_ARRAY:
-            return Allocator::alloc<BitcellArray>(std::move(circuitName), dynamic_cast<BitcellArrayArguments*>(arguments));
-        case ModuleType::MOS:
-            return Allocator::alloc<MOS>(std::move(circuitName), dynamic_cast<MOSArguments*>(arguments));
-        case ModuleType::INV:
-            return Allocator::alloc<INV>(std::move(circuitName), dynamic_cast<INVArguments*>(arguments));
-        case ModuleType::NAND:
-            return Allocator::alloc<NAND>(std::move(circuitName), dynamic_cast<NANDArguments*>(arguments));
-        case ModuleType::AND:
-            return Allocator::alloc<AND>(std::move(circuitName), dynamic_cast<ANDArguments*>(arguments));
-        case ModuleType::NOR:
-            return Allocator::alloc<NOR>(std::move(circuitName), dynamic_cast<NORArguments*>(arguments));
-        case ModuleType::OR:
-            return Allocator::alloc<OR>(std::move(circuitName), dynamic_cast<ORArguments*>(arguments));
-        case ModuleType::DECODER:
-            return Allocator::alloc<Decoder>(std::move(circuitName), dynamic_cast<DecoderArguments*>(arguments));
+        case ModuleType::BITCELL: return ALLOCATE_MODULE(Bitcell);
+        case ModuleType::DFF: return ALLOCATE_MODULE(DFF);
+        case ModuleType::PRECHARGE: return ALLOCATE_MODULE(Precharge);
+        case ModuleType::SENSE_AMPLIFIER: return ALLOCATE_MODULE(SenseAmplifier);
+        case ModuleType::TRISTATE_GATE: return ALLOCATE_MODULE(TristateGate);
+        case ModuleType::WRITE_DRIVER: return ALLOCATE_MODULE(WriteDriver);
+        case ModuleType::BITCELL_ARRAY: return ALLOCATE_MODULE(BitcellArray);
+        case ModuleType::MOS: return ALLOCATE_MODULE(MOS);
+        case ModuleType::INV: return ALLOCATE_MODULE(INV);
+        case ModuleType::NAND: return ALLOCATE_MODULE(NAND);
+        case ModuleType::AND: return ALLOCATE_MODULE(AND);
+        case ModuleType::NOR: return ALLOCATE_MODULE(NOR);
+        case ModuleType::OR: return ALLOCATE_MODULE(OR);
+        case ModuleType::DECODER: return ALLOCATE_MODULE(Decoder);
+        case ModuleType::ROW_DECODER: return ALLOCATE_MODULE(RowDecoder);
         }
         return nullptr;
     }

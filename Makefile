@@ -1,4 +1,4 @@
-.PHYON: run clean init compile
+.PHYON: run clean init compile test
 
 run:
 	./out/bin/xtaro-main
@@ -12,3 +12,6 @@ init:
 
 compile:
 	cmake --build build
+
+test:
+	./out/bin/xtaro-main ./temp/config.json

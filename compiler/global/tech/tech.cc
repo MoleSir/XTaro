@@ -22,6 +22,8 @@ namespace xtaro
             throw MessageException("Tech invalid", "No 'bitcell.sp'");
         if (!Tech::fileExists(spicepath + "/dff.sp"))
             throw MessageException("Tech invalid", "No 'dff.sp'");
+        if (!Tech::fileExists(spicepath + "/precharge.sp"))
+            throw MessageException("Tech invalid", "No 'precharge.sp'");
         if (!Tech::fileExists(spicepath + "/sense_amp.sp"))
             throw MessageException("Tech invalid", "No 'sense_amp.sp'");
         if (!Tech::fileExists(spicepath + "/tri_gate.sp"))
@@ -51,13 +53,19 @@ namespace xtaro
         if (this->drc.invalid())
             throw MessageException("Load tech", "No drc tech message.");
 
-        this->checkSpiceMessage();    
+        this->checkSpiceMessage();
+        this->checkDRCMessage(); 
     }
     
     void Tech::checkSpiceMessage() const
     {
-        if (!this->spice.has("nmos")) throw MessageException("Load spice tech", "No 'nmos' message.");
-        if (!this->spice.has("pmos")) throw MessageException("Load spice tech", "No 'pmos' message.");
+        if (!this->spice.has("nmos")) throw MessageException("Load spice tech", "No 'nmos'.");
+        if (!this->spice.has("pmos")) throw MessageException("Load spice tech", "No 'pmos'.");
+    }
+
+    void Tech::checkDRCMessage() const
+    {
+        if (!this->drc.has("minwidth_poly")) throw MessageException("Load drc tech", "No 'minwidth_poly'.");
     }
 
     Tech* Tech::instance()

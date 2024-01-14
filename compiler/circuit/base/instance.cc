@@ -73,7 +73,7 @@ namespace xtaro::circuit
             for (Port* port : this->_ports)
             {
                 if (netsSize == 0) ss << '+';
-                ss << ' ' << port->name();
+                ss << ' ' << port->net()->name();
                 if (++netsSize == 15)
                 {
                     ss << '\n';

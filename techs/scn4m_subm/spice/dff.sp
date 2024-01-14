@@ -1,8 +1,4 @@
-*********************** "dff" ******************************
-* Positive edge-triggered FF
 .SUBCKT dff D Q clk vdd gnd
-
-* SPICE3 file created from dff.ext - technology: scmos
 
 M1000 vdd clk a_24_24# vdd p w=8u l=0.4u
 M1001 a_84_296# D vdd vdd p w=4u l=0.4u

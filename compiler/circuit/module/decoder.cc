@@ -39,7 +39,7 @@ namespace xtaro::circuit
         _inv{nullptr}
     {
         // check input size range!!!
-        if (this->_inputSize < 0 || this->_inputSize > Decoder::MAX_INPUT_SIZE)
+        if (this->_inputSize <= 1 || this->_inputSize > Decoder::MAX_INPUT_SIZE)
             throw MessageException(
                 "Create Decoder", 
                  util::format("'%d' is not a vaild input size", this->_inputSize)

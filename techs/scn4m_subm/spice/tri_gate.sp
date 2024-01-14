@@ -1,8 +1,4 @@
-*********************** tri_gate ******************************
-
 .SUBCKT tri_gate in out en en_bar vdd gnd
-
-* SPICE3 file created from tri_gate.ext - technology: scmos
 
 M1000 vdd in a_16_108# vdd p w=1.6u l=0.4u
 M1001 a_76_212# a_16_108# vdd vdd p w=1.6u l=0.4u

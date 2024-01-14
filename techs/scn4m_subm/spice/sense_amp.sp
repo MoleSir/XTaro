@@ -1,8 +1,4 @@
-*********************** "sense_amp" ******************************
-
 .SUBCKT sense_amp bl br dout en vdd gnd
-
-* SPICE3 file created from sense_amp.ext - technology: scmos
 
 M1000 gnd en a_56_432# gnd n w=1.8u l=0.4u
 M1001 a_56_432# a_48_304# dint gnd n w=1.8u l=0.4u

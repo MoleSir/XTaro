@@ -28,6 +28,7 @@ namespace xtaro::circuit
     */
     class Decoder : public Circuit
     {
+    public:
         enum 
         {
             MAX_SIMPLE_INPUT_SIZE = 4,

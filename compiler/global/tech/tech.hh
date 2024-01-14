@@ -26,6 +26,7 @@ namespace xtaro
         Tech& operator = (Tech&&) = delete;
 
         void checkSpiceMessage() const;
+        void checkDRCMessage() const;
         void checkTechFiles() const;
 
         static bool fileExists(const std::string& filePath);

@@ -10,6 +10,11 @@ namespace xtaro::circuit
     enum class ModuleType
     { 
         BITCELL,
+        DFF,
+        PRECHARGE,
+        SENSE_AMPLIFIER,
+        TRISTATE_GATE,
+        WRITE_DRIVER,
         BITCELL_ARRAY,
         MOS,
         INV,
@@ -18,6 +23,7 @@ namespace xtaro::circuit
         NOR,
         OR,
         DECODER,
+        ROW_DECODER,
         SIZE,
     };
 

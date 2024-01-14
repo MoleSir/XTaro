@@ -9,6 +9,7 @@
 #include <module/nor.hh>
 #include <module/or.hh>
 #include <module/decoder.hh>
+#include <module/rowdecoder.hh>
 
 namespace xtaro
 {
@@ -32,9 +33,9 @@ namespace xtaro
     {
         try
         {
-            circuit::DecoderArguments argument{10};
+            circuit::RowDecoderArguments argument{8};
             circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::DECODER, &argument);
+                circuit::factory->create(circuit::ModuleType::ROW_DECODER, &argument);
             c->writeSpice("./temp/output/sram.sp");
         }
         catch (const std::exception& err)
