@@ -24,6 +24,8 @@ namespace xtaro::circuit
         OR,
         DECODER,
         ROW_DECODER,
+        MUX,
+        COLUMN_MUX,
         SIZE,
     };
 

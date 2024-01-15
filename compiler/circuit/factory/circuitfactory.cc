@@ -18,6 +18,8 @@
 #include <module/or.hh>
 #include <module/decoder.hh>
 #include <module/rowdecoder.hh>
+#include <module/mux.hh>
+#include <module/columnmux.hh>
 
 #include <util/util.hh>
 
@@ -42,6 +44,8 @@ namespace xtaro::circuit
         "or",
         "decoder",
         "row_decoder",
+        "mux",
+        "column_mux"
     };
 
 #define NDEBUG
@@ -144,6 +148,8 @@ Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass #
         case ModuleType::OR: return ALLOCATE_MODULE(OR);
         case ModuleType::DECODER: return ALLOCATE_MODULE(Decoder);
         case ModuleType::ROW_DECODER: return ALLOCATE_MODULE(RowDecoder);
+        case ModuleType::MUX: return ALLOCATE_MODULE(Mux);
+        case ModuleType::COLUMN_MUX: return ALLOCATE_MODULE(ColumnMux);
         }
         return nullptr;
     }

@@ -10,6 +10,8 @@
 #include <module/or.hh>
 #include <module/decoder.hh>
 #include <module/rowdecoder.hh>
+#include <module/mux.hh>
+#include <module/columnmux.hh>
 
 namespace xtaro
 {
@@ -33,9 +35,9 @@ namespace xtaro
     {
         try
         {
-            circuit::RowDecoderArguments argument{8};
+            circuit::ColumnMuxArguments argument{3, 8};
             circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::ROW_DECODER, &argument);
+                circuit::factory->create(circuit::ModuleType::COLUMN_MUX, &argument);
             c->writeSpice("./temp/output/sram.sp");
         }
         catch (const std::exception& err)
