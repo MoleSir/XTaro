@@ -66,4 +66,11 @@
 - tsmc SRAM 网标
 - tsmc SRAM verilog
 
-[TSMC](E:\XTaro\reference\tsmc\16x8m2f)
+
+
+## Report8
+
+- 软件[框架](./Framework.md)
+- 电路模块[类图](./framework/circuit/电路类图.drawio) 
+- 若干模块
+

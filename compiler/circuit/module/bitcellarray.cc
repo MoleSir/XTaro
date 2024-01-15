@@ -12,21 +12,15 @@ namespace xtaro::circuit
 {
     std::string BitcellArrayArguments::toString() const
     {
-        return util::format("array_w%d_a%d", this->wordWidth, this->addressWidth);
+        return util::format("r%d_c%d", this->rowSize, this->columnSize);
     }
 
     BitcellArray::BitcellArray(std::string name, BitcellArrayArguments* arguments) :
         Circuit{std::move(name), DeviceType::SUBCKT},
-        _wordWidth{ arguments->wordWidth },
-        _addressWidth{ arguments->addressWidth },
-        _rowSize{0},
-        _columnSize{0},
+        _rowSize{arguments->rowSize},
+        _columnSize{arguments->columnSize},
         _bitcell{nullptr}
     {
-        // TODO: Set suitable row and column size
-        this->_rowSize = std::pow(2, this->_addressWidth);
-        this->_columnSize = arguments->wordWidth;
-
         this->createNetlist();
     }
 

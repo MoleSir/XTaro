@@ -4,22 +4,24 @@
 
 namespace xtaro::circuit
 {
+    /*
+        - Construction: (std::string name, int wordWidth, int addressWidth);
+    */
     struct BitcellArrayArguments : public CircuitArguments
     {
-        BitcellArrayArguments(std::int32_t w, std::int32_t a) :
-            wordWidth{w}, addressWidth{a} {}
+        BitcellArrayArguments(int rs, int cs) :
+            rowSize{rs}, columnSize{cs} {}
 
         virtual ~BitcellArrayArguments() noexcept override {};
 
         virtual std::string toString() const override;
 
-        std::int32_t wordWidth;
-        std::int32_t addressWidth;
+        int rowSize;
+        int columnSize;
     };
 
     /*
         - Ports sequency: bl0 ... bln br0 ... brn ... wl0 ... wlm vdd gnd;
-        - Construction: (std::string name, std::int32_t wordWidth, std::int32_t addressWidth);
     */
     class BitcellArray : public Circuit
     {
@@ -33,10 +35,9 @@ namespace xtaro::circuit
         virtual void createInstances() override;
 
     private:
-        std::int32_t _wordWidth;
-        std::int32_t _addressWidth;
-        std::int32_t _rowSize;
-        std::int32_t _columnSize;
+        int _rowSize;
+        int _columnSize;
+        
         Circuit* _bitcell;
     };
 
