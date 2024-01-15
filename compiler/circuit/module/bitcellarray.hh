@@ -5,7 +5,7 @@
 namespace xtaro::circuit
 {
     /*
-        - Construction: (std::string name, int wordWidth, int addressWidth);
+        - Construction: (int wordWidth, int addressWidth);
     */
     struct BitcellArrayArguments : public CircuitArguments
     {
@@ -26,7 +26,7 @@ namespace xtaro::circuit
     class BitcellArray : public Circuit
     {
     public:
-        BitcellArray(std::string name, BitcellArrayArguments* arguments);
+        BitcellArray(String name, BitcellArrayArguments* arguments);
         virtual ~BitcellArray() noexcept override = default;
 
     private:

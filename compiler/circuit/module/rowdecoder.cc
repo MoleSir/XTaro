@@ -14,8 +14,8 @@ namespace xtaro::circuit
         return util::format("as%d", this->addressSize);
     }
 
-    RowDecoder::RowDecoder(std::string name, RowDecoderArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    RowDecoder::RowDecoder(String name, RowDecoderArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _addressSize{arguments->addressSize},
         _wlSize{util::power(2, this->_addressSize)},
         _and{nullptr},
@@ -59,19 +59,19 @@ namespace xtaro::circuit
         Instance* decoder{ this->addInstance("decoder", this->_decoder) };
 
         // Connect decoder
-        std::vector<std::string> decoderPorts{};
+        std::vector<String> decoderPorts{};
 
         for (int i = 0; i < this->_addressSize; ++i)
             decoderPorts.emplace_back(util::format("A%d", i));
 
-        std::vector<std::string> outputPorts{};
+        std::vector<String> outputPorts{};
         for (int i = 0; i < this->_wlSize; ++i)
             decoderPorts.emplace_back( util::format("Y%d", i) );
         
         decoderPorts.emplace_back("vdd");
         decoderPorts.emplace_back("gnd");
 
-        this->connectWith(decoder, std::move(decoderPorts));
+        this->connectWith(decoder, decoderPorts);
 
         // Create AND gates 
         for (int i = 0; i < this->_wlSize; ++i)

@@ -4,8 +4,8 @@
 
 namespace xtaro::circuit
 {
-    WriteDriver::WriteDriver(std::string name, WriteDriverArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/write_driver.sp"}
+    WriteDriver::WriteDriver(String name, WriteDriverArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/write_driver.sp"}
     {
         this->createNetlist();
     }

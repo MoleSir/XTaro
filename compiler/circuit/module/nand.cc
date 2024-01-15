@@ -16,8 +16,8 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    NAND::NAND(std::string name, NANDArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    NAND::NAND(String name, NANDArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
         _nmos{nullptr},
@@ -90,7 +90,7 @@ namespace xtaro::circuit
         }
 
         // NMOS
-        std::vector<std::string> net{};
+        std::vector<String> net{};
         for (int i = 0; i < this->_inputSize - 1; ++i)
             net.emplace_back( util::format("net%d", i) );
 

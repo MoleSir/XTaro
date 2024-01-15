@@ -1,4 +1,5 @@
 #include "circuitfactory.hh"
+#include <stringpool/string.hh>
 #include <allocator/allocator.hh>
 #include <tech/tech.hh>
 
@@ -54,7 +55,7 @@ namespace xtaro::circuit
 
     Circuit* CircuitFactory::create(ModuleType circuitType, 
                                     CircuitArguments* arguments, 
-                                    std::string circuitName)
+                                    String circuitName)
     {
         // Is target circuit exits
 #ifndef NDEBUG
@@ -110,12 +111,12 @@ namespace xtaro::circuit
         return nullptr;
     }
 
-    std::string CircuitFactory::getDefaultCircuitName(ModuleType circuitType) const
+    String CircuitFactory::getDefaultCircuitName(ModuleType circuitType) const
     {
         const auto& circuits{ this->_circuits[INT(circuitType)] };
 
         if (circuits.empty())
-            return std::string( CircuitFactory::modulesName[INT(circuitType)] );
+            return CircuitFactory::modulesName[INT(circuitType)];
         return util::format("%s_%d", 
                             CircuitFactory::modulesName[INT(circuitType)], 
                             circuits.size());
@@ -123,7 +124,7 @@ namespace xtaro::circuit
 
     Circuit* CircuitFactory::createNewCircuit(ModuleType circuitType, 
                                 CircuitArguments* arguments,
-                                std::string circuitName) const
+                                String circuitName) const
     {
 #define ALLOCATE_MODULE(ModuleClass)\
 Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));

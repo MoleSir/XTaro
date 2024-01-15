@@ -16,7 +16,7 @@
 namespace xtaro::circuit
 {
 
-    Circuit::Circuit(std::string name, DeviceType type, const std::string& spicefile) :
+    Circuit::Circuit(String name, DeviceType type, const std::string& spicefile) :
         _name{std::move(name)},
         _type{type},
         _ports{},
@@ -54,21 +54,21 @@ namespace xtaro::circuit
             Allocator::free<Net>(kv.second);
     }
 
-    void Circuit::addPort(std::string name, PortType type)
+    void Circuit::addPort(String name, PortType type)
     {
-        Port* port = Allocator::alloc<Port>(std::move(name), type);
-        this->_ports.push_back(port);
+        Port* port { Allocator::alloc<Port>(name, type) };
+        this->_ports.emplace_back(port);
     }
 
-    void Circuit::addPorts(std::vector<std::string> portsName, PortType portType)
+    void Circuit::addPorts(const std::vector<String>& portsName, PortType portType)
     {
-        for (auto& portName : portsName)
-            this->addPort(std::move(portName), portType);
+        for (const String& portName : portsName)
+            this->addPort(portName, portType);
     }
 
-    Instance* Circuit::addInstance(std::string instanceName, Circuit* circuit)
+    Instance* Circuit::addInstance(String instanceName, Circuit* circuit)
     {
-        Instance* instance = Allocator::alloc<Instance>(std::move(instanceName), circuit);
+        Instance* instance = Allocator::alloc<Instance>(instanceName, circuit);
         this->_instances.emplace_back(instance);
         return instance;
     }
@@ -79,11 +79,11 @@ namespace xtaro::circuit
         std::size_t i = 0;
         
         for (Port* port : this->_ports)
-            names[i++] = port->name().c_str();
+            names[i++] = port->name().cstr();
         return names;
     }
 
-    void Circuit::connectWith(Instance* instance, const std::vector<std::string>& netsName)
+    void Circuit::connectWith(Instance* instance, const std::vector<String>& netsName)
     {
         if (instance->ports().size() != netsName.size())
             throw MessageException("Connect Instance", "Port size != Net size");
@@ -92,7 +92,7 @@ namespace xtaro::circuit
         instance->connectNets(nets);
     }
 
-    std::vector<Net*> Circuit::createNets(const std::vector<std::string>& netsName)
+    std::vector<Net*> Circuit::createNets(const std::vector<String>& netsName)
     {
         std::vector<Net*> nets(netsName.size(), nullptr);
         for (std::size_t i = 0; i < nets.size(); ++i)
@@ -157,7 +157,7 @@ namespace xtaro::circuit
             }
 
             // Write .SUBCKT line
-            file << "\n.SUBCKT " << this->_name << '\n';
+            file << "\n.SUBCKT " << this->_name.cstr() << '\n';
             // Write ports, each line has 15 ports
             int portsSize{0};
             for (Port* port : this->_ports)
@@ -180,7 +180,7 @@ namespace xtaro::circuit
             }
 
             // Write .END
-            file << ".ENDS " << this->_name << '\n'; 
+            file << ".ENDS " << this->_name.cstr() << '\n'; 
 
             visited.emplace(this);
         }

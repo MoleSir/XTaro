@@ -4,8 +4,8 @@
 
 namespace xtaro::circuit
 {
-    SenseAmplifier::SenseAmplifier(std::string name, SenseAmplifierArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/sense_amp.sp"}
+    SenseAmplifier::SenseAmplifier(String name, SenseAmplifierArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/sense_amp.sp"}
     {
         this->createNetlist();
     }

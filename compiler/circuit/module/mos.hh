@@ -29,7 +29,7 @@ namespace xtaro::circuit
     class MOS : public Circuit
     {
     public:
-        MOS(std::string name, MOSArguments* arguments);
+        MOS(String name, MOSArguments* arguments);
         virtual ~MOS() noexcept override = default;
 
     public:

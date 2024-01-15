@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stringpool/string.hh>
+
 #include <string>
 #include <map>
 #include <list>
@@ -11,12 +13,12 @@ namespace xtaro::circuit
     class Net
     {
     public:
-        Net(std::string name);
-        const std::string& name() const noexcept
+        Net(String name);
+        const String& name() const noexcept
         { return this->_name; }
                 
     private:
-        std::string _name;
+        String _name;
     };
 
 }

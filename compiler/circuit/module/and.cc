@@ -4,6 +4,7 @@
 #include <module/inv.hh>
 
 #include <factory/circuitfactory.hh>
+#include <stringpool/string.hh>
 #include <module/mos.hh>
 #include <tech/tech.hh>
 
@@ -19,8 +20,8 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    AND::AND(std::string name, ANDArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    AND::AND(String name, ANDArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
         _nand{nullptr},
@@ -52,7 +53,7 @@ namespace xtaro::circuit
 
     void AND::createInstances() 
     {
-        std::vector<std::string> nets{};
+        std::vector<String> nets{};
         for (int i = 0; i < this->_inputSize; ++i)
             nets.emplace_back( util::format("A%d", i) );
         nets.emplace_back("Z_bar");
@@ -61,7 +62,7 @@ namespace xtaro::circuit
         
 
         Instance* nand{ this->addInstance("nand", this->_nand) };
-        this->connectWith(nand, std::move(nets));
+        this->connectWith(nand, nets);
 
         Instance* inv{ this->addInstance("inv", this->_inv) };
         this->connectWith(inv, {"Z_bar", "Z", "vdd", "gnd"});

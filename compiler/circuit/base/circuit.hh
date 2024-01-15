@@ -5,6 +5,8 @@
 #include "net.hh"
 #include "port.hh"
 
+#include <stringpool/string.hh>
+
 #include <string>
 #include <map>
 #include <set>
@@ -29,20 +31,23 @@ namespace xtaro::circuit
     class Circuit
     {
     public:
-        Circuit(std::string name, DeviceType type, const std::string& spicefile = "");
+        Circuit(String name, DeviceType type, const std::string& spicefile = "");
         virtual ~Circuit() noexcept;
 
     public:
-        void addPort(std::string portName, PortType portType);
-        void addPorts(std::vector<std::string> portsName, PortType portType);
-
-        Instance* addInstance(std::string instanceName, Circuit* circuit);
+        void addPort(String portName, PortType portType);
+        void addPorts(const std::vector<String>& portsName, PortType portType);
         std::vector<const char*> portsName() const;
-        void connectWith(Instance* instance, const std::vector<std::string>& nets);
-        std::vector<Net*> createNets(const std::vector<std::string>& netsName);
         std::vector<Port*> copyPort() const;
+
+        Instance* addInstance(String instanceName, Circuit* circuit);
+        void connectWith(Instance* instance, const std::vector<String>& nets);
+
         void writeSpice(const std::string& filename);
         void createNetlist();
+
+    protected:
+        std::vector<Net*> createNets(const std::vector<String>& netsName);
 
     protected:
         void doWriteSpice(std::ofstream& file, std::set<Circuit*>& visited);
@@ -56,7 +61,7 @@ namespace xtaro::circuit
         { return ""; }
 
     public:
-        const std::string& name() const noexcept
+        const String& name() const noexcept
         { return this->_name; }
 
         DeviceType type() const noexcept
@@ -72,13 +77,13 @@ namespace xtaro::circuit
         { return this->_instances; }
 
     protected:
-        std::string _name;
+        String _name;
         DeviceType  _type;
 
         std::set<Circuit*> _circuits;
         std::vector<Instance*> _instances;
         std::vector<Port*> _ports;
-        std::map<std::string, Net*> _nets;
+        std::map<String, Net*> _nets;
 
         bool _isMetaCircuit;
         std::string _metaSpice;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stringpool/string.hh>
 #include <base/circuit.hh>
 
 #include <string>
@@ -50,14 +51,14 @@ namespace xtaro::circuit
     public:
         Circuit* create(ModuleType circuitType,
                         CircuitArguments* arguments,
-                        std::string circuitName = "");
+                        String circuitName = "");
 
     private:
         Circuit* findCircuit(ModuleType circuitType, const std::string& argsList) const;
-        std::string getDefaultCircuitName(ModuleType circuitType) const;
+        String getDefaultCircuitName(ModuleType circuitType) const;
         Circuit* createNewCircuit(ModuleType circuitType, 
                                   CircuitArguments* arguments,
-                                  std::string circuitName) const;
+                                  String circuitName) const;
         void collectCircuit(ModuleType circuitType, std::string argsList, Circuit* circuit);
 
     private:

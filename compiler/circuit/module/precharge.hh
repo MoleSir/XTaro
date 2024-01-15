@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class Precharge : public Circuit
     {
     public:
-        Precharge(std::string name, PrechargeArguments* arguments);
+        Precharge(String name, PrechargeArguments* arguments);
         virtual ~Precharge() noexcept override = default;
 
     private:

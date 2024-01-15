@@ -4,8 +4,8 @@
 
 namespace xtaro::circuit
 {
-    Precharge::Precharge(std::string name, PrechargeArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/precharge.sp"}
+    Precharge::Precharge(String name, PrechargeArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/precharge.sp"}
     {
         this->createNetlist();
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "circuitenum.hh"
+#include <stringpool/string.hh>
 
 #include <string>
 #include <map>
@@ -20,21 +21,21 @@ namespace xtaro::circuit
         static const std::array<char, DEVICE_SIZE> deviceKeywords;
 
     public:
-        Instance(std::string name, Circuit* circuit);
+        Instance(String name, Circuit* circuit);
         ~Instance() noexcept;
 
     public:
         //! \brief Connect 'net' to the 'port' whose name is 'portName'
-        void connectNet(const std::string& portName, Net* net);
+        void connectNet(const String& portName, Net* net);
         void connectNets(const std::vector<Net*>& nets);
 
         //! \brief Generate the spice command of this instance
         std::string spiceCommand() const;
 
     public:
-        Port* port(const std::string& name) const;
+        Port* port(const String& name) const;
 
-        const std::string& name() const noexcept
+        const String& name() const noexcept
         { return this->_name; }
 
         Circuit* circuit() const noexcept
@@ -44,7 +45,7 @@ namespace xtaro::circuit
         { return this->_ports; }
 
     private:
-        std::string _name;
+        String _name;
         Circuit* _circuit;
         std::vector<Port*> _ports;
         std::size_t _connectCount;

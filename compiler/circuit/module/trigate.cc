@@ -4,7 +4,7 @@
 
 namespace xtaro::circuit
 {
-    TristateGate::TristateGate(std::string name, TristateGateArguments* arguments) :
+    TristateGate::TristateGate(String name, TristateGateArguments* arguments) :
         Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/tri_gate.sp"}
     {
         this->createNetlist();

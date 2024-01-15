@@ -20,7 +20,7 @@ namespace xtaro::circuit
         'M', 'R', 'C', 'D', 'X', 
     };
 
-    Instance::Instance(std::string name, Circuit* circuit) :
+    Instance::Instance(String name, Circuit* circuit) :
         _name{std::move(name)},
         _circuit{circuit},
         _ports{std::move( circuit->copyPort() )},
@@ -34,7 +34,7 @@ namespace xtaro::circuit
             Allocator::free<Port>(port);
     }
 
-    void Instance::connectNet(const std::string& portName, Net* net)
+    void Instance::connectNet(const String& portName, Net* net)
     {
         Port* port = this->port(portName);
         if (port != nullptr)
@@ -63,8 +63,8 @@ namespace xtaro::circuit
 
         // Instance name
         char deviceKeyword{ Instance::deviceKeywords[INT(this->_circuit->type())] }; 
-        ss << deviceKeyword << this->_name;
-        
+        ss << deviceKeyword << this->_name.cstr();
+   
         // Ports
         if (this->_circuit->type() == DeviceType::SUBCKT)
         {
@@ -89,7 +89,7 @@ namespace xtaro::circuit
         }
         
         // Circuit name
-        ss << ' ' << this->_circuit->name();
+        ss << ' ' << this->_circuit->name().cstr();
 
         // Arguments list
         ss << ' ' << this->_circuit->argumentsList();
@@ -97,7 +97,7 @@ namespace xtaro::circuit
         return ss.str();
     }
 
-    Port* Instance::port(const std::string& name) const
+    Port* Instance::port(const String& name) const
     {
         for (Port* port : this->_ports)
             if (port->name() == name)

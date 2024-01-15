@@ -16,8 +16,8 @@ namespace xtaro::circuit
         return util::format("ss%d", this->selectionSize);
     }
 
-    Mux::Mux(std::string name, MuxArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    Mux::Mux(String name, MuxArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _selectionSize{arguments->selectionSize},
         _inputSize{util::power(2, arguments->selectionSize)},
         _decoder{nullptr},
@@ -73,8 +73,8 @@ namespace xtaro::circuit
 
     void Mux::createInstances() 
     {
-        std::vector<std::string> decoderOutput{};
-        std::vector<std::string> decoderOutputBar{};
+        std::vector<String> decoderOutput{};
+        std::vector<String> decoderOutputBar{};
         for (int i = 0; i < this->_inputSize; ++i)
         {
             decoderOutput.emplace_back(util::format("Y%d", i));
@@ -110,7 +110,7 @@ namespace xtaro::circuit
             // A0 A1 ... An Y0 Y1 ... Y2^n-1 vdd gnd
             Instance* decoder{ this->addInstance("decoder", this->_decoder) };
 
-            std::vector<std::string> decoderPorts{};
+            std::vector<String> decoderPorts{};
             for (int i = 0; i < this->_selectionSize; ++i)
                 decoderPorts.emplace_back( util::format("S%d", i) );
             for (int i = 0; i < this->_inputSize; ++i)
@@ -118,14 +118,14 @@ namespace xtaro::circuit
             decoderPorts.emplace_back("vdd");
             decoderPorts.emplace_back("gnd");
 
-            this->connectWith(decoder, std::move(decoderPorts));
+            this->connectWith(decoder, decoderPorts);
 
             // INV gates
             for (int i = 0; i < this->_inputSize; ++i)
             {
                 Instance* inv{ this->addInstance(util::format("inv%d", i), this->_inv) };
                 this->connectWith(inv, {
-                    std::move(decoderOutput[i]), std::move(decoderOutputBar[i]), "vdd", "gnd"
+                    decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
                 });
             }
         }

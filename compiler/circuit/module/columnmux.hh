@@ -39,7 +39,7 @@ namespace xtaro::circuit
     class ColumnMux : public Circuit
     {
     public:
-        ColumnMux(std::string name, ColumnMuxArguments* arguments);
+        ColumnMux(String name, ColumnMuxArguments* arguments);
         virtual ~ColumnMux() noexcept override = default;
 
     private:

@@ -39,7 +39,7 @@ namespace xtaro::circuit
         static const std::array<std::vector<int>, COMPONENT_SIZE> subDecodersInputSizes; 
 
     public:
-        Decoder(std::string name, DecoderArguments* arguments);
+        Decoder(String name, DecoderArguments* arguments);
         virtual ~Decoder() noexcept override = default;
 
     private:

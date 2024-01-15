@@ -2,7 +2,7 @@
 
 namespace xtaro::circuit
 {
-    Net::Net(std::string name):
+    Net::Net(String name):
         _name{std::move(name)}
     {}
 

@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class DFF : public Circuit
     {
     public:
-        DFF(std::string name, DFFArguments* arguments);
+        DFF(String name, DFFArguments* arguments);
         virtual ~DFF() noexcept override = default;
 
     private:

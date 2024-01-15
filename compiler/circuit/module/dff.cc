@@ -4,8 +4,8 @@
 
 namespace xtaro::circuit
 {
-    DFF::DFF(std::string name, DFFArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/dff.sp"}
+    DFF::DFF(String name, DFFArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/dff.sp"}
     {
         this->createNetlist();
     }

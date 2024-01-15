@@ -28,7 +28,7 @@ namespace xtaro::circuit
     class NOR : public Circuit
     {
     public:
-        NOR(std::string name, NORArguments* arguments);
+        NOR(String name, NORArguments* arguments);
         virtual ~NOR() noexcept override = default;
 
     private:

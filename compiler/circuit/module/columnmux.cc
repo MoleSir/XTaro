@@ -13,8 +13,8 @@ namespace xtaro::circuit
         return util::format("ss%d_ms%d", this->selectionSize, this->muxSize);
     }
 
-    ColumnMux::ColumnMux(std::string name, ColumnMuxArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    ColumnMux::ColumnMux(String name, ColumnMuxArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _selectionSize{arguments->selectionSize},
         _inputSize{util::power(2, arguments->selectionSize)},
         _muxSize{arguments->muxSize},
@@ -56,10 +56,12 @@ namespace xtaro::circuit
     {
         for (int muxIdx = 0; muxIdx < this->_muxSize; ++muxIdx)
         {
-            Instance* mux{ this->addInstance(util::format("mux%d", muxIdx), this->_mux) };
-
+            Instance* mux { 
+                this->addInstance(util::format("mux%d", muxIdx), this->_mux) 
+            };
+ 
             // S0 S1 ... Sn-1 bl0 bl1 ... bl2^n-1 br0 br1 ... br2^n-1 bl br vdd gnd
-            std::vector<std::string> muxPorts{};
+            std::vector<String> muxPorts{};
             for (int i = 0; i < this->_selectionSize; ++i)
                 muxPorts.emplace_back(util::format("A%d", i));
             
@@ -75,7 +77,7 @@ namespace xtaro::circuit
             muxPorts.emplace_back("vdd");
             muxPorts.emplace_back("gnd");
 
-            this->connectWith(mux, std::move(muxPorts));
+            this->connectWith(mux, muxPorts);
         }
     }
 }

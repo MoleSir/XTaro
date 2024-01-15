@@ -28,7 +28,7 @@ namespace xtaro::circuit
     class AND : public Circuit
     {
     public:
-        AND(std::string name, ANDArguments* arguments);
+        AND(String name, ANDArguments* arguments);
         virtual ~AND() noexcept override = default;
 
     private:

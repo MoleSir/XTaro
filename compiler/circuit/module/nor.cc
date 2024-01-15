@@ -16,8 +16,8 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    NOR::NOR(std::string name, NORArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    NOR::NOR(String name, NORArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
         _nmos{nullptr},
@@ -83,7 +83,7 @@ namespace xtaro::circuit
     void NOR::createInstances() 
     {
         // PMOS
-        std::vector<std::string> net{};
+        std::vector<String> net{};
         for (int i = 0; i < this->_inputSize - 1; ++i)
             net.emplace_back( util::format("net%d", i) );
 

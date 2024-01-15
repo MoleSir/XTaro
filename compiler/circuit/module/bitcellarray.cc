@@ -15,8 +15,8 @@ namespace xtaro::circuit
         return util::format("r%d_c%d", this->rowSize, this->columnSize);
     }
 
-    BitcellArray::BitcellArray(std::string name, BitcellArrayArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    BitcellArray::BitcellArray(String name, BitcellArrayArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _rowSize{arguments->rowSize},
         _columnSize{arguments->columnSize},
         _bitcell{nullptr}
@@ -27,20 +27,20 @@ namespace xtaro::circuit
     void BitcellArray::createPorts()
     {
         // 'bl' and 'br'
-        std::vector<std::string> blbrPortsName;
+        std::vector<String> blbrPortsName;
         for (std::int32_t i = 0; i < this->_columnSize; ++i)
             blbrPortsName.emplace_back( util::format("bl%d", i) );
         for (std::int32_t i = 0; i < this->_columnSize; ++i)
             blbrPortsName.emplace_back( util::format("br%d", i) );
 
-        this->addPorts( std::move(blbrPortsName), PortType::OUTPUT );
+        this->addPorts(blbrPortsName, PortType::OUTPUT);
 
         // 'WL' ports
-        std::vector<std::string> wlPortsName;
+        std::vector<String> wlPortsName;
         for (std::int32_t i = 0; i < this->_rowSize; ++i)
             wlPortsName.emplace_back( util::format("wl%d", i) );
         
-        this->addPorts( std::move(wlPortsName), PortType::INPUT );
+        this->addPorts(wlPortsName, PortType::INPUT);
 
         // 'vdd' and 'gnd'
         this->addPort("vdd", PortType::INOUT);

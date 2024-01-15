@@ -28,7 +28,7 @@ namespace xtaro::circuit
     class NAND : public Circuit
     {
     public:
-        NAND(std::string name, NANDArguments* arguments);
+        NAND(String name, NANDArguments* arguments);
         virtual ~NAND() noexcept override = default;
 
     private:

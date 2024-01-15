@@ -17,8 +17,8 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    OR::OR(std::string name, ORArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    OR::OR(String name, ORArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
         _nor{nullptr},
@@ -50,7 +50,7 @@ namespace xtaro::circuit
 
     void OR::createInstances() 
     {
-        std::vector<std::string> nets{};
+        std::vector<String> nets{};
         for (int i = 0; i < this->_inputSize; ++i)
             nets.emplace_back( util::format("A%d", i) );
         nets.emplace_back("Z_bar");
@@ -58,7 +58,7 @@ namespace xtaro::circuit
         nets.emplace_back("gnd");
         
         Instance* nor{ this->addInstance("nor", this->_nor) };
-        this->connectWith(nor, std::move(nets));
+        this->connectWith(nor, nets);
 
         Instance* inv{ this->addInstance("inv", this->_inv) };
         this->connectWith(inv, {"Z_bar", "Z", "vdd", "gnd"});

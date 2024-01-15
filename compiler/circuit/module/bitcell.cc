@@ -4,8 +4,8 @@
 
 namespace xtaro::circuit
 {
-    Bitcell::Bitcell(std::string name, BitcellArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT, tech->techpath + "/spice/bitcell.sp"}
+    Bitcell::Bitcell(String name, BitcellArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/bitcell.sp"}
     {
         this->createNetlist();
     }

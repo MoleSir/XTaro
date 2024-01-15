@@ -10,13 +10,13 @@ namespace xtaro::circuit
 {
     std::string MOSArguments::toString() const
     {
-        return util::format("t%d_w%.2fu_l%.2fu", 
+        return util::format("t%d_w%.2f_l%.2f", 
                             static_cast<int>(this->type), 
                             this->width, 
                             this->length);
     }
 
-    MOS::MOS(std::string name, MOSArguments* arguments):
+    MOS::MOS(String name, MOSArguments* arguments):
         Circuit{"", DeviceType::MOS},
         _type{arguments->type},
         _width{arguments->width},

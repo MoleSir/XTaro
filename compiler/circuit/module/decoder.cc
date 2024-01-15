@@ -31,8 +31,8 @@ namespace xtaro::circuit
         return util::format("is%d", this->inputSize);
     }
 
-    Decoder::Decoder(std::string name, DecoderArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    Decoder::Decoder(String name, DecoderArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _inputSize{arguments->inputSize},
         _outputSize{ util::power(2, this->_inputSize) },
         _and{nullptr},
@@ -112,8 +112,8 @@ namespace xtaro::circuit
 
     void Decoder::createSimpleInstances()
     {
-        std::vector<std::string> inputPorts{};
-        std::vector<std::string> inputPortsInt{};
+        std::vector<String> inputPorts{};
+        std::vector<String> inputPortsInt{};
         for (int i = 0; i < this->_inputSize; ++i)
         {
             inputPorts.emplace_back( util::format("A%d", i) );
@@ -137,7 +137,7 @@ namespace xtaro::circuit
             ) };
             
             // Create nets list to connect with 'andInstance'
-            std::vector<std::string> nets{};
+            std::vector<String> nets{};
             for (int j = 0; j < this->_inputSize; ++j)
             {
                 // 'i' is the AND gate's index. Each AND gate's inputs are [A0/A0_int, A1/A1_int ... An/An_int]
@@ -154,7 +154,7 @@ namespace xtaro::circuit
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
 
-            this->connectWith(andGate, std::move(nets));
+            this->connectWith(andGate, nets);
         }
     }
 
@@ -177,7 +177,7 @@ namespace xtaro::circuit
             
             // Connect nets
             // Create the nets' name
-            std::vector<std::string> nets{};
+            std::vector<String> nets{};
             // Input ports
             for (int i = 0; i < subDecoderInputSize; ++i)
                 nets.emplace_back( util::format("A%d", inputPortIndex++) );
@@ -188,7 +188,7 @@ namespace xtaro::circuit
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
             
-            this->connectWith(decoder, std::move(nets));
+            this->connectWith(decoder, nets);
         }
 
         // Loop for each Output AND gate
@@ -200,7 +200,7 @@ namespace xtaro::circuit
             ) };
         
             // Connect nets...
-            std::vector<std::string> nets{};
+            std::vector<String> nets{};
             
             // For each decoder, get an output line as AND gate's input
             // emmm... this algo is hard to explain, so TODO!!!
@@ -223,7 +223,7 @@ namespace xtaro::circuit
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
 
-            this->connectWith(andGate, std::move(nets));
+            this->connectWith(andGate, nets);
         }
     }
 }

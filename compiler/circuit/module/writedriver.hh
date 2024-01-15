@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class WriteDriver : public Circuit
     {
     public:
-        WriteDriver(std::string name, WriteDriverArguments* arguments);
+        WriteDriver(String name, WriteDriverArguments* arguments);
         virtual ~WriteDriver() noexcept override = default;
 
     private:

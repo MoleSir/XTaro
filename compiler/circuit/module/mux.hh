@@ -33,7 +33,7 @@ namespace xtaro::circuit
         };
 
     public:
-        Mux(std::string name, MuxArguments* arguments);
+        Mux(String name, MuxArguments* arguments);
         virtual ~Mux() noexcept override = default;
 
     private:

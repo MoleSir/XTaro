@@ -14,8 +14,8 @@ namespace xtaro::circuit
         return util::format("dc%d", static_cast<int>(this->driveCapability));
     }
 
-    INV::INV(std::string name, INVArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT},
+    INV::INV(String name, INVArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _nmos{nullptr},
         _pmos{nullptr}
