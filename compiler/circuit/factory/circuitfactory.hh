@@ -31,6 +31,8 @@ namespace xtaro::circuit
         SENSE_AMPLIFIER_ARRAY,
         WRITE_DRIVER_ARRAY,
         PRECHARGE_ARRAY,
+        REPLICA_BANK,
+        BANK,
         SIZE,
     };
 

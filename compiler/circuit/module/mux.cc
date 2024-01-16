@@ -73,6 +73,7 @@ namespace xtaro::circuit
 
     void Mux::createInstances() 
     {
+        bool useDecoder {this->_selectionSize > 1};
         std::vector<String> decoderOutput{};
         std::vector<String> decoderOutputBar{};
         for (int i = 0; i < this->_inputSize; ++i)
@@ -82,27 +83,53 @@ namespace xtaro::circuit
         }
 
         // Create & Connect tristate-gate instance
-        for (int i = 0; i < this->_inputSize; ++i)
+        if (!useDecoder)
         {
-            // in out en en_bar vdd gnd
-            Instance* blTrigate{ this->addInstance(util::format("bl_tri_gate%d", i), this->_trigate) };
-            Instance* brTrigate{ this->addInstance(util::format("br_tri_gate%d", i), this->_trigate) };
+            for (int i = 0; i < 2; ++i)
+            {
+                // in out en en_bar vdd gnd
+                Instance* blTrigate{ this->addInstance(util::format("bl_tri_gate%d", i), this->_trigate) };
+                Instance* brTrigate{ this->addInstance(util::format("br_tri_gate%d", i), this->_trigate) };
 
-            this->connectWith(blTrigate, {
-                util::format("bl%d", i), "bl", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
-            });
+                this->connectWith(blTrigate, {
+                    util::format("bl%d", i), "bl", 
+                    i == 0 ? "S0" : "S0_bar", 
+                    i == 0 ? "S0_bar" : "S0", 
+                    "vdd", "gnd"
+                });
 
-            this->connectWith(brTrigate, {
-                util::format("br%d", i), "br", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
-            });
+                this->connectWith(brTrigate, {
+                    util::format("br%d", i), "br", 
+                    i == 0 ? "S0" : "S0_bar", 
+                    i == 0 ? "S0_bar" : "S0", 
+                    "vdd", "gnd"
+                });
+            }
+        }
+        else
+        {
+            for (int i = 0; i < this->_inputSize; ++i)
+            {
+                // in out en en_bar vdd gnd
+                Instance* blTrigate{ this->addInstance(util::format("bl_tri_gate%d", i), this->_trigate) };
+                Instance* brTrigate{ this->addInstance(util::format("br_tri_gate%d", i), this->_trigate) };
+
+                this->connectWith(blTrigate, {
+                    util::format("bl%d", i), "bl", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
+                });
+
+                this->connectWith(brTrigate, {
+                    util::format("br%d", i), "br", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
+                });
+            }
         }
 
         // Create decoder instance if necessary
-        if (this->_selectionSize == 1)
+        if (!useDecoder)
         {
             // No need decoder, just a INV
-            Instance* inv{ this->addInstance("inv", this->_inv) };
-            this->connectWith(inv, {"S0", "Y0", "Y0_bar", "vdd", "gnd"});
+            Instance* inv {this->addInstance("inv", this->_inv)};
+            this->connectWith(inv, {"S0", "S0_bar", "vdd", "gnd"});
         }
         else
         {

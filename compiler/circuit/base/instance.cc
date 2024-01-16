@@ -56,7 +56,11 @@ namespace xtaro::circuit
     std::string Instance::spiceCommand() const
     {
         if (this->_connectCount < this->_ports.size())
-            throw MessageException("Generate spice", "Not all port has been connected.");
+            throw MessageException(
+                "Generate spice", 
+                util::format("The instance '%s', belongs circuit '%s'. Not all port has been connected. Connected: '%d'.", 
+                    this->_name.cstr(), this->_circuit->name().cstr(), this->_connectCount)
+            );
 
         // Xins A B C D cir
         std::stringstream ss;

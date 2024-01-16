@@ -33,8 +33,7 @@ namespace xtaro::circuit
             this->addPort(util::format("A%d", i), PortType::INPUT);
         
         // Output Ports
-        int outputSize{ util::power(2, this->_addressSize) };
-        for (int i = 0; i < outputSize; ++i)
+        for (int i = 0; i < this->_wlSize; ++i)
             this->addPort(util::format("wl%d", i), PortType::OUTPUT);
 
         // vdd & gnd

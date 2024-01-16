@@ -86,7 +86,14 @@ namespace xtaro::circuit
     void Circuit::connectWith(Instance* instance, const std::vector<String>& netsName)
     {
         if (instance->ports().size() != netsName.size())
-            throw MessageException("Connect Instance", "Port size != Net size");
+            throw MessageException(
+                "Connect Instance", 
+                util::format("In circuit '%s', when connect with instance '%s', port size '%d' != Net size '%d'", 
+                             this->_name.cstr(),
+                             instance->name().cstr(),
+                             instance->ports().size(), 
+                             netsName.size())
+            );
 
         std::vector<Net*> nets = this->createNets(netsName);
         instance->connectNets(nets);

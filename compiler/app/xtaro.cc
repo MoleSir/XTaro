@@ -15,6 +15,7 @@
 #include <module/senseamparr.hh>
 #include <module/writedriverarr.hh>
 #include <module/prechargearr.hh>
+#include <module/bank.hh>
 
 namespace xtaro
 {
@@ -38,10 +39,11 @@ namespace xtaro
     {
         try
         {
-            circuit::PrechargeArrayArguments argument{8};
+            circuit::BankArguments argument{config->addressWidth, config->wordWidth};
             circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::PRECHARGE_ARRAY, &argument);
+                circuit::factory->create(circuit::ModuleType::BANK, &argument);
             c->writeSpice("./temp/output/sram.sp");
+                
         }
         catch (const std::exception& err)
         {

@@ -20,6 +20,7 @@ namespace xtaro::circuit
         _muxSize{arguments->muxSize},
         _mux{nullptr}
     {
+        // TODO check
         this->createNetlist();
     }
 

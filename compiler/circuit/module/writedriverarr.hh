@@ -23,7 +23,7 @@ namespace xtaro::circuit
     };
 
     /*
-        - Ports sequency: bin0 bin1 ... bl0 bl1 ... br0 br1 ... sa_en vdd gnd
+        - Ports sequency: bin0 bin1 ... bl0 bl1 ... br0 br1 ... we_en vdd gnd
     */
     class WriteDriverArray : public Circuit
     {

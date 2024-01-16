@@ -25,6 +25,8 @@
 #include <module/senseamparr.hh>
 #include <module/writedriverarr.hh>
 #include <module/prechargearr.hh>
+#include <module/replicabank.hh>
+#include <module/bank.hh>
 
 #include <util/util.hh>
 
@@ -55,6 +57,8 @@ namespace xtaro::circuit
         "sense_amp_arr",
         "write_driver_arr",
         "precharge_array",
+        "replica_bank",
+        "bank",
     };
 
 #define NDEBUG
@@ -163,6 +167,8 @@ Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass #
         case ModuleType::SENSE_AMPLIFIER_ARRAY: return ALLOCATE_MODULE(SenseAmplifierArray);
         case ModuleType::WRITE_DRIVER_ARRAY: return ALLOCATE_MODULE(WriteDriverArray);
         case ModuleType::PRECHARGE_ARRAY: return ALLOCATE_MODULE(PrechargeArray);
+        case ModuleType::REPLICA_BANK: return ALLOCATE_MODULE(ReplicaBank);
+        case ModuleType::BANK: return ALLOCATE_MODULE(Bank);
         }
         return nullptr;
     }

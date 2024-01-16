@@ -5,7 +5,7 @@
 namespace xtaro::circuit
 {
     /*
-        - Construction: (int wordWidth, int addressWidth);
+        - Construction: (int rowSize, int columnSize);
     */
     struct BitcellArrayArguments : public CircuitArguments
     {
