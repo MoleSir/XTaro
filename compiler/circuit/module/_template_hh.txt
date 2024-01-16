@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -24,7 +25,7 @@ namespace xtaro::circuit
     class XXX : public Circuit
     {
     public:
-        XXX(std::string name, XXXArguments* arguments);
+        XXX(String name, XXXArguments* arguments);
         virtual ~XXX() noexcept override = default;
 
     private:

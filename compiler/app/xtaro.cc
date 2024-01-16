@@ -12,6 +12,9 @@
 #include <module/rowdecoder.hh>
 #include <module/mux.hh>
 #include <module/columnmux.hh>
+#include <module/senseamparr.hh>
+#include <module/writedriverarr.hh>
+#include <module/prechargearr.hh>
 
 namespace xtaro
 {
@@ -35,9 +38,9 @@ namespace xtaro
     {
         try
         {
-            circuit::ColumnMuxArguments argument{3, 8};
+            circuit::PrechargeArrayArguments argument{8};
             circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::COLUMN_MUX, &argument);
+                circuit::factory->create(circuit::ModuleType::PRECHARGE_ARRAY, &argument);
             c->writeSpice("./temp/output/sram.sp");
         }
         catch (const std::exception& err)

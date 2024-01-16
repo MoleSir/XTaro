@@ -11,8 +11,8 @@ namespace xtaro::circuit
         return util::format("");
     }
 
-    XXX::XXX(std::string name, XXXArguments* arguments) :
-        Circuit{std::move(name), DeviceType::SUBCKT}
+    XXX::XXX(String name, XXXArguments* arguments) :
+        Circuit{name, DeviceType::SUBCKT}
     {
         this->createNetlist();
     }

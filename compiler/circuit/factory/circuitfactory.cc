@@ -21,6 +21,10 @@
 #include <module/rowdecoder.hh>
 #include <module/mux.hh>
 #include <module/columnmux.hh>
+#include <module/fanoutbuff.hh>
+#include <module/senseamparr.hh>
+#include <module/writedriverarr.hh>
+#include <module/prechargearr.hh>
 
 #include <util/util.hh>
 
@@ -46,7 +50,11 @@ namespace xtaro::circuit
         "decoder",
         "row_decoder",
         "mux",
-        "column_mux"
+        "column_mux",
+        "fanout_buffer",
+        "sense_amp_arr",
+        "write_driver_arr",
+        "precharge_array",
     };
 
 #define NDEBUG
@@ -151,6 +159,10 @@ Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass #
         case ModuleType::ROW_DECODER: return ALLOCATE_MODULE(RowDecoder);
         case ModuleType::MUX: return ALLOCATE_MODULE(Mux);
         case ModuleType::COLUMN_MUX: return ALLOCATE_MODULE(ColumnMux);
+        case ModuleType::FANOUT_BUFFER: return ALLOCATE_MODULE(FanoutBuffer);
+        case ModuleType::SENSE_AMPLIFIER_ARRAY: return ALLOCATE_MODULE(SenseAmplifierArray);
+        case ModuleType::WRITE_DRIVER_ARRAY: return ALLOCATE_MODULE(WriteDriverArray);
+        case ModuleType::PRECHARGE_ARRAY: return ALLOCATE_MODULE(PrechargeArray);
         }
         return nullptr;
     }

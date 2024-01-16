@@ -27,6 +27,10 @@ namespace xtaro::circuit
         ROW_DECODER,
         MUX,
         COLUMN_MUX,
+        FANOUT_BUFFER,
+        SENSE_AMPLIFIER_ARRAY,
+        WRITE_DRIVER_ARRAY,
+        PRECHARGE_ARRAY,
         SIZE,
     };
 

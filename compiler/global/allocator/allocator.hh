@@ -12,16 +12,8 @@ namespace xtaro
         template<typename Type, typename... Args>
         static Type* alloc(Args&&... args) noexcept
         {
-            try 
-            {
-                Type* instance = new Type{std::forward<Args>(args)...};
-                return instance;
-            }
-            catch (const std::exception& e) 
-            {
-                std::cout << "Allocate memory error!: " << e.what() << std::endl;
-                exit(11);
-            }
+            Type* instance = new Type{std::forward<Args>(args)...};
+            return instance;
         }
 
         template<typename Type>
