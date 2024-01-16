@@ -42,6 +42,7 @@ namespace xtaro::circuit
 
         Instance* addInstance(String instanceName, Circuit* circuit);
         void connectWith(Instance* instance, const std::vector<String>& nets);
+        Instance* addInstance(String instanceName, Circuit* circuit, const std::vector<String>& nets);
 
         void writeSpice(const std::string& filename);
         void createNetlist();

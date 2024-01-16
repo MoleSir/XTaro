@@ -33,6 +33,8 @@ namespace xtaro::circuit
         PRECHARGE_ARRAY,
         REPLICA_BANK,
         BANK,
+        CONTROL_LOGIC,
+        SRAM,
         SIZE,
     };
 

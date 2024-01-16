@@ -111,7 +111,6 @@ namespace xtaro::circuit
     void Bank::createInstances() 
     {
         // Nets' name
-        std::cout << 1 << std::endl;
         std::vector<String> blNets{};
         std::vector<String> blgroupNets{};
         std::vector<String> brNets{};
@@ -141,8 +140,6 @@ namespace xtaro::circuit
             ANets.emplace_back( util::format("A%d", i) );
 
         // Create and Connect bitcell array
-        std::cout << 2 << ' ' << this->_columnAddressWidth << std::endl;
-
         Instance* bitcellArray {this->addInstance("bitcell_arr", this->_bitcellArray)};
         // Bitcell array' ports sequency: bl0 ... bln br0 ... brn ... wl0 ... wlm vdd gnd
         std::vector<String> bitcellarrPorts{};
@@ -161,8 +158,6 @@ namespace xtaro::circuit
         this->connectWith(bitcellArray, bitcellarrPorts);
 
         // Create and Connect row decoder
-        std::cout << 3 << ' ' << this->_rowAddressWidth << ' ' << this->_rowSize << std::endl;
-
         Instance* rowdecoder {this->addInstance("row_deocder", this->_rowDecoder)};
         // Row decoder's ports sequency: wl_en A0 A1 ... An wl0 wl1 ... wl2^n-1 vdd gnd
         std::vector<String> rowdecoderPorts;
@@ -175,7 +170,6 @@ namespace xtaro::circuit
         rowdecoderPorts.emplace_back("gnd");
         this->connectWith(rowdecoder, rowdecoderPorts);
 
-        std::cout << 4 << std::endl;
         if (this->_columnAddressWidth > 0)
         {
             // Create and Connect column mux
@@ -223,15 +217,11 @@ namespace xtaro::circuit
         }
 
         // Create and Connect replica bank
-        std::cout << 5 << std::endl;
-
         Instance* replica {this->addInstance("raplica_bank", this->_replicaBank)};
         // wl_en p_en_bar sa_en we_en rbl vdd gnd
         this->connectWith(replica, {"wl_en", "p_en_bar", "sa_en", "we_en", "rbl", "vdd", "gnd"});
 
         // Create and Connect precharge array
-        std::cout << 7 << std::endl;
-
         Instance* precharge {this->addInstance("precharge_array", this->_prechargeArray)};
         // bl0 bl1 ... br0 br1 ... p_en_bar vdd gnd
         std::vector<String> prechargePorts{};
@@ -245,8 +235,6 @@ namespace xtaro::circuit
         this->connectWith(precharge, prechargePorts);
 
         // Create and Connect sensa amp array
-        std::cout << 7 << std::endl;
-
         Instance* senseamp {this->addInstance("sense_amp_array", this->_senseampArray)};
         // bl0 bl1 ... br0 br1 ... dout0 dout1 ... sa_en vdd gnd
         std::vector<String> senseampPorts{};
@@ -262,8 +250,6 @@ namespace xtaro::circuit
         this->connectWith(senseamp, senseampPorts);
 
         // Create and Connect write driver array
-        std::cout << 8 << std::endl;
-
         Instance* writedriver {this->addInstance("write_driver_array", this->_writedriverArray)};
         // bin0 bin1 ... bl0 bl1 ... br0 br1 ... we_en vdd gnd
         std::vector<String> writedriverPorts{};

@@ -73,16 +73,6 @@ namespace xtaro::circuit
         return instance;
     }
 
-    std::vector<const char*> Circuit::portsName() const
-    {
-        std::vector<const char*> names(this->_ports.size(), nullptr);
-        std::size_t i = 0;
-        
-        for (Port* port : this->_ports)
-            names[i++] = port->name().cstr();
-        return names;
-    }
-
     void Circuit::connectWith(Instance* instance, const std::vector<String>& netsName)
     {
         if (instance->ports().size() != netsName.size())
@@ -97,6 +87,23 @@ namespace xtaro::circuit
 
         std::vector<Net*> nets = this->createNets(netsName);
         instance->connectNets(nets);
+    }
+
+    Instance* Circuit::addInstance(String instanceName, Circuit* circuit, const std::vector<String>& netsName)
+    {
+        Instance* instance {this->addInstance(instanceName, circuit)};
+        this->connectWith(instance, netsName);
+        return instance;
+    }
+
+    std::vector<const char*> Circuit::portsName() const
+    {
+        std::vector<const char*> names(this->_ports.size(), nullptr);
+        std::size_t i = 0;
+        
+        for (Port* port : this->_ports)
+            names[i++] = port->name().cstr();
+        return names;
     }
 
     std::vector<Net*> Circuit::createNets(const std::vector<String>& netsName)

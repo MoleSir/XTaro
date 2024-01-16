@@ -27,6 +27,8 @@
 #include <module/prechargearr.hh>
 #include <module/replicabank.hh>
 #include <module/bank.hh>
+#include <module/controllogic.hh>
+#include <module/sram.hh>
 
 #include <util/util.hh>
 
@@ -59,6 +61,8 @@ namespace xtaro::circuit
         "precharge_array",
         "replica_bank",
         "bank",
+        "control_logic",
+        "sram",
     };
 
 #define NDEBUG
@@ -169,6 +173,8 @@ Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass #
         case ModuleType::PRECHARGE_ARRAY: return ALLOCATE_MODULE(PrechargeArray);
         case ModuleType::REPLICA_BANK: return ALLOCATE_MODULE(ReplicaBank);
         case ModuleType::BANK: return ALLOCATE_MODULE(Bank);
+        case ModuleType::CONTROL_LOGIC: return ALLOCATE_MODULE(ControlLogic);
+        case ModuleType::SRAM: return ALLOCATE_MODULE(SRAM);
         }
         return nullptr;
     }

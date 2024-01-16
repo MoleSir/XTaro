@@ -16,6 +16,8 @@
 #include <module/writedriverarr.hh>
 #include <module/prechargearr.hh>
 #include <module/bank.hh>
+#include <module/controllogic.hh>
+#include <module/sram.hh>
 
 namespace xtaro
 {
@@ -39,9 +41,9 @@ namespace xtaro
     {
         try
         {
-            circuit::BankArguments argument{config->addressWidth, config->wordWidth};
+            circuit::SRAMArguments argument{config->addressWidth, config->wordWidth};
             circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::BANK, &argument);
+                circuit::factory->create(circuit::ModuleType::SRAM, &argument);
             c->writeSpice("./temp/output/sram.sp");
                 
         }
