@@ -73,6 +73,8 @@ namespace xtaro::circuit
     void ControlLogic::createInstances() 
     {
         // TODO clk ==> iclk
+        this->addInstance("inv0", this->_inv, {"clk", "clk_bar", "vdd", "gnd"});
+        this->addInstance("inv1", this->_inv, {"clk_bar", "iclk", "vdd", "gnd"});
 
         // Ecah input signals INV
         this->addInstance("csbInv", this->_inv, {"csb", "csb_bar", "vdd", "gnd"});

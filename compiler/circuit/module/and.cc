@@ -60,7 +60,6 @@ namespace xtaro::circuit
         nets.emplace_back("vdd");
         nets.emplace_back("gnd");
         
-
         Instance* nand{ this->addInstance("nand", this->_nand) };
         this->connectWith(nand, nets);
 

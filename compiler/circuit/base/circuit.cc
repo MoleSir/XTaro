@@ -132,7 +132,7 @@ namespace xtaro::circuit
         {
             ports.emplace_back(Allocator::alloc<Port>(
                 // TAG: Do not copy port
-                "",
+                port->name(),
                 port->type()
             ));
         }

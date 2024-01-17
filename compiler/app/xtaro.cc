@@ -1,23 +1,8 @@
 #include "xtaro.hh"
 #include <global.hh>
 #include <factory/circuitfactory.hh>
-#include <module/bitcellarray.hh>
-#include <module/mos.hh>
-#include <module/inv.hh>
-#include <module/nand.hh>
-#include <module/and.hh>
-#include <module/nor.hh>
-#include <module/or.hh>
-#include <module/decoder.hh>
-#include <module/rowdecoder.hh>
-#include <module/mux.hh>
-#include <module/columnmux.hh>
-#include <module/senseamparr.hh>
-#include <module/writedriverarr.hh>
-#include <module/prechargearr.hh>
-#include <module/bank.hh>
-#include <module/controllogic.hh>
 #include <module/sram.hh>
+#include <verilog/verilog.hh>
 
 namespace xtaro
 {
@@ -41,11 +26,13 @@ namespace xtaro
     {
         try
         {
-            circuit::SRAMArguments argument{config->addressWidth, config->wordWidth};
+            circuit::SRAMArguments argument {config->addressWidth, config->wordWidth};
             circuit::Circuit* c = 
                 circuit::factory->create(circuit::ModuleType::SRAM, &argument);
             c->writeSpice("./temp/output/sram.sp");
-                
+
+            parse::Verilog verilog {config->addressWidth, config->wordWidth};
+            verilog.writeSRAM("./temp/output/sram.v");
         }
         catch (const std::exception& err)
         {
