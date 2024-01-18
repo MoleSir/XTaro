@@ -1,6 +1,6 @@
 #include "setuphold.hh"
-#include "../simulator/simulator.hh"
-#include "../simulator/delaymeasurement.hh"
+#include <simulator/simulator.hh>
+#include <simulator/delaymeas.hh>
 
 #include <log/log.hh>
 #include <util/util.hh>
@@ -77,7 +77,7 @@ namespace xtaro::character
 
     double SetupHoldCharacterizer::simulate(EdgeDirection direction, TimeMode mode, double dataArriveTime, bool& success)
     {
-        simulate::Simulator simulator(
+        Simulator simulator(
             "/mnt/e/XTaro/temp/stim.sp", "/mnt/e/XTaro/temp/timing.lis");
         this->_simulator = &simulator;
 
@@ -86,14 +86,14 @@ namespace xtaro::character
         this->writeSimulateData(direction, mode, dataArriveTime);
         this->writeSimulateClock();
 
-        simulate::DelayMeasurement m(
+        DelayMeasurement m(
             "clk2q_delay",
             "clk", 
-            simulate::EdgeDirection::RISE, 
+            EdgeDirection::RISE, 
             2.5, 
             1.9 * this->_period,
             "Q", 
-            direction == RISE ? simulate::EdgeDirection::RISE : simulate::EdgeDirection::FALL,
+            direction == RISE ? EdgeDirection::RISE : EdgeDirection::FALL,
             2.5, 
             1.9 * this->_period
         );

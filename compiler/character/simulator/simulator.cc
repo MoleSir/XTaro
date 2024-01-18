@@ -1,53 +1,72 @@
 #include "simulator.hh"
-#include "./util/util.hh"
-#include "./log/log.hh"
+
+#include <command/meas.hh>
+
+#include <util/util.hh>
+#include <log/log.hh>
+#include <exception/msgexception.hh>
 
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <memory>
 
-namespace xtaro::simulate
+namespace xtaro::character
 {
-    Simulator::Simulator(std::string simulationFilename, std::string outputFilename): 
+    Simulator::Simulator(std::string simulationFilename): 
         _simulationFilename{std::move(simulationFilename)},
-        _outputFilename{std::move(outputFilename)},
-        _simulationFile{}, _outputFile{}
+        _simulationFile{}
     {
         this->_simulationFile.open(this->_simulationFilename);
+        if (!this->_simulationFile.is_open())
+            throw MessageException(
+                "Generate spice simulate file", 
+                util::format("Open '%d' failed!", this->_simulationFilename.c_str())
+            );
     }
 
-    void Simulator::addInclude(const std::string& filename)
+    Simulator::~Simulator() noexcept = default;
+
+    void Simulator::writeInclude(const std::string& filename)
     {
-        if (!this->checkWritable()) return;
+        this->checkFileWritable();
 
         std::string command = util::format(".include \"%s\"\n", filename.c_str());
         this->_simulationFile << command;
     }
 
-    void Simulator::addMeasurement(Measurement* measurement)
+    void Simulator::writeMeasurement(Measurement* measurement)
     {
-        if (!this->checkWritable()) return;
+        this->_measurements.emplace_back(measurement);
         measurement->writeCommand(this->_simulationFile);
     }
 
-    void Simulator::addEnd()
+    void Simulator::writeEnd()
     {
-        if (!this->checkWritable()) return;
+        this->checkFileWritable();
         this->_simulationFile << ".end\n";
     }
 
-    void Simulator::addTemperature(double temperature)
+    void Simulator::writeComment(const std::string& comment)
     {
-        if (!this->checkWritable()) return;
+        this->checkFileWritable();
+        this->_simulationFile << "* " << comment << '\n';
+    }
+
+    void Simulator::writeTemperature(double temperature)
+    {
+        this->checkFileWritable();
+
         this->_simulationFile << util::format(".TEMP %f\n", temperature);
     }
 
-    void Simulator::addInstance(const std::string& instanceName, 
-                                const std::vector<std::string>& portsName,
-                                const std::string& moduleName)
+    void Simulator::writeInstance(
+                    const std::string& moduleName,
+                    const std::string& instanceName, 
+                    const std::vector<std::string>& portsName)
     {
-        if (!this->checkWritable()) return;
+        this->checkFileWritable();
 
         this->_simulationFile << 'X' <<  instanceName;
         
@@ -57,22 +76,20 @@ namespace xtaro::simulate
         this->_simulationFile << ' ' << moduleName << '\n';
     }
 
-    void Simulator::addPWLSupply(const std::string& supplyName, 
-                                 const std::string& portName, 
-                                 const std::vector<double>& times,
-                                 const std::vector<double>& voltages,
-                                 double slew)
+    void Simulator::writePWLVoltage(
+                    const std::string& supplyName, 
+                    const std::string& portName, 
+                    const std::vector<double>& times,
+                    const std::vector<double>& voltages,
+                    double slew)
     {
-        if (!this->checkWritable()) return;
+        this->checkFileWritable();
 
         if (times.size() != voltages.size())
-        {
-            logger->error(
-                "Write PWL failed! times' size '%lu' is not equal to voltages' size '%lu'",
-                times.size(), voltages.size()
+            throw MessageException(
+                "Add PWL volatage",
+                util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
             );
-            return;
-        }
 
         // Vclk clk 0 PWL (0n 0.0v 1n 0.0v 3n 5v 9n 5V 11n 0v 19n 0v 21n 5v) 
         this->_simulationFile << util::format("V%s %s 0 PWL (", supplyName.c_str(), portName.c_str());
@@ -94,66 +111,145 @@ namespace xtaro::simulate
         this->_simulationFile << ")\n";
     }
 
-    void Simulator::addDCSupply(const std::string& supplyName,
-                                const std::string& portName,
-                                double voltage)
+
+    void Simulator::writePWLVoltage(
+                    const std::string& supplyName, 
+                    const std::string& portName, 
+                    const std::vector<double>& times,
+                    const std::vector<double>& voltages)
     {
-        if (!this->checkWritable()) return;
-        this->_simulationFile << util::format("V%s %s 0 %f\n", supplyName.c_str(), portName.c_str(), voltage);
+        this->checkFileWritable();
+
+        if (times.size() != voltages.size())
+            throw MessageException(
+                "Add PWL volatage",
+                util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
+            );
+
+        // Vclk clk 0 PWL (0n 0.0v 1n 0.0v 3n 5v 9n 5V 11n 0v 19n 0v 21n 5v) 
+        this->_simulationFile << util::format("V%s %s 0 PWL (", supplyName.c_str(), portName.c_str());
+
+        for (std::size_t i = 0; i < times.size(); ++i)
+            this->_simulationFile << util::format("%fn %fv ", times[i], voltages[i]);
+
+        this->_simulationFile << ")\n";
     }
 
-    void Simulator::addTrans(double interval, double endTime)
+    void Simulator::writePULSEVoltage(
+                    const std::string& volatgeName,
+                    const std::string& netName, 
+                    double initVoltage,
+                    double pulsedVoltage,
+                    double delayTime,
+                    double riseTime,
+                    double fallTime,
+                    double pulseWidth,
+                    double period)
     {
-        if (!this->checkWritable()) return;
-        this->_simulationFile << util::format(".TRAN %fp %fn 0n %fp UIC\n", interval, endTime, interval);
+        this->checkFileWritable();
+
+        // Vclk0 clk0 0 PULSE (0 3.3 9.95n 0.1n 0.1n 4.9n 10n)
+        this->_simulationFile << util::format(
+            "V%s %s 0 PULSE(%f %f %fn %fn %fn %fn %fn)\n",
+            volatgeName.c_str(), netName.c_str(),
+            initVoltage, pulseWidth, 
+            delayTime,
+            riseTime, fallTime,
+            pulseWidth, period
+        );
     }
 
-    void Simulator::addCapacitance(const std::string& name, 
+    void Simulator::writeDCVoltage(
+                    const std::string& supplyName,
+                    const std::string& portName,
+                    double voltage)
+    {
+        this->checkFileWritable();
+
+        this->_simulationFile << util::format(
+            "V%s %s 0 %f\n", 
+            supplyName.c_str(), 
+            portName.c_str(), 
+            voltage
+        );
+    }
+
+    void Simulator::writeTrans(double stepTime, double starTime, double endTime)
+    {
+        this->checkFileWritable();
+
+        this->_simulationFile << util::format(
+            ".TRAN %fp %fn %fn\n", 
+            stepTime, 
+            endTime,
+            starTime
+        );
+    }
+
+    void Simulator::writeCapacitance(const std::string& name, 
                                    const std::string& portName1, 
                                    const std::string& protName2,
                                    double value)
     {
+        this->checkFileWritable();
+        
         // CD00 dout0_0 0 0f
-        if (!this->checkWritable()) return;
         this->_simulationFile << util::format(
-            "C%s %s %s %ff", name.c_str(), portName1.c_str(), protName2.c_str(), value);
+            "C%s %s %s %ff", 
+            name.c_str(), 
+            portName1.c_str(), 
+            protName2.c_str(), 
+            value
+        );
     }
     
-    void Simulator::run()
+    std::map<std::string, double> 
+    Simulator::run(const std::string& outputFilename)
     {
+        this->executeCommand(outputFilename);
+        return this->getResults(outputFilename);
+    }
+
+    void Simulator::executeCommand(const std::string& outputFilename)
+    {
+        //!\note Close simulate file!!!
         this->_simulationFile.close();
 
-        util::execute(util::format(
+        // Execute spice 
+        std::string bashCommand {util::format(
             "/bin/bash -c 'ngspice -b -o %s %s'", 
-            this->_outputFilename.c_str(), 
-            this->_simulationFilename.c_str()
-        ));
+            outputFilename.c_str(), 
+            this->_simulationFilename.c_str()            
+        )};
+        util::execute(bashCommand);
     }
 
-    bool Simulator::getResult(Measurement* measurement)
+    std::map<std::string, double> 
+    Simulator::getResults(const std::string& outputFilename)
     {
-        // Read output file
-        this->_outputFile.open(this->_outputFilename);
-        this->_outputFile.seekg(0, std::ios::end);
-        std::size_t size = this->_outputFile.tellg();
-        this->_outputFile.seekg(0, std::ios::beg);
+        // Read output file content
+        std::ifstream infile {outputFilename};
+        std::string content {util::readFile(infile)};
 
-        std::string content(size + 1, '\0');
-        this->_outputFile.read(content.data(), size);
-
-        // Get result 
-        bool result = measurement->getMeasureResult(content);
-        this->_outputFile.close();
-        return result;
-    }
-
-    bool Simulator::checkWritable() const
-    {
-        if (this->_simulationFile.is_open() == false)
+        // Get each result
+        std::map<std::string, double> results {};
+        for (auto& meas : this->_measurements)
         {
-            logger->error("Write .sp file failed! %s is not open", this->_simulationFilename.c_str());
-            return -1;
+            // TODO: When failed...
+            if (meas->getMeasureResult(content))
+                results.emplace(meas->name(), meas->result());
         }
-        return true;
+
+        return results;
     }
+
+    void Simulator::checkFileWritable() const
+    {
+        if (!this->_simulationFile.is_open())
+            throw MessageException(
+                "Write spice simulation",
+                "The simulation file already closed."
+            );
+    }
+
 }

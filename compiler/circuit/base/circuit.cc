@@ -96,13 +96,11 @@ namespace xtaro::circuit
         return instance;
     }
 
-    std::vector<const char*> Circuit::portsName() const
+    std::vector<std::string> Circuit::portsName() const
     {
-        std::vector<const char*> names(this->_ports.size(), nullptr);
-        std::size_t i = 0;
-        
+        std::vector<std::string> names{};     
         for (Port* port : this->_ports)
-            names[i++] = port->name().cstr();
+            names.emplace_back(std::string{port->name().cstr()});
         return names;
     }
 

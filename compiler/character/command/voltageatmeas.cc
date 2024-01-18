@@ -1,15 +1,16 @@
-#include "voltagemeasurement.hh"
+#include "voltageatmeas.hh"
 #include "global.hh"
 
 #include <string>
 #include <fstream>
+#include <regex>
 
-namespace xtaro::simulate
+namespace xtaro::character
 {
     VoltageAtMeasurement::VoltageAtMeasurement(
-        std::string name, std::string measureName, float measureTime):
+        std::string name, std::string netName, float measureTime):
         Measurement{std::move(name)},
-        _measureName{std::move(measureName)},
+        _netName{std::move(netName)},
         _measureTime{measureTime}
     {
     }
@@ -19,10 +20,11 @@ namespace xtaro::simulate
         std::string command = util::format(
             ".meas tran %s FIND v(%s) AT=%fn\n",
             this->_name.c_str(),
-            this->_measureName.c_str(),
+            this->_netName.c_str(),
             this->_measureTime
         );
 
         file << command;
     }
+    
 }

@@ -13,6 +13,16 @@ namespace xtaro::util
         return size;
     }
 
+    std::string readFile(std::ifstream& file)
+    {
+        std::size_t size {filesize(file)};
+        std::string content {};
+        content.resize(size + 1);
+        file.read(content.data(), size);
+        content.reserve(size);
+        return content;
+    }
+
     int power(int base, unsigned int exponent)
     {
         int value = 1;

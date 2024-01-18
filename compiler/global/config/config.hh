@@ -16,6 +16,7 @@ namespace xtaro
         std::string  techName{"scn4m_subm"};
         
         std::string  outputPath{"./output"};
+        std::string  sramName{"sram"};
 
         void load(const std::string& configFile);
 

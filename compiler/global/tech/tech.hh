@@ -5,6 +5,7 @@
 
 namespace xtaro
 {
+    
     class Tech 
     {
     public:

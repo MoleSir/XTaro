@@ -2,23 +2,19 @@
 
 #include <string>
 #include <fstream>
-#include <regex>
 
-namespace xtaro::simulate
+namespace xtaro::character
 {
 
     class Measurement
     {
-        static std::regex _nameResultRegex;
-        static std::regex _resultRegex;
-
     public:
         Measurement(std::string name);
 
         virtual void writeCommand(std::ofstream& file) const = 0;
+        virtual bool getMeasureResult(const std::string& context);
 
-        bool getMeasureResult(const std::string& context);
-
+    public:
         const std::string& name() const noexcept
         { return this->_name; }
 

@@ -59,7 +59,7 @@ namespace xtaro::circuit
         /*
             Return all ports's name as a std::vector<const char*>
         */
-        std::vector<const char*> portsName() const;
+        std::vector<std::string> portsName() const;
 
         /*
             Copy all ports in this circuit, return as a std::vector<Port*>.

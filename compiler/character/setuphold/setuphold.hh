@@ -2,16 +2,13 @@
 
 #include <string>
 
-namespace xtaro::simulate
-{
-    class Simulator;
-}
 
 namespace xtaro::character
 {
 
     class SetupHoldCharacterizer
     {
+        class Simulator;
         enum EdgeDirection
         {
             FALL = 0, RISE = 1,
@@ -50,7 +47,7 @@ namespace xtaro::character
     private:
         std::string _dffFilename;
         double _period;
-        simulate::Simulator* _simulator;
+        Simulator* _simulator;
 
         double _relatedInputSlew;
         double _constrainedInputSlew;

@@ -42,6 +42,13 @@ namespace xtaro::circuit
         virtual void createCircuits() override;
         virtual void createInstances() override;
 
+    public:
+        int addressWidth() const noexcept
+        { return this->_addressWidth; }
+
+        int wordWidth() const noexcept
+        { return this->_wordWidth; }
+
     private:
         int _addressWidth;
         int _wordWidth;

@@ -17,6 +17,7 @@ namespace xtaro::util
     }
 
     std::size_t filesize(std::ifstream& file);
+    std::string readFile(std::ifstream& file);
 
     int power(int base, unsigned int exponent);
 
