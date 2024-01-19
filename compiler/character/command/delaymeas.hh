@@ -21,21 +21,21 @@ namespace xtaro::character
     {
     public:
         DelayMeasurement(std::string name,
-                         std::string trigNetName, EdgeDirection trigDirection, float trigVoltage, float trigTimeDelay,
-                         std::string targNetName, EdgeDirection targDirection, float targVoltage, float targTimeDelay);
+                         std::string trigNetName, EdgeDirection trigDirection, double trigVoltage, double trigTimeDelay,
+                         std::string targNetName, EdgeDirection targDirection, double targVoltage, double targTimeDelay);
 
         virtual void writeCommand(std::ofstream& file) const override;
 
     private:
         std::string _trigNetName;
         EdgeDirection _trigDirection;
-        float _trigVoltage;
-        float _trigTimeDalay;
+        double _trigVoltage;
+        double _trigTimeDalay;
 
         std::string _targNetName;
         EdgeDirection _targDirection;
-        float _targVoltage;
-        float _targTimeDalay;
+        double _targVoltage;
+        double _targTimeDalay;
 
     private:
         static std::array<const char*, EDGE_DIRECTION_SIZE> edgeDirectionNames;

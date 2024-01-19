@@ -29,6 +29,9 @@ namespace xtaro::character
 
     class SRAMSimulator : public Simulator
     {
+    protected:
+        using ReadChecker = std::pair<Measurement*, double>;
+
     public:
         SRAMSimulator(
             std::string simulationFilename,
@@ -43,22 +46,31 @@ namespace xtaro::character
         void writeTransactions();
 
     private:
-        void checkAddress(unsigned int address) const;
-        void checkWord(unsigned int word) const;
+        unsigned int resetAddress(unsigned int address) const;
+        unsigned int resetWord(unsigned int word) const;
 
         Bits addressBits(unsigned int address) const;
         Bits wordBits(unsigned int word) const;
 
-    private:
+        std::string writeTransactionComment(unsigned int address, unsigned int word) const;
+        std::string readTransactionComment(unsigned int address) const;
+
+    protected:
         static Bits intToBits(unsigned int value, int size);
 
     protected:
         circuit::SRAM* _sram;
+        
         PVT _pvt;
         int _period;
         double _slew;
 
+        unsigned int _addrMask;
+        unsigned int _wordMask;
+
         std::vector<SRAMTransaction> _transactions;
+        std::map<unsigned int, Bits> _memoryState;
+        std::vector<ReadChecker>     _readCheckers;
     };
 
 }

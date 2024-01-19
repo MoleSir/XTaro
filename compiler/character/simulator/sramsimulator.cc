@@ -1,8 +1,10 @@
 #include "sramsimulator.hh"
 #include <tech/tech.hh>
 #include <config/config.hh>
+#include <command/voltageatmeas.hh>
 
 #include <util/util.hh>
+#include <log/log.hh>
 
 namespace xtaro::character
 {
@@ -12,10 +14,18 @@ namespace xtaro::character
     ) :
         Simulator{simulationFilename},
         _sram{sram},
+        
         _pvt{std::move(pvt)},
         _period{tech->spice["period"].asInteger()},
         // TODO slew
-        _slew{0.4}
+        _slew{0.4},
+        
+        _addrMask{util::fullBitsNumber(sram->addressWidth())},
+        _wordMask{util::fullBitsNumber(sram->wordWidth())},
+
+        _transactions{},
+        _memoryState{},
+        _readCheckers{}
     {
         // Initial base spice command
         // Include command
@@ -26,10 +36,12 @@ namespace xtaro::character
             config->outputPath.c_str(),
             config->sramName.c_str()
         ));
+        this->writeContent('\n');
 
         // Voltage & Temperature
         this->writeDCVoltage("vdd", "vdd", this->_pvt.temperature);
         this->writeTemperature(this->_pvt.temperature);
+        this->writeContent('\n');
 
         // Instantiation of the SRAM
         std::vector<std::string> nets {this->_sram->portsName()};
@@ -38,6 +50,7 @@ namespace xtaro::character
             "sram",
             nets
         );
+        this->writeContent('\n');
     
         // Write CLK
         this->writePULSEVoltage(
@@ -46,34 +59,66 @@ namespace xtaro::character
             0.0, this->_slew, this->_slew,
             this->_period / 2, this->_period
         );
+        this->writeContent('\n');
     }
 
     void SRAMSimulator::addWriteTransaction(unsigned int address, unsigned int word)
     {
-        this->checkAddress(address);
-        this->checkWord(word);
+        address = this->resetAddress(address);
+        word = this->resetWord(word);
 
+        // Add transcation
         this->_transactions.emplace_back(
             SRAMOperation::WRITE,
             this->addressBits(address),
             this->wordBits(word)
         );
+
+        // Record memory state
+        this->_memoryState[address] = this->wordBits(word);
+        this->writeComment(this->writeTransactionComment(address, word));
     }
 
     void SRAMSimulator::addReadTransaction(unsigned int address)
     {
-        this->checkAddress(address);
+        address = this->resetAddress(address);
 
+        auto iter {this->_memoryState.find(address)};
+        if (iter == this->_memoryState.end())
+        {   
+            logger->warning("Try to read an unset address 0x%x, this transaction will be ignored.");
+            return;
+        }
+
+        // Add transcation
         this->_transactions.emplace_back(
             SRAMOperation::READ,
             this->addressBits(address),
             Bits {}
         );
+
+        // Add read checker
+        const Bits& targetBits {iter->second};
+        for (std::size_t i = 0; i < this->_sram->wordWidth(); ++i)
+        {
+            bool targetBit { targetBits[i] };
+            this->_readCheckers.emplace_back(
+                new VoltageAtMeasurement{
+                    util::format("D%d", i),
+                    util::format("D%d", i),
+                    (this->_transactions.size() + 1.5) * this->_period
+                },
+                targetBit == true ? this->_pvt.voltage : 0.0
+            );
+        }
+
+        this->writeComment(this->readTransactionComment(address));
     }
 
     void SRAMSimulator::writeTransactions()
     {
         this->checkFileWritable();
+        this->writeContent('\n');
 
         double period {static_cast<double>(this->_period)};
         double vdd {this->_pvt.voltage};
@@ -121,36 +166,76 @@ namespace xtaro::character
                 for (std::vector<double>& wordBit : word)
                     wordBit.emplace_back(0.0);
             }
-
-            // TRAN
-            this->writeTrans(10, 0, period * (this->_transactions.size() + 1) );
         }
 
         // Write PWL
         this->writePWLVoltage("csb", "csb", times, csb, this->_slew);
         this->writePWLVoltage("we", "we", times, we, this->_slew);
+        this->writeContent('\n');
         
         for (int i = 0; i < this->_sram->addressWidth(); ++i)
             this->writePWLVoltage(
                 util::format("A%d", i), util::format("A%d", i),
                 times, address[i], this->_slew
             );
+        this->writeContent('\n');
 
         for (int i = 0; i < this->_sram->wordWidth(); ++i)
             this->writePWLVoltage(
                 util::format("D%d", i), util::format("D%d", i),
                 times, word[i], this->_slew
             );
+        this->writeContent('\n');
+
+        // Write .MEAS
+        for (const ReadChecker& check : this->_readCheckers)
+            this->writeMeasurement(check.first);
+        this->writeContent('\n');
+    
+        // Write .TRAN
+        this->writeTrans(10, 0, period * (this->_transactions.size() + 1) );
     }
 
-    void SRAMSimulator::checkAddress(unsigned int address) const
+    unsigned int SRAMSimulator::resetAddress(unsigned int address) const
     {
-
+        unsigned int newAddr {this->_addrMask & address};
+        if (newAddr != address)
+            logger->warning("The address 0x%x out of range(0x%x)", address, this->_addrMask);
+        return newAddr;
+    }
+    
+    unsigned int SRAMSimulator::resetWord(unsigned int word) const
+    {
+        unsigned int newWord {this->_wordMask & word};
+        if (newWord != word)
+            logger->warning("The word 0x%x out of range(0x%x)", word, this->_wordMask);
+        return newWord;
     }
 
-    void SRAMSimulator::checkWord(unsigned int word) const
+    std::string SRAMSimulator::
+    writeTransactionComment(unsigned int address, unsigned int word) const
     {
+        int cycle {static_cast<int>(this->_transactions.size())};
+        return util::format(
+            "Writing 0x%x to address 0x%x during cycle %d (%dns - %dns)",
+            word, address,
+            cycle,
+            cycle * this->_period + this->_period / 2, 
+            (cycle + 1) * this->_period + this->_period / 2
+        );
+    }
 
+    std::string SRAMSimulator::
+    readTransactionComment(unsigned int address) const
+    {
+        int cycle {static_cast<int>(this->_transactions.size())};
+        return util::format(
+            "Reading address 0x%x during cycle %d (%dns - %dns)",
+            address,
+            cycle, 
+            cycle * this->_period + this->_period / 2, 
+            (cycle + 1) * this->_period + this->_period / 2
+        );
     }
 
     Bits SRAMSimulator::addressBits(unsigned int address) const

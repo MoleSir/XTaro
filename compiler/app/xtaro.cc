@@ -3,11 +3,13 @@
 #include <factory/circuitfactory.hh>
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
-#include <simulator/sramsimulator.hh>
+#include <character/function.hh>
 
 namespace xtaro
 {
-    void init(const std::string& configfile)
+    XTaro* xTaro {XTaro::instance()};
+
+    void XTaro::init(const std::string& configfile)
     {
         try
         {
@@ -23,29 +25,15 @@ namespace xtaro
         }
     }
 
-    void createSRAM()
+    void XTaro::createSRAM()
     {
         try
         {
+            logger->info("Generate SRAM circuit.");
             circuit::SRAMArguments argument {config->addressWidth, config->wordWidth};
-            circuit::Circuit* c = 
-                circuit::factory->create(circuit::ModuleType::SRAM, &argument, config->sramName);
-            c->writeSpice(util::format("%s/%s.sp", config->outputPath.c_str(), config->sramName.c_str()));
-
-            parse::Verilog verilog {config->addressWidth, config->wordWidth};
-            verilog.writeSRAM(util::format("./temp/output/%s.v", config->sramName.c_str()));
-
-            character::SRAMSimulator simulator {
-                "./temp/output/stim.sp", 
-                dynamic_cast<circuit::SRAM*>(c), 
-                PVT{"TT", 3.3, 25}
-            };
-
-            simulator.addWriteTransaction(1, 0);
-            simulator.addWriteTransaction(2, 255);
-            simulator.addReadTransaction(1);
-
-            simulator.writeTransactions();
+            this->_sram = dynamic_cast<circuit::SRAM*>(
+                circuit::factory->create(circuit::ModuleType::SRAM, &argument, config->sramName)
+            );
         }
         catch (const std::exception& err)
         {
@@ -54,8 +42,39 @@ namespace xtaro
         }
     }
 
-    void saveFiles()
+    void XTaro::saveFiles()
     {
+        try
+        {
+            logger->info("Write spice file.");
+            this->_sram->writeSpice(
+                util::format("%s/%s.sp", config->outputPath.c_str(), config->sramName.c_str())
+            );
 
+            logger->info("Write verilog file.");
+            parse::Verilog verilog {config->addressWidth, config->wordWidth};
+            verilog.writeSRAM(
+                util::format("%s/%s.v", config->outputPath.c_str(), config->sramName.c_str())
+            );
+
+            logger->info("Begin to functional test.");
+            character::FunctionSimulator function {
+                util::format("%s/function.sp", config->outputPath.c_str()),
+                this->_sram, 
+                PVT{"TT", 3.3, 25}
+            };
+            function.randomTest();
+        }
+        catch (const std::exception& err)
+        {
+            std::cout << err.what() << std::endl;
+            std::exit(12);
+        }
+    }
+
+    XTaro* XTaro::instance()
+    {
+        static XTaro _xTaro{};
+        return &_xTaro;
     }
 }

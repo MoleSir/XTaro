@@ -8,7 +8,7 @@
 namespace xtaro::character
 {
     VoltageAtMeasurement::VoltageAtMeasurement(
-        std::string name, std::string netName, float measureTime):
+        std::string name, std::string netName, double measureTime):
         Measurement{std::move(name)},
         _netName{std::move(netName)},
         _measureTime{measureTime}

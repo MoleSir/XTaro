@@ -14,12 +14,12 @@ namespace xtaro::character
     public:
 
     public:
-        VoltageAtMeasurement(std::string name, std::string netName, float measureTime);
+        VoltageAtMeasurement(std::string name, std::string netName, double measureTime);
         virtual void writeCommand(std::ofstream& file) const override;
 
     private:
         std::string _netName;
-        float _measureTime;
+        double _measureTime;
     };
 
 }

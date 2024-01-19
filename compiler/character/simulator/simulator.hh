@@ -31,29 +31,35 @@ namespace xtaro::character
 
     public:
         /*
-            Add a '.include' to command file. 
+            Write string to spice file
+        */
+        void writeContent(const std::string& content);
+        void writeContent(char ch);
+        
+        /*
+            Write a '.include' to command file. 
             - filename: The file need to include.
         */
         void writeInclude(const std::string& filename);
 
         /*
-            Add a '.END' spice command.
+            Write a '.END' spice command.
         */
         void writeEnd();
 
         /*
-            Add spice 
+            Write spice 
         */
         void writeComment(const std::string& comment);
         
         /*
-            Add a '.TEMP' command.
+            Write a '.TEMP' command.
             - temperature: The temperature value.
         */
         void writeTemperature(double temperature);
 
         /*
-            Add a SUBCKT instance.
+            Write a SUBCKT instance.
 
             e.g, write an INV Gate, whose name is "inv0", and it connects with "in", "in_bar", "vdd" and "gnd".
             Jsut call: `writeInstance("inv", "inv0", {"in", "in_bar", "vdd", "gnd"});`.
@@ -72,7 +78,7 @@ namespace xtaro::character
         );
 
         /*
-            Add a PWL Voltage source. 
+            Write a PWL Voltage source. 
 
             e.g: `writePWLVoltage("VCLK", "clk", {0, 1, 2}, {0, 3.3, 0}), 0.1);`
             Generate spice: VVCLK clk 0 PWL (0n 0.0v 0.95n 0v 1.05n 3.3v 1.95n 3.3v 2.05n 0v)
@@ -93,7 +99,7 @@ namespace xtaro::character
         );
 
         /*
-            Add a PWL Voltage source. 
+            Write a PWL Voltage source. 
             But in this method, times and voltages write into spice directly.
         */
         void writePWLVoltage(
@@ -104,7 +110,7 @@ namespace xtaro::character
         );
 
         /*
-            Add a PULSE Voltage source.
+            Write a PULSE Voltage source.
             - initVoltage: Initial value
             - pulsedVoltage: Pulsed value
             - delayTime: Delay time
@@ -126,7 +132,7 @@ namespace xtaro::character
         );
 
         /*
-            Add a DC Voltage source.
+            Write a DC Voltage source.
 
             Method params:
             - volatgeName: The name of this voltage source.
@@ -139,7 +145,7 @@ namespace xtaro::character
              double voltage);
         
         /*
-            Add a '.TRAN' command.
+            Write a '.TRAN' command.
 
             .TRAN {stepTime}p {endTime}n {startTIme}n {stepTime}p
             
@@ -151,7 +157,7 @@ namespace xtaro::character
         void writeTrans(double stepTime, double beginTime, double endTime);
 
         /*
-            Add a capacitance instance.
+            Write a capacitance instance.
 
             C{capName} {net1Name} {net2Name} {capValue}f
 
@@ -169,7 +175,7 @@ namespace xtaro::character
         );
 
         /*
-            Add spice measurement.
+            Write spice measurement.
         */
         void writeMeasurement(Measurement* measurement);
 

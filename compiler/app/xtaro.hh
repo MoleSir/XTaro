@@ -4,7 +4,31 @@
 
 namespace xtaro
 {
-    void init(const std::string& configfile);
-    void createSRAM();
-    void saveFiles();
+    namespace circuit {
+        class SRAM;
+    }
+
+    class XTaro
+    {
+    public:
+        static XTaro* instance();
+
+        void init(const std::string& configfile);
+        void createSRAM();
+        void saveFiles();
+    
+    private:
+        XTaro() = default;
+        ~XTaro() noexcept = default;
+        XTaro(const XTaro&) = delete;
+        XTaro(XTaro&&) = delete;
+        XTaro& operator = (const XTaro&) = delete;
+        XTaro& operator = (XTaro&&) = delete;
+
+    private:
+        circuit::SRAM* _sram{nullptr};
+    };
+
+    extern XTaro* xTaro;
+
 } // namespace xtaro

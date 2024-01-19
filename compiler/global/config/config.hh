@@ -12,10 +12,10 @@ namespace xtaro
         std::int32_t wordWidth{-1};
         std::int32_t addressWidth{-1};
         
-        std::string  techPath{"./tech"};
+        std::string  techPath{"./tech/"};
         std::string  techName{"scn4m_subm"};
         
-        std::string  outputPath{"./output"};
+        std::string  outputPath{"./output/"};
         std::string  sramName{"sram"};
 
         void load(const std::string& configFile);

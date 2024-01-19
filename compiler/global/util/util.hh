@@ -20,6 +20,9 @@ namespace xtaro::util
     std::string readFile(std::ifstream& file);
 
     int power(int base, unsigned int exponent);
+    // 0b11111, 0b111
+    unsigned int fullBitsNumber(unsigned int size);
+    double deviation(double v1, double v2);
 
     int execute(const std::string& command) noexcept;
     int execute(const char* command) noexcept;

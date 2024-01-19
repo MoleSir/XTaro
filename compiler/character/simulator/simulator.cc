@@ -28,6 +28,18 @@ namespace xtaro::character
 
     Simulator::~Simulator() noexcept = default;
 
+    void Simulator::writeContent(const std::string& content)
+    {
+        this->checkFileWritable();
+        this->_simulationFile << content;
+    }
+    
+    void Simulator::writeContent(char ch)
+    {
+        this->checkFileWritable();
+        this->_simulationFile << ch;
+    }
+
     void Simulator::writeInclude(const std::string& filename)
     {
         this->checkFileWritable();
@@ -87,7 +99,7 @@ namespace xtaro::character
 
         if (times.size() != voltages.size())
             throw MessageException(
-                "Add PWL volatage",
+                "Write PWL volatage",
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
             );
 
@@ -122,7 +134,7 @@ namespace xtaro::character
 
         if (times.size() != voltages.size())
             throw MessageException(
-                "Add PWL volatage",
+                "Write PWL volatage",
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
             );
 

@@ -13,8 +13,8 @@ namespace xtaro::character
 
     DelayMeasurement::DelayMeasurement(
             std::string name,
-            std::string trigNetName, EdgeDirection trigDirection, float trigVoltage, float trigTimeDelay,
-            std::string targNetName, EdgeDirection targDirection, float targVoltage, float targTimeDelay) :
+            std::string trigNetName, EdgeDirection trigDirection, double trigVoltage, double trigTimeDelay,
+            std::string targNetName, EdgeDirection targDirection, double targVoltage, double targTimeDelay) :
 
         Measurement{std::move(name)},
 

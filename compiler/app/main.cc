@@ -1,6 +1,8 @@
 #include "xtaro.hh"
 #include <iostream>
 
+using namespace xtaro;
+
 int main(int argc, const char* argv[])
 {
     if (argc == 1)
@@ -10,9 +12,9 @@ int main(int argc, const char* argv[])
     }
     else 
     {
-        xtaro::init(argv[1]);
-        xtaro::createSRAM();
-        xtaro::saveFiles();
+        xTaro->init(argv[1]);
+        xTaro->createSRAM();
+        xTaro->saveFiles();
     }
 
     return 0;
