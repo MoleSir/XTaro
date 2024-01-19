@@ -2,6 +2,7 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <iostream>
+#include <filesystem>
 
 namespace xtaro::util
 {
@@ -19,8 +20,20 @@ namespace xtaro::util
         std::string content {};
         content.resize(size + 1);
         file.read(content.data(), size);
-        content.reserve(size);
+        content.resize(size);
         return content;
+    }
+
+    bool fileExists(const std::string& filePath) 
+    {
+        return std::filesystem::exists(filePath) && 
+               std::filesystem::is_regular_file(filePath);
+    }
+
+    bool directoryExists(const std::string& dirPath) 
+    {
+        return std::filesystem::exists(dirPath) && 
+               std::filesystem::is_directory(dirPath);
     }
 
     int power(int base, unsigned int exponent)

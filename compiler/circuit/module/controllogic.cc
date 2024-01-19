@@ -8,6 +8,7 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -25,6 +26,7 @@ namespace xtaro::circuit
         _nor3{nullptr},
         _nand2{nullptr}
     {
+        logger->debug("Create a 'Control Logic' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

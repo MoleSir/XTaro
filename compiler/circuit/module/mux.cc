@@ -8,6 +8,7 @@
 #include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <exception/msgexception.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -24,13 +25,15 @@ namespace xtaro::circuit
         _trigate{nullptr},
         _inv{nullptr}
     {
-        // TODO: Check selection size
         if (this->_selectionSize < 1 || this->_selectionSize > Mux::MAX_SELECTION_SIZE)
-            throw MessageException(
-                "Create Mux", 
-                 util::format("'%d' is not a vaild selection size", this->_selectionSize)
-            );
+        {
+            std::string errorMsg {util::format("Mux's selection size '%d' is not a vaild", this->_selectionSize)};
 
+            logger->error(errorMsg);
+            throw MessageException {"Create Mux", errorMsg};
+        }
+
+        logger->debug("Create a 'Mux' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

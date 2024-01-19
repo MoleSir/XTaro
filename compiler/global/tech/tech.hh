@@ -29,9 +29,7 @@ namespace xtaro
         void checkSpiceMessage() const;
         void checkDRCMessage() const;
         void checkTechFiles() const;
-
-        static bool fileExists(const std::string& filePath);
-        static bool directoryExists(const std::string& dirPath);
+        
     };
 
     extern Tech* tech;

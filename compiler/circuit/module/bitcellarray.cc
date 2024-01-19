@@ -5,6 +5,8 @@
 
 #include <tech/tech.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
+#include <exception/msgexception.hh>
 
 #include <cmath>
 
@@ -21,6 +23,20 @@ namespace xtaro::circuit
         _columnSize{arguments->columnSize},
         _bitcell{nullptr}
     {
+        if (this->_rowSize < 1 || this->_columnSize < 1)
+        {
+            std::string errorMsg {
+                util::format(
+                    "Bitcell Array's row size '%d' or column size '%d'< 1", 
+                    this->_rowSize, this->_columnSize
+                )
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Create Bitcell Array", errorMsg);
+        }
+
+        logger->debug("Create a 'Bitcell Array' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

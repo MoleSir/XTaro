@@ -2,6 +2,7 @@
 #include <stringpool/string.hh>
 #include <allocator/allocator.hh>
 #include <tech/tech.hh>
+#include <log/logger.hh>
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>
@@ -138,9 +139,10 @@ namespace xtaro::circuit
                             circuits.size());
     }
 
-    Circuit* CircuitFactory::createNewCircuit(ModuleType circuitType, 
-                                CircuitArguments* arguments,
-                                String circuitName) const
+    Circuit* CircuitFactory::createNewCircuit(
+             ModuleType circuitType, 
+             CircuitArguments* arguments,
+             String circuitName) const
     {
 #define ALLOCATE_MODULE(ModuleClass)\
 Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));

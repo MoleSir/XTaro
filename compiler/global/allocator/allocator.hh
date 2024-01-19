@@ -10,7 +10,7 @@ namespace xtaro
     {
     public:
         template<typename Type, typename... Args>
-        static Type* alloc(Args&&... args) noexcept
+        static Type* alloc(Args&&... args)
         {
             Type* instance = new Type{std::forward<Args>(args)...};
             return instance;

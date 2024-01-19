@@ -6,6 +6,7 @@
 #include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <exception/msgexception.hh>
+#include <log/logger.hh>
 
 #include <string>
 #include <map>
@@ -56,11 +57,17 @@ namespace xtaro::circuit
     std::string Instance::spiceCommand() const
     {
         if (this->_connectCount < this->_ports.size())
-            throw MessageException(
-                "Generate spice", 
+        {
+            std::string errorMsg {
                 util::format("The instance '%s', belongs circuit '%s'. Not all port has been connected. Connected: '%d'.", 
-                    this->_name.cstr(), this->_circuit->name().cstr(), this->_connectCount)
-            );
+                             this->_name.cstr(), 
+                             this->_circuit->name().cstr(), 
+                             this->_connectCount)
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Generate spice", errorMsg);
+        }
 
         // Xins A B C D cir
         std::stringstream ss;

@@ -6,6 +6,7 @@
 #include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <exception/msgexception.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -20,9 +21,14 @@ namespace xtaro::circuit
         _inv{nullptr}
     {
         if (this->_fanoutSize <= 1 || this->_fanoutSize > MAX_FANOUT)
-            throw MessageException(
-                "Create Sense Amplifier Array", util::format("Fanout size '%d' invalid", this->_fanoutSize)
-            );
+        {
+            std::string errorMsg {util::format("Fanout Buffer's fanout size '%d' invalid", this->_fanoutSize)};
+
+            logger->error(errorMsg);
+            throw MessageException {"Create Fanout Buffer", errorMsg};
+        }
+
+        logger->debug("Create a 'Fanout Buffer' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

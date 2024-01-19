@@ -7,6 +7,7 @@
 #include <allocator/allocator.hh>
 #include <exception/msgexception.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -18,18 +19,22 @@ namespace xtaro::circuit
     WriteDriverArray::WriteDriverArray(String name, WriteDriverArrayArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _wordWidth{arguments->wordWidth},
-        _writedriver{nullptr},
         _fanoutSize{0},
+        _writedriver{nullptr},
         _fanoutbuf{nullptr}
     {
-        if (this->_wordWidth <= 1)
-            throw MessageException(
-                "Create Write Driver Array", util::format("Word width '%d' <= 1", this->_wordWidth)
-            );
+        if (this->_wordWidth < 1)
+        {
+            std::string errorMsg {util::format("Write Driver Array's word width '%d' < 1", this->_wordWidth)};
+
+            logger->error(errorMsg);
+            throw MessageException("Create Write Driver Array", errorMsg);
+        }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;
         if (this->_wordWidth % MAX_FANOUT != 0) this->_fanoutSize += 1;
         
+        logger->debug("Create a 'Write Driver Array' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

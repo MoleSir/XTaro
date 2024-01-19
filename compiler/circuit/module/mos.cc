@@ -5,6 +5,7 @@
 
 #include <tech/tech.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -26,6 +27,8 @@ namespace xtaro::circuit
             this->_name = tech->spice["nmos"].asString();
         else
             this->_name = tech->spice["pmos"].asString();
+
+        logger->debug("Create a 'MOS' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

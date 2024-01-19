@@ -6,6 +6,8 @@
 #include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <tech/tech.hh>
+#include <log/logger.hh>
+#include <exception/msgexception.hh>
 
 namespace xtaro::circuit
 {
@@ -23,6 +25,15 @@ namespace xtaro::circuit
         _nmos{nullptr},
         _pmos{nullptr}
     {
+        if (this->_inputSize < 2)
+        {
+            std::string errorMsg {util::format("NOR gate's input size '%d' < 2", this->_inputSize)};
+
+            logger->error(errorMsg);
+            throw MessageException("Create NOR", errorMsg);
+        }
+
+        logger->debug("Create a 'NOR' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

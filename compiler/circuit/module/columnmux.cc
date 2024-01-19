@@ -5,6 +5,8 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
+#include <exception/msgexception.hh>
 
 namespace xtaro::circuit
 {
@@ -20,7 +22,15 @@ namespace xtaro::circuit
         _muxSize{arguments->muxSize},
         _mux{nullptr}
     {
-        // TODO check
+        if (this->_selectionSize < 1)
+        {
+            std::string errorMsg {util::format("Column Mux's selection size '%d' < 1", this->_selectionSize)};
+
+            logger->error(errorMsg);
+            throw MessageException("Create Column Mux", errorMsg);
+        }
+
+        logger->debug("Create a 'Column Mux' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

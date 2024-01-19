@@ -1,12 +1,14 @@
 #include "senseamp.hh"
 #include <base/circuit.hh>
 #include <tech/tech.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
     SenseAmplifier::SenseAmplifier(String name, SenseAmplifierArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/sense_amp.sp"}
     {
+        logger->debug("Create a 'Sense Amplifier' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

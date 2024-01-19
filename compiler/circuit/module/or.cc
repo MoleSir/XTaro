@@ -7,6 +7,8 @@
 #include <allocator/allocator.hh>
 #include <tech/tech.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
+#include <exception/msgexception.hh>
 
 namespace xtaro::circuit
 {
@@ -24,6 +26,15 @@ namespace xtaro::circuit
         _nor{nullptr},
         _inv{nullptr}
     {
+        if (this->_inputSize < 2)
+        {
+            std::string errorMsg {util::format("OR gate's input size '%d' < 2", this->_inputSize)};
+
+            logger->error(errorMsg);
+            throw MessageException("Create OR", errorMsg);
+        }
+
+        logger->debug("Create a 'OR' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

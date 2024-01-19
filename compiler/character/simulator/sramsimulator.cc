@@ -4,7 +4,7 @@
 #include <command/voltageatmeas.hh>
 
 #include <util/util.hh>
-#include <log/log.hh>
+#include <log/logger.hh>
 
 namespace xtaro::character
 {

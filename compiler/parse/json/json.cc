@@ -4,6 +4,8 @@
 
 #include <exception/msgexception.hh>
 #include <allocator/allocator.hh>
+#include <util/util.hh>
+#include <log/logger.hh>
 
 #include <string>
 #include <vector>
@@ -24,13 +26,10 @@ namespace xtaro::parse
     {
         // Read json file content
         std::ifstream file{filepath};
-        file.seekg(0, std::ios::end);
-        std::size_t fileSize = file.tellg();
-        file.seekg(0, std::ios::beg);
+        if (!file.is_open())
+            throw MessageException("Load json file", util::format("File '%s' does not exit.", filepath.c_str()));
 
-        std::string content(fileSize + 1, '\0');
-        content.resize(fileSize);
-        file.read(const_cast<char*>(content.data()), fileSize);
+        std::string content {util::readFile(file)};
         file.close();
 
         // Scan file

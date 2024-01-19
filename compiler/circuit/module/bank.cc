@@ -11,6 +11,8 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/util.hh>
+#include <log/logger.hh>
+#include <exception/msgexception.hh>
 
 namespace xtaro::circuit
 {
@@ -37,6 +39,19 @@ namespace xtaro::circuit
         _writedriverArray{nullptr},
         _senseampArray{nullptr}
     {
+        if (this->_addressWidth < 1 || this->_wordWidth < 1)
+        {
+            std::string errorMsg {
+                util::format(
+                    "Bank 's address width '%d' or word width '%d' < 1", 
+                    this->_addressWidth, this->_wordWidth
+                )
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Create Bank", errorMsg);
+        }
+
         if (this->_addressWidth > 4)
         {
             while (this->_rowSize > (2 * this->_columnSize))
@@ -49,6 +64,7 @@ namespace xtaro::circuit
             }
         }
 
+        logger->debug("Create a 'Bank' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

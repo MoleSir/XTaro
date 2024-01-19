@@ -1,4 +1,4 @@
-#include "log.hh"
+#include "logger.hh"
 
 #include <ctime>
 #include <cstdlib>
@@ -31,30 +31,14 @@ namespace xtaro
         return &_logger;
     }
 
-    void Logger::open(const std::string& fileName) noexcept
+    void Logger::open(const std::string& fileName)
     {
-        try
-        {
-            this->_fileOut.open(fileName);
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Open log file failed: " << e.what() << '\n';
-            exit(12);
-        }
+        this->_fileOut.open(fileName);
     }
 
-    void Logger::close() noexcept
+    void Logger::close()
     {
-        try
-        {
-            this->_fileOut.close();
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Close log file failed: " << e.what() << '\n';
-            exit(12);
-        }
+        this->_fileOut.close();
     }
 
     void Logger::log(Logger::Level level, const char* format, va_list args)
@@ -105,12 +89,22 @@ namespace xtaro
         va_end(args);
     }
 
+    void Logger::debug(const std::string& message)
+    {
+        this->debug(message.c_str());
+    }
+
     void Logger::info(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
         this->log(Logger::Level::INFO, format, args);
         va_end(args);
+    }
+
+    void Logger::info(const std::string& message)
+    {
+        this->info(message.c_str());
     }
 
     void Logger::warning(const char* format, ...)
@@ -121,13 +115,22 @@ namespace xtaro
         va_end(args);
     }
 
+    void Logger::warning(const std::string& message)
+    {
+        this->warning(message.c_str());
+    }
+
     void Logger::error(const char* format, ...)
     {
         va_list args;
         va_start(args, format);
         this->log(Logger::Level::ERROR, format, args);
         va_end(args);
-        exit(-1);
+    }
+
+    void Logger::error(const std::string& message)
+    {
+        this->error(message.c_str());
     }
 
     void Logger::fatal(const char* format, ...)
@@ -137,4 +140,10 @@ namespace xtaro
         this->log(Logger::Level::FATAL, format, args);
         va_end(args);
     }
+
+    void Logger::fatal(const std::string& message)
+    {
+        this->fatal(message.c_str());
+    }
+
 }

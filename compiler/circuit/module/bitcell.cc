@@ -1,12 +1,14 @@
 #include "bitcell.hh"
 #include <base/circuit.hh>
 #include <tech/tech.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
     Bitcell::Bitcell(String name, BitcellArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/bitcell.sp"}
     {
+        logger->debug("Create a 'Bitcell' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

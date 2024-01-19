@@ -8,7 +8,7 @@
 #include <allocator/allocator.hh>
 #include <tech/tech.hh>
 #include <util/util.hh>
-#include <log/log.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -40,10 +40,14 @@ namespace xtaro::circuit
     {
         // check input size range!!!
         if (this->_inputSize <= 1 || this->_inputSize > Decoder::MAX_INPUT_SIZE)
-            throw MessageException(
-                "Create Decoder", 
-                 util::format("'%d' is not a vaild input size", this->_inputSize)
-            );
+        {
+            std::string errorMsg {util::format("Decoder's input size '%d' is not a vaild", this->_inputSize)};
+
+            logger->error(errorMsg);
+            throw MessageException("Create Decoder", errorMsg);
+        }
+
+        logger->debug("Create a 'Decoder' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

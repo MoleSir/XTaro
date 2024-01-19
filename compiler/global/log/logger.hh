@@ -28,18 +28,27 @@ namespace xtaro
         static Logger* instance() noexcept;
     
     public:
-        void open(const std::string& fileName) noexcept;
-        void close() noexcept;
+        void open(const std::string& fileName);
+        void close();
 
         void setLevel(Logger::Level level) noexcept
         { this->_level = level; }
 
-        void log(Logger::Level level, const char* format, va_list args);
+    public:
         void debug(const char* format, ...);
+        void debug(const std::string& message);
+
         void info(const char* format, ...);
+        void info(const std::string& message);
+
         void warning(const char* format, ...);
+        void warning(const std::string& message);
+
         void error(const char* format, ...); 
+        void error(const std::string& message);
+
         void fatal(const char* format, ...);
+        void fatal(const std::string& message);
 
     private:
         Logger();
@@ -50,12 +59,15 @@ namespace xtaro
         Logger& operator = (Logger&&) = delete;
 
     private:
-        std::ofstream _fileOut;
-        Logger::Level _level;
-
-    private:
         static const char* _levelStrings[Level::COUNT];
         static char _buffer[MAX_BUFFER_SIZE];
+
+    private:
+        void log(Logger::Level level, const char* format, va_list args);
+
+    private:
+        std::ofstream _fileOut;
+        Logger::Level _level;
     };
 
     extern Logger* logger;

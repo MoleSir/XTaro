@@ -1,7 +1,7 @@
 #pragma once
 
 #include "./allocator/allocator.hh"
-#include "./log/log.hh"
+#include "./log/logger.hh"
 #include "./util/util.hh"
 #include "./exception/msgexception.hh"
 #include "./tech/tech.hh"

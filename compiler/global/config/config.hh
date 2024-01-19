@@ -24,6 +24,9 @@ namespace xtaro
         static Config* instance();
 
     private:
+        void buildOutputPath();
+
+    private:
         Config() = default;
         ~Config() noexcept = default;
         Config(const Config&) = delete;

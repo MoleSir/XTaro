@@ -14,13 +14,17 @@ namespace xtaro
         try
         {
             config->load(configfile);
+            
             logger->open(config->outputPath + "xtaro.log");
             logger->info("Init xtaro.");
+            logger->setLevel(Logger::Level::DEBUG);
+
             tech->load();
         }
         catch (const std::exception& err)
         {
             std::cout << err.what() << std::endl;
+            logger->fatal(err.what());
             std::exit(12);
         }
     }

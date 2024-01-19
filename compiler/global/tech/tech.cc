@@ -16,19 +16,19 @@ namespace xtaro
     {
         // Check spice file
         std::string spicepath = this->techpath + "spice";
-        if (!Tech::directoryExists(spicepath))
+        if (!util::directoryExists(spicepath))
             throw MessageException("Tech invaild", "No spice file folder.");
-        if (!Tech::fileExists(spicepath + "/bitcell.sp"))
+        if (!util::fileExists(spicepath + "/bitcell.sp"))
             throw MessageException("Tech invalid", "No 'bitcell.sp'");
-        if (!Tech::fileExists(spicepath + "/dff.sp"))
+        if (!util::fileExists(spicepath + "/dff.sp"))
             throw MessageException("Tech invalid", "No 'dff.sp'");
-        if (!Tech::fileExists(spicepath + "/precharge.sp"))
+        if (!util::fileExists(spicepath + "/precharge.sp"))
             throw MessageException("Tech invalid", "No 'precharge.sp'");
-        if (!Tech::fileExists(spicepath + "/sense_amp.sp"))
+        if (!util::fileExists(spicepath + "/sense_amp.sp"))
             throw MessageException("Tech invalid", "No 'sense_amp.sp'");
-        if (!Tech::fileExists(spicepath + "/tri_gate.sp"))
+        if (!util::fileExists(spicepath + "/tri_gate.sp"))
             throw MessageException("Tech invalid", "No 'tri_gate.sp'");
-        if (!Tech::fileExists(spicepath + "/write_driver.sp"))
+        if (!util::fileExists(spicepath + "/write_driver.sp"))
             throw MessageException("Tech invalid", "No 'write_driver.sp'");
     }
 
@@ -72,17 +72,6 @@ namespace xtaro
     {
         static Tech _tech{};
         return &_tech;
-    }  
-
-    bool Tech::fileExists(const std::string& filePath) 
-    {
-        return std::filesystem::exists(filePath) && 
-               std::filesystem::is_regular_file(filePath);
     }
-
-    bool Tech::directoryExists(const std::string& dirPath) 
-    {
-        return std::filesystem::exists(dirPath) && 
-               std::filesystem::is_directory(dirPath);
-    }
+    
 }

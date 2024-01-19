@@ -8,6 +8,7 @@
 #include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <exception/msgexception.hh>
+#include <log/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -24,10 +25,19 @@ namespace xtaro::circuit
         _writedriver{nullptr}
     {
         if (this->_bitcellSize < LINKED_BITCELL_SIZE)
-            throw MessageException(
-                "Create Sense Amplifier Array", util::format("Bitcell size '%d' <= 1", this->_bitcellSize)
-            );
+        {
+            std::string errorMsg {
+                util::format(
+                    "Replica Bank's bitcell size '%d' < %d", 
+                    this->_bitcellSize, LINKED_BITCELL_SIZE
+                )
+            };
 
+            logger->error(errorMsg);
+            throw MessageException {"Create Replica Bank", errorMsg};
+        }
+
+        logger->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

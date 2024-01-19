@@ -5,6 +5,8 @@
 
 #include <allocator/allocator.hh>
 #include <exception/msgexception.hh>
+#include <log/logger.hh>
+#include <util/util.hh>
 
 #include <string>
 #include <map>
@@ -30,13 +32,7 @@ namespace xtaro::circuit
             return;
 
         std::ifstream file{spicefile};
-        file.seekg(0, std::ios::end);
-        std::size_t len = static_cast<std::size_t>(file.tellg());
-        file.seekg(0, std::ios::beg);
-
-        this->_metaSpice.resize(len + 1);
-        file.read(this->_metaSpice.data(), len);
-        this->_metaSpice.resize(len);
+        this->_metaSpice.assign(util::readFile(file));
         file.close();
 
         this->_isMetaCircuit = true;
@@ -76,14 +72,18 @@ namespace xtaro::circuit
     void Circuit::connectWith(Instance* instance, const std::vector<String>& netsName)
     {
         if (instance->ports().size() != netsName.size())
-            throw MessageException(
-                "Connect Instance", 
+        {
+            std::string errorMsg {
                 util::format("In circuit '%s', when connect with instance '%s', port size '%d' != Net size '%d'", 
                              this->_name.cstr(),
                              instance->name().cstr(),
                              instance->ports().size(), 
                              netsName.size())
-            );
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Connect Instance", errorMsg);
+        }
 
         std::vector<Net*> nets = this->createNets(netsName);
         instance->connectNets(nets);

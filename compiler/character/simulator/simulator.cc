@@ -3,7 +3,7 @@
 #include <command/meas.hh>
 
 #include <util/util.hh>
-#include <log/log.hh>
+#include <log/logger.hh>
 #include <exception/msgexception.hh>
 
 #include <string>
@@ -20,10 +20,14 @@ namespace xtaro::character
     {
         this->_simulationFile.open(this->_simulationFilename);
         if (!this->_simulationFile.is_open())
-            throw MessageException(
-                "Generate spice simulate file", 
+        {
+            std::string errorMsg {
                 util::format("Open '%d' failed!", this->_simulationFilename.c_str())
-            );
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Generate spice simulate file", errorMsg);
+        }
     }
 
     Simulator::~Simulator() noexcept = default;
@@ -98,10 +102,14 @@ namespace xtaro::character
         this->checkFileWritable();
 
         if (times.size() != voltages.size())
-            throw MessageException(
-                "Write PWL volatage",
+        {
+            std::string errorMsg {
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
-            );
+            };
+            
+            logger->error(errorMsg);
+            throw MessageException("Write PWL volatage", errorMsg);
+        }
 
         // Vclk clk 0 PWL (0n 0.0v 1n 0.0v 3n 5v 9n 5V 11n 0v 19n 0v 21n 5v) 
         this->_simulationFile << util::format("V%s %s 0 PWL (", supplyName.c_str(), portName.c_str());
@@ -133,10 +141,14 @@ namespace xtaro::character
         this->checkFileWritable();
 
         if (times.size() != voltages.size())
-            throw MessageException(
-                "Write PWL volatage",
+        {
+            std::string errorMsg {
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
-            );
+            };
+
+            logger->error(errorMsg);
+            throw MessageException("Write PWL volatage", errorMsg);
+        }
 
         // Vclk clk 0 PWL (0n 0.0v 1n 0.0v 3n 5v 9n 5V 11n 0v 19n 0v 21n 5v) 
         this->_simulationFile << util::format("V%s %s 0 PWL (", supplyName.c_str(), portName.c_str());
@@ -258,10 +270,12 @@ namespace xtaro::character
     void Simulator::checkFileWritable() const
     {
         if (!this->_simulationFile.is_open())
-            throw MessageException(
-                "Write spice simulation",
-                "The simulation file already closed."
-            );
+        {
+            std::string errorMsg {"The simulation file already closed."};
+
+            logger->error(errorMsg);
+            throw MessageException("Write spice simulation", errorMsg);
+        }
     }
 
 }

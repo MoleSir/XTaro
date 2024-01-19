@@ -18,6 +18,8 @@ namespace xtaro::util
 
     std::size_t filesize(std::ifstream& file);
     std::string readFile(std::ifstream& file);
+    bool fileExists(const std::string& filePath);
+    bool directoryExists(const std::string& dirPath);
 
     int power(int base, unsigned int exponent);
     // 0b11111, 0b111

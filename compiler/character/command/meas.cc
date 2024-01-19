@@ -1,6 +1,6 @@
 #include "meas.hh"
 
-#include <log/log.hh>
+#include <log/logger.hh>
 #include <util/util.hh>
 #include <regex>
 #include <iostream>
