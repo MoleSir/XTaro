@@ -13,6 +13,7 @@ namespace xtaro::character
         std::string simulationFilename, circuit::SRAM* sram, PVT pvt
     ) :
         Simulator{simulationFilename},
+        
         _sram{sram},
         
         _pvt{std::move(pvt)},

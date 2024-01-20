@@ -1,4 +1,4 @@
-#include "xtaro.hh"
+#include "xtaro/xtaro.hh"
 #include <iostream>
 
 using namespace xtaro;
