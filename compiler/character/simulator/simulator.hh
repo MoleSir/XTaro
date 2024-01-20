@@ -178,6 +178,7 @@ namespace xtaro::character
             Write spice measurement.
         */
         void writeMeasurement(Measurement* measurement);
+        void writeMeasurement(std::unique_ptr<Measurement> measurement);
 
     public:
         /*

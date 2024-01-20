@@ -1,22 +1,29 @@
 #include "function.hh"
 
 #include <command/meas.hh>
+#include <command/voltageatmeas.hh>
 
 #include <util/util.hh>
 #include <config/config.hh>
+#include <log/logger.hh>
 
 #include <random>
 
 namespace xtaro::character
 {
-
     FunctionSimulator::FunctionSimulator(
         std::string simulationFilename, circuit::SRAM* sram, PVT pvt
     ) :
-        SRAMSimulator{std::move(simulationFilename), sram, std::move(pvt)},
+        _simulator{std::make_unique<SRAMSimulator>(
+            std::move(simulationFilename), sram, std::move(pvt)
+        )},
+        
+        _readRecords{},
+        _targetMeasResults{},
+
         _engine{std::random_device{}()},
-        _addrGenerator{0, util::fullBitsNumber(this->_sram->addressWidth())},
-        _wordGenerator{0, util::fullBitsNumber(this->_sram->wordWidth())},
+        _addrGenerator{0, util::fullBitsNumber(sram->addressWidth())},
+        _wordGenerator{0, util::fullBitsNumber(sram->wordWidth())},
         _operGenerator{0, 1}
     {
     }
@@ -24,9 +31,26 @@ namespace xtaro::character
     bool FunctionSimulator::randomTest(int periods)
     {
         this->generateRandomTransactions(periods);
-        // auto results {this->run(util::format("%sfunctoin.res", config->outputPath.c_str()))};
-        // return this->checkSimluationReuslts(results);
-        return true;
+        this->writeRandomTransactions();
+        auto results {
+            this->_simulator->run(util::format("%s/function.res", config->outputPath.c_str()))
+        };
+        return this->checkSimluationReuslts(results);
+    }
+
+    void FunctionSimulator::addWriteTransaction(unsigned int address, unsigned int word)
+    {
+        this->_simulator->addWriteTransaction(address, word);
+    }
+
+    void FunctionSimulator::addReadTransaction(unsigned int address)
+    {
+        this->_simulator->addReadTransaction(address);
+        
+        // Record
+        Bits bits {this->_simulator->memory(address)};
+        double measTime {this->_simulator->currentTime()};
+        this->_readRecords.emplace_back(std::move(bits), measTime);
     }
 
     void FunctionSimulator::
@@ -38,7 +62,7 @@ namespace xtaro::character
             unsigned int address {this->randomAddress()};
             
             if (operation == SRAMOperation::WRITE || 
-                this->_memoryState.find(address) == this->_memoryState.end() )
+                !this->_simulator->isWrittenMemory(address))
             {
                 // Read a unwirte address, turn to write
                 unsigned int word {this->randomWord()};
@@ -47,21 +71,60 @@ namespace xtaro::character
             else
                 this->addReadTransaction(address);
         }
+    }
 
-        this->writeTransactions();
+    void FunctionSimulator::writeRandomTransactions()
+    {
+        // Write transactions & .Trans
+        this->_simulator->writeTransactions();
+
+        // Write .MEAS
+        for (std::size_t i = 0; i < this->_readRecords.size(); ++i)
+        {
+            const ReadRecord& record = this->_readRecords[i];
+
+            // For each bit
+            for (std::size_t bitIdx = 0; bitIdx < record.bits.size(); ++bitIdx)
+            {
+                bool bit {record.bits[bitIdx]};
+                std::string measName {util::format("D%d_%d", bitIdx, i)};
+                double targetResult {bit ? this->_simulator->vdd() : 0.0};
+
+                this->_simulator->writeMeasurement(
+                    std::make_unique<VoltageAtMeasurement>(
+                        measName,
+                        util::format("D%d", bitIdx),
+                        record.measureTime
+                    )
+                );
+                this->_targetMeasResults.emplace(std::move(measName), targetResult);
+            }
+
+            this->_simulator->writeContent('\n');
+        }
     }
 
     bool FunctionSimulator::
     checkSimluationReuslts(const std::map<std::string, double>& results) const
     {
-        for (const ReadChecker& checker : this->_readCheckers)
+        for (const auto& kv : this->_targetMeasResults)
         {
-            const Measurement* meas {checker.first};
-            auto result {results.find(meas->name())};
-            
-            if ( util::deviation(result->second, checker.second) > FunctionSimulator::deviation )
-                return false;
+            const std::string& measName {kv.first};
+            auto iter {results.find(measName)};
+            if (iter == results.end())
+            {
+                logger->error("The .MEAS task '%s' failed!", measName.c_str());
+                return false;                
+            }
+            else
+            {
+                double tartgetResult {kv.second};
+                double realResult {iter->second};
+                if ( util::deviation(tartgetResult, realResult) > FunctionSimulator::deviation )
+                    return false;
+            }
         }
+
         return true;
     }
 

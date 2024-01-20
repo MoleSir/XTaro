@@ -26,7 +26,7 @@ namespace xtaro::character
         if (success == false)
         {
             logger->warning(util::format(
-                "Get '%s'.meas result failed, no 'name = result' found!", this->_name.c_str()).c_str());
+                "Get '%s'.meas result failed!", this->_name.c_str()).c_str());
             return false;
         }
         

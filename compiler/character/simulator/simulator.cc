@@ -54,8 +54,14 @@ namespace xtaro::character
 
     void Simulator::writeMeasurement(Measurement* measurement)
     {
-        this->_measurements.emplace_back(measurement);
         measurement->writeCommand(this->_simulationFile);
+        this->_measurements.emplace_back(measurement);
+    }
+
+    void Simulator::writeMeasurement(std::unique_ptr<Measurement> measurement)
+    {
+        measurement->writeCommand(this->_simulationFile);
+        this->_measurements.emplace_back(std::move(measurement));
     }
 
     void Simulator::writeEnd()

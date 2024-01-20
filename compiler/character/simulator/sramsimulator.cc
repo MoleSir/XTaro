@@ -25,13 +25,30 @@ namespace xtaro::character
         _wordMask{util::fullBitsNumber(sram->wordWidth())},
 
         _transactions{},
-        _memoryState{},
-        _readCheckers{}
+        _memoryState{}
+        // _readCheckers{}
     {
         // Initial base spice command
         // Include command
-        this->writeInclude(tech->spice["models"][this->_pvt.process][0].asString());
-        this->writeInclude(tech->spice["models"][this->_pvt.process][1].asString());
+        std::string nmosModelPath {
+            util::format(
+                "%s/%s/%s",
+                config->techPath.c_str(),
+                config->techName.c_str(),
+                tech->spice["models"][this->_pvt.process][0].asString().c_str()
+            )
+        };
+        std::string pmosModelPath {
+            util::format(
+                "%s/%s/%s",
+                config->techPath.c_str(),
+                config->techName.c_str(),
+                tech->spice["models"][this->_pvt.process][1].asString().c_str()
+            )
+        };
+
+        this->writeInclude(nmosModelPath);
+        this->writeInclude(pmosModelPath);
         this->writeInclude(util::format(
             "%s%s.sp",
             config->outputPath.c_str(),
@@ -63,7 +80,7 @@ namespace xtaro::character
         this->writeContent('\n');
     }
 
-    void SRAMSimulator::addWriteTransaction(unsigned int address, unsigned int word)
+    bool SRAMSimulator::addWriteTransaction(unsigned int address, unsigned int word)
     {
         address = this->resetAddress(address);
         word = this->resetWord(word);
@@ -78,9 +95,11 @@ namespace xtaro::character
         // Record memory state
         this->_memoryState[address] = this->wordBits(word);
         this->writeComment(this->writeTransactionComment(address, word));
+
+        return true;
     }
 
-    void SRAMSimulator::addReadTransaction(unsigned int address)
+    bool SRAMSimulator::addReadTransaction(unsigned int address)
     {
         address = this->resetAddress(address);
 
@@ -88,7 +107,7 @@ namespace xtaro::character
         if (iter == this->_memoryState.end())
         {   
             logger->warning("Try to read an unset address 0x%x, this transaction will be ignored.");
-            return;
+            return false;
         }
 
         // Add transcation
@@ -98,22 +117,13 @@ namespace xtaro::character
             Bits {}
         );
 
-        // Add read checker
-        const Bits& targetBits {iter->second};
-        for (std::size_t i = 0; i < this->_sram->wordWidth(); ++i)
-        {
-            bool targetBit { targetBits[i] };
-            this->_readCheckers.emplace_back(
-                new VoltageAtMeasurement{
-                    util::format("D%d", i),
-                    util::format("D%d", i),
-                    (this->_transactions.size() + 1.5) * this->_period
-                },
-                targetBit == true ? this->_pvt.voltage : 0.0
-            );
-        }
-
         this->writeComment(this->readTransactionComment(address));
+        return true;
+    }
+
+    double SRAMSimulator::currentTime() const
+    {
+        return (this->_transactions.size() + 1.5) * this->_period;
     }
 
     void SRAMSimulator::writeTransactions()
@@ -187,14 +197,20 @@ namespace xtaro::character
                 times, word[i], this->_slew
             );
         this->writeContent('\n');
-
-        // Write .MEAS
-        for (const ReadChecker& check : this->_readCheckers)
-            this->writeMeasurement(check.first);
-        this->writeContent('\n');
     
         // Write .TRAN
         this->writeTrans(10, 0, period * (this->_transactions.size() + 1) );
+        this->writeContent('\n');
+    }
+
+    const Bits& SRAMSimulator::memory(unsigned int address) const
+    {
+        return this->_memoryState.find(address)->second;
+    }
+
+    bool SRAMSimulator::isWrittenMemory(unsigned int address) const
+    {
+        return this->_memoryState.find(address) != this->_memoryState.end();
     }
 
     unsigned int SRAMSimulator::resetAddress(unsigned int address) const
