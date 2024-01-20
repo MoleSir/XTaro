@@ -156,6 +156,8 @@ namespace xtaro::circuit
 
     void Circuit::doWriteSpice(std::ofstream& file, std::set<Circuit*>& visited)
     {
+        visited.emplace(this);
+        
         if (this->_isMetaCircuit == false)
         {
             // .SUBCKT and2 A B Z vdd gnd  
@@ -192,9 +194,7 @@ namespace xtaro::circuit
             }
 
             // Write .END
-            file << ".ENDS " << this->_name.cstr() << '\n'; 
-
-            visited.emplace(this);
+            file << ".ENDS " << this->_name.cstr() << '\n';
         }
         else
         {

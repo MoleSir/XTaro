@@ -6,7 +6,7 @@
 namespace xtaro::circuit
 {
     DFF::DFF(String name, DFFArguments* arguments) :
-        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/dff.sp"}
+        Circuit{name, DeviceType::SUBCKT, tech->dffSpicePath}
     {
         logger->debug("Create a 'DFF' circuit: '%s'", this->_name.cstr());
         this->createNetlist();

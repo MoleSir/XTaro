@@ -26,34 +26,20 @@ namespace xtaro::character
 
         _transactions{},
         _memoryState{}
-        // _readCheckers{}
     {
         // Initial base spice command
         // Include command
         std::string nmosModelPath {
-            util::format(
-                "%s/%s/%s",
-                config->techPath.c_str(),
-                config->techName.c_str(),
-                tech->spice["models"][this->_pvt.process][0].asString().c_str()
-            )
+            config->techPath + tech->spice["models"][this->_pvt.process][0].asString()
         };
+
         std::string pmosModelPath {
-            util::format(
-                "%s/%s/%s",
-                config->techPath.c_str(),
-                config->techName.c_str(),
-                tech->spice["models"][this->_pvt.process][1].asString().c_str()
-            )
+            config->techPath + tech->spice["models"][this->_pvt.process][0].asString()
         };
 
         this->writeInclude(nmosModelPath);
         this->writeInclude(pmosModelPath);
-        this->writeInclude(util::format(
-            "%s%s.sp",
-            config->outputPath.c_str(),
-            config->sramName.c_str()
-        ));
+        this->writeInclude(config->spicePath);
         this->writeContent('\n');
 
         // Voltage & Temperature

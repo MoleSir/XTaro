@@ -37,15 +37,23 @@ namespace xtaro
 
         std::string techPathName{"tech_path"};
         if (json.has(techPathName))
+        {
             this->techPath.assign( std::move(json[techPathName].asString()) );
-        
-        std::string techNameName{"tech_name"};
-        if (json.has(techNameName))
-            this->techName.assign( std::move(json[techNameName].asString()) );
+            this->techPath.assign(util::absolutePath(this->techPath));
+            if (this->techPath.back() != '/')
+                this->techPath.push_back('/');
+        }
 
         std::string outputPathName{"output_path"};
         if (json.has(outputPathName))
+        {
             this->outputPath.assign( std::move(json[outputPathName].asString()) );
+            this->outputPath = util::absolutePath(this->outputPath);
+            if (this->outputPath.back() != '/')
+                this->outputPath.push_back('/');
+        }
+
+        this->buildOutputFilesName();
         this->buildOutputPath();
     }
 
@@ -59,6 +67,19 @@ namespace xtaro
                     util::format("Create output path '%s'", this->outputPath.c_str())
                 );
         }
+
+        std::filesystem::create_directories(this->sramFolderPath);
+        std::filesystem::create_directories(this->simFolderPath);
+    }
+
+    void Config::buildOutputFilesName()
+    {
+        this->sramFolderPath = this->outputPath + "sram/";
+        this->simFolderPath = this->outputPath + "simulation/";
+
+        this->spicePath = util::format("%s%s.sp", this->sramFolderPath.c_str(), this->sramName.c_str());
+        this->gdsiiPath = util::format("%s%s.gds", this->sramFolderPath.c_str(), this->sramName.c_str());
+        this->verilogPath = util::format("%s%s.v", this->sramFolderPath.c_str(), this->sramName.c_str());
     }
 
     Config* Config::instance()

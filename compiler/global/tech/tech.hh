@@ -9,10 +9,19 @@ namespace xtaro
     class Tech 
     {
     public:
-        std::string techpath{};
         parse::Json spice{};
         parse::Json drc{};
 
+        // Leafcell
+        std::string bitcellSpicePath{};
+        std::string dffSpicePath{};
+        std::string prechargeSpicePath{};
+        std::string senseampSpicePath{};
+        std::string trigateSpicePath{};
+        std::string writedriverSpicePath{};
+
+
+    public:
         void load();
 
     public:

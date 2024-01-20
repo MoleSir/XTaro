@@ -51,22 +51,14 @@ namespace xtaro
         try
         {
             logger->info("Write spice file.");
-            this->_sram->writeSpice(
-                util::format("%s/%s.sp", config->outputPath.c_str(), config->sramName.c_str())
-            );
+            this->_sram->writeSpice(config->spicePath);
 
             logger->info("Write verilog file.");
             parse::Verilog verilog {config->addressWidth, config->wordWidth};
-            verilog.writeSRAM(
-                util::format("%s/%s.v", config->outputPath.c_str(), config->sramName.c_str())
-            );
+            verilog.writeSRAM(config->verilogPath);
 
             logger->info("Begin to functional test.");
-            character::FunctionSimulator function {
-                util::format("%s/function.sp", config->outputPath.c_str()),
-                this->_sram, 
-                PVT{"TT", 3.3, 25}
-            };
+            character::FunctionSimulator function {this->_sram, PVT{"TT", 3.3, 25}};
             function.randomTest();
         }
         catch (const std::exception& err)

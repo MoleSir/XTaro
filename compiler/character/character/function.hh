@@ -23,11 +23,7 @@ namespace xtaro::character
         };
 
     public:
-        FunctionSimulator(
-            std::string simulationFilename,
-            circuit::SRAM* sram, 
-            PVT pvt
-        );
+        FunctionSimulator(circuit::SRAM* sram, PVT pvt);
     
     public:
         bool randomTest(int periods = 20);

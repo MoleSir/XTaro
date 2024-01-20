@@ -6,7 +6,7 @@
 namespace xtaro::circuit
 {
     SenseAmplifier::SenseAmplifier(String name, SenseAmplifierArguments* arguments) :
-        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/sense_amp.sp"}
+        Circuit{name, DeviceType::SUBCKT, tech->senseampSpicePath}
     {
         logger->debug("Create a 'Sense Amplifier' circuit: '%s'", this->_name.cstr());
         this->createNetlist();

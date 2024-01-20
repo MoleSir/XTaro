@@ -6,7 +6,7 @@
 namespace xtaro::circuit
 {
     WriteDriver::WriteDriver(String name, WriteDriverArguments* arguments) :
-        Circuit{name, DeviceType::SUBCKT, tech->techpath + "/spice/write_driver.sp"}
+        Circuit{name, DeviceType::SUBCKT, tech->writedriverSpicePath}
     {
         logger->debug("Create a 'Write Driver' circuit: '%s'", this->_name.cstr());
         this->createNetlist();

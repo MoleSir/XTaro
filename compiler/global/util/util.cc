@@ -36,6 +36,11 @@ namespace xtaro::util
                std::filesystem::is_directory(dirPath);
     }
 
+    std::string absolutePath(const std::string& relatePath)
+    {
+        return std::filesystem::absolute(relatePath);
+    }
+
     int power(int base, unsigned int exponent)
     {
         int value = 1;

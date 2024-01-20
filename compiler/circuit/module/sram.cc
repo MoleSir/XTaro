@@ -92,14 +92,16 @@ namespace xtaro::circuit
         this->addInstance("we_dff", this->_dff, {"we", "we_r", "clk", "vdd", "gnd"});
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addInstance("csb_dff", this->_dff, {
-                util::format("A%d", i), addressRegPorts[i], "clk", "vdd", "gnd"
-            });
+            this->addInstance(
+                util::format("A%d_dff", i), this->_dff, 
+                {util::format("A%d", i), addressRegPorts[i], "clk", "vdd", "gnd"}
+            );
     
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addInstance("csb_dff", this->_dff, {
-                util::format("D%d", i), wordRegPorts[i], "clk", "vdd", "gnd"
-            });
+            this->addInstance(
+                util::format("D%d", i), this->_dff, 
+                {util::format("D%d", i), wordRegPorts[i], "clk", "vdd", "gnd"}
+            );
 
         // Bank
         Instance* bank {this->addInstance("bank", this->_bank)};

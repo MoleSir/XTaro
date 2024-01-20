@@ -20,6 +20,7 @@ namespace xtaro::util
     std::string readFile(std::ifstream& file);
     bool fileExists(const std::string& filePath);
     bool directoryExists(const std::string& dirPath);
+    std::string absolutePath(const std::string& relatePath);
 
     int power(int base, unsigned int exponent);
     // 0b11111, 0b111
