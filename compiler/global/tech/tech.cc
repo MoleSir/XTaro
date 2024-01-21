@@ -11,7 +11,27 @@
 
 namespace xtaro
 {
+
+    static void checkTechFilesComplete();
+    static void assignFilesPath();
+    static void loadTechMessage();
+    static void checkTechMessage();
+
     Tech* tech{Tech::instance()};
+
+    void Tech::load()
+    {
+        // Four steps:
+        checkTechFilesComplete();
+
+        assignFilesPath();
+
+        loadTechMessage();
+        
+        checkTechMessage();
+    }
+
+    // ============================ Check Tech Files Complete =============================== //
 
 #define CHECK_Directory(directory)\
 if (!util::fileExists(spicepath + file))\
@@ -27,75 +47,96 @@ if (!util::fileExists(file))\
     throw MessageException("Tech", "'" file "' not be given.");\
 }
 
-    void Tech::checkTechFiles() const
-    {
-        // Check spice file
-        std::string spicepath = config->techPath + "spice/";
-
-        Tech::checkDirectoryExits(spicepath);
-        Tech::checkFileExits(spicepath + "bitcell.sp");
-        Tech::checkFileExits(spicepath + "dff.sp");
-        Tech::checkFileExits(spicepath + "precharge.sp");
-        Tech::checkFileExits(spicepath + "sense_amp.sp");
-        Tech::checkFileExits(spicepath + "tri_gate.sp");
-        Tech::checkFileExits(spicepath + "write_driver.sp");
-    }
-
-    void Tech::load()
-    {
-        // Check tech complete
-        this->checkTechFiles();
-
-        this->bitcellSpicePath = config->techPath + "spice/bitcell.sp";
-        this->dffSpicePath = config->techPath + "spice/dff.sp";
-        this->prechargeSpicePath = config->techPath + "spice/precharge.sp";
-        this->senseampSpicePath = config->techPath + "spice/sense_amp.sp";
-        this->trigateSpicePath = config->techPath + "spice/tri_gate.sp";
-        this->writedriverSpicePath = config->techPath + "spice/write_driver.sp";
-
-        parse::Json json{ parse::Json::loadFromFile(config->techPath + "tech.json") };
-
-        // Spice tech
-        this->spice = json.get("spice");
-        if (this->spice.invalid())
-            throw MessageException("Load tech", "No spice tech message.");
-
-        this->drc = json.get("drc");
-        if (this->drc.invalid())
-            throw MessageException("Load tech", "No drc tech message.");
-
-        this->checkSpiceMessage();
-        this->checkDRCMessage(); 
-    }
-    
-    void Tech::checkSpiceMessage() const
-    {
-        if (!this->spice.has("nmos")) throw MessageException("Load spice tech", "No 'nmos'.");
-        if (!this->spice.has("pmos")) throw MessageException("Load spice tech", "No 'pmos'.");
-    }
-
-    void Tech::checkDRCMessage() const
-    {
-        if (!this->drc.has("minwidth_poly")) throw MessageException("Load drc tech", "No 'minwidth_poly'.");
-    }
-
-    void Tech::checkDirectoryExits(const std::string& directory)
-    {
-        if (!util::directoryExists(directory))
-            Tech::noExitsError(directory);
-    }
-
-    void Tech::checkFileExits(const std::string& file)
-    {
-        if (!util::fileExists(file))
-            Tech::noExitsError(file);
-    }
-
-    void Tech::noExitsError(const std::string& path)
+    static void noExitsError(const std::string& path)
     {
         logger->error(util::format("'%s' not be given in tech lib.", path.c_str()));
         throw MessageException("Load tech", util::format("'%s' not be given.", path.c_str()));
     }
+
+    static void checkDirectoryExits(const std::string& directory)
+    {
+        if (!util::directoryExists(directory))
+            noExitsError(directory);
+    }
+
+    static void checkFileExits(const std::string& file)
+    {
+        if (!util::fileExists(file))
+            noExitsError(file);
+    }
+
+    static void checkTechFilesComplete()
+    {
+        // Check spice file
+        std::string spicepath = config->techPath + "spice/";
+
+        checkDirectoryExits(spicepath);
+        checkFileExits(spicepath + "bitcell.sp");
+        checkFileExits(spicepath + "dff.sp");
+        checkFileExits(spicepath + "precharge.sp");
+        checkFileExits(spicepath + "sense_amp.sp");
+        checkFileExits(spicepath + "tri_gate.sp");
+        checkFileExits(spicepath + "write_driver.sp");
+    }
+
+    // ============================ Assign Files Path =============================== //
+
+    static void assignSpicefilePath()
+    {
+        tech->bitcellSpicePath = config->techPath + "spice/bitcell.sp";
+        tech->dffSpicePath = config->techPath + "spice/dff.sp";
+        tech->prechargeSpicePath = config->techPath + "spice/precharge.sp";
+        tech->senseampSpicePath = config->techPath + "spice/sense_amp.sp";
+        tech->trigateSpicePath = config->techPath + "spice/tri_gate.sp";
+        tech->writedriverSpicePath = config->techPath + "spice/write_driver.sp";
+    }
+
+    static void assignGDSIIfilePath()
+    {
+    }
+
+    static void assignFilesPath()
+    {
+        assignSpicefilePath();
+        assignGDSIIfilePath();
+    }
+
+    // ============================ Load Tech Message =============================== //
+
+    static void loadTechMessage()
+    {
+        parse::Json json{ parse::Json::loadFromFile(config->techPath + "tech.json") };
+
+        // Spice tech
+        tech->spice = json.get("spice");
+        if (tech->spice.invalid())
+            throw MessageException("Load tech", "No spice tech message.");
+
+        tech->drc = json.get("drc");
+        if (tech->drc.invalid())
+            throw MessageException("Load tech", "No drc tech message.");
+    }
+
+    // ============================ Check Tech Message =============================== //
+
+    static void checkSpiceMessage()
+    {
+        if (!tech->spice.has("nmos")) throw MessageException("Load spice tech", "No 'nmos'.");
+        if (!tech->spice.has("pmos")) throw MessageException("Load spice tech", "No 'pmos'.");
+    }
+
+    static void checkDRCMessage()
+    {
+        if (!tech->drc.has("minwidth_poly")) throw MessageException("Load drc tech", "No 'minwidth_poly'.");
+    }
+
+    static void checkTechMessage()
+    {
+        checkSpiceMessage();
+        checkDRCMessage();
+    }
+
+    // ============================ Tech::instance =============================== //
 
     Tech* Tech::instance()
     {

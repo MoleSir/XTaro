@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <stdexcept>
+#include <vector>
 
 namespace xtaro
 {
@@ -9,12 +9,19 @@ namespace xtaro
     class Config
     {
     public:
+    ////////////////////////////////////////////////////////
+    
         int         wordWidth{-1};
         int         addressWidth{-1};
         
         std::string techPath{"./tech/scn4m_subm"};
         std::string outputPath{"./output/"};
         std::string sramName{"sram"};
+
+        // PVT
+        std::vector<std::string> processCorners{};
+        std::vector<double>      supplyVoltages{};
+        std::vector<double>      temperatures{};
 
         // Folder path
         std::string sramFolderPath{};
@@ -25,15 +32,10 @@ namespace xtaro
         std::string gdsiiPath{};
         std::string verilogPath{};
 
+    /////////////////////////////////////////////////////////
     public:
         void load(const std::string& configFile);
-
-    public:
         static Config* instance();
-
-    private:
-        void buildOutputPath();
-        void buildOutputFilesName();
 
     private:
         Config() = default;
