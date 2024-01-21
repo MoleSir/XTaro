@@ -182,7 +182,7 @@ namespace xtaro::character
         this->_simulationFile << util::format(
             "V%s %s 0 PULSE(%f %f %fn %fn %fn %fn %fn)\n",
             volatgeName.c_str(), netName.c_str(),
-            initVoltage, pulseWidth, 
+            initVoltage, pulsedVoltage, 
             delayTime,
             riseTime, fallTime,
             pulseWidth, period

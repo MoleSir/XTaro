@@ -38,11 +38,10 @@ namespace xtaro::character
     {
         this->generateRandomTransactions(periods);
         this->writeRandomTransactions();
-        // auto results {
-        //     this->_simulator->run(util::format("%s/function.res", option->outputPath.c_str()))
-        // };
-        // return this->checkSimluationReuslts(results);
-        return true;
+        auto results {
+            this->_simulator->run(util::format("%s/function.res", option->outputPath.c_str()))
+        };
+        return this->checkSimluationReuslts(results);
     }
 
     void FunctionSimulator::addWriteTransaction(unsigned int address, unsigned int word)

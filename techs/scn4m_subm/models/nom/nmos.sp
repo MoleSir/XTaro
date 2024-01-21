@@ -5,7 +5,7 @@
 *       models from MOSIS or SCN4ME
 *********************************************
 
-.MODEL n NMOS (     LEVEL   = 49
+.MODEL n NMOS      LEVEL   = 49
 +VERSION = 3.1            TNOM    = 27             TOX     = 7.6E-9
 +XJ      = 1.5E-7         NCH     = 1.7E17         VTH0    = 0.4964448
 +K1      = 0.5307769      K2      = 0.0199705      K3      = 0.2963637
@@ -36,5 +36,5 @@
 +CGBO    = 0              CJ      = 9.276962E-4    PB      = 0.8157962
 +MJ      = 0.3557696      CJSW    = 3.181055E-10   PBSW    = 0.6869149
 +MJSW    = 0.1            PVTH0   = -0.0252481     PRDSW   = -96.4502805
-+PK2     = -4.805372E-3   WKETA   = -7.643187E-4   LKETA   = -0.0129496      )
++PK2     = -4.805372E-3   WKETA   = -7.643187E-4   LKETA   = -0.0129496      
 

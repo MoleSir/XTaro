@@ -1,74 +1,70 @@
 #include "xtaro.hh"
 
-#include <config/option.hh>
-#include <config/tech.hh>
-#include <debug/logger.hh>
-
-#include <factory/circuitfactory.hh>
-#include <module/sram.hh>
-#include <verilog/verilog.hh>
-#include <character/function.hh>
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
 
 namespace xtaro
 {
     XTaro* xTaro {XTaro::instance()};
 
-    void XTaro::init(const std::string& optionFile)
-    {
-        try
-        {
-            option->load(optionFile);
-            
-            logger->open(option->outputPath + "xtaro.log");
-            logger->info("Init xtaro.");
-            logger->setLevel(Logger::Level::DEBUG);
+    std::map<std::string, RunMode> XTaro::argvMap {
+        {"-h", RunMode::HELP},
+        {"--help", RunMode::HELP},
+        {"-v", RunMode::VERION},
+        {"--version", RunMode::VERION},
+        {"-i", RunMode::INTERPRETER},
+        {"--interactive", RunMode::INTERPRETER},
+        {"-l", RunMode::SCRIPT},
+        {"--load", RunMode::SCRIPT},
+    };
 
-            tech->load();
-        }
-        catch (const std::exception& err)
+    std::vector<std::string> 
+    XTaro::parseArgv(int argc, const char* argv[])
+    {
+        if (argc == 1)
         {
-            std::cout << err.what() << std::endl;
-            logger->fatal(err.what());
-            std::exit(12);
+            this->_runMode = RunMode::INTERPRETER;
+            return {};
         }
+
+        std::vector<std::string> arguments{};
+        for (int i = 1; i < argc; ++i)
+            arguments.emplace_back(argv[i]);
+
+        // First argument indicates mode
+        auto iter {XTaro::argvMap.find(arguments[0])};
+        if (iter == XTaro::argvMap.end())
+        {
+            if (arguments[0].front() == '-')
+                std::cout << '"' << arguments[0] << '"' 
+                          << " is not a supported option." << std::endl;
+                          
+            else 
+                std::cout << "First argument should be an option." << std::endl;
+            std::cout << "You can use '-h' or '--help' to the see how to run this tool." << std::endl;
+            std::exit(10);
+        }
+
+        this->_runMode = iter->second;
+        if (this->_runMode == RunMode::SCRIPT)
+            return {arguments[1]};
+        return {};
     }
 
-    void XTaro::createSRAM()
+    void XTaro::run(const std::vector<std::string>& arguments)
     {
-        try
+        switch (this->_runMode)
         {
-            logger->info("Generate SRAM circuit.");
-            circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
-            this->_sram = dynamic_cast<circuit::SRAM*>(
-                circuit::factory->create(circuit::ModuleType::SRAM, &argument, option->sramName)
-            );
-        }
-        catch (const std::exception& err)
-        {
-            std::cout << err.what() << std::endl;
-            std::exit(12);
-        }
-    }
-
-    void XTaro::saveFiles()
-    {
-        try
-        {
-            logger->info("Write spice file.");
-            this->_sram->writeSpice(option->spicePath);
-
-            logger->info("Write verilog file.");
-            parse::Verilog verilog {option->addressWidth, option->wordWidth};
-            verilog.writeSRAM(option->verilogPath);
-
-            logger->info("Begin to functional test.");
-            character::FunctionSimulator function {this->_sram, PVT{"TT", 3.3, 25}};
-            function.randomTest();
-        }
-        catch (const std::exception& err)
-        {
-            std::cout << err.what() << std::endl;
-            std::exit(12);
+        case RunMode::HELP: 
+            return this->runHelpMode(arguments);
+        case RunMode::VERION:
+            return this->runVersionMode(arguments);
+        case RunMode::INTERPRETER:
+            return this->runInterpreterMode(arguments);
+        case RunMode::SCRIPT:
+            return this->runScriptMode(arguments);
         }
     }
 

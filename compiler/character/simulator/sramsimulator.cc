@@ -35,9 +35,10 @@ namespace xtaro::character
         };
 
         std::string pmosModelPath {
-            option->techPath + tech->spice["models"][this->_pvt.process][0].asString()
+            option->techPath + tech->spice["models"][this->_pvt.process][1].asString()
         };
 
+        this->writeContent('\n');
         this->writeInclude(nmosModelPath);
         this->writeInclude(pmosModelPath);
         this->writeInclude(option->spicePath);
