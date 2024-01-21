@@ -68,9 +68,18 @@
 
 
 
-## Report8
+## Report 8
 
 - 软件[框架](./Framework.md)
 - 电路模块[类图](./framework/circuit/电路类图.drawio) 
 - 若干模块
 
+
+
+## Report 9
+
+- 生成 SRAM 网标（待调试）
+- 生成 Verilog
+- Function 功能验证
+- MBIST ？
+- 获取 SPICE 仿真结果 ？

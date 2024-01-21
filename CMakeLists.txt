@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(XTaro)
+project(XTaroProject)
 
 set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/out/lib)
 set(EXEC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/out/bin)

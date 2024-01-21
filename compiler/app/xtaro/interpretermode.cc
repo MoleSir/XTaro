@@ -21,6 +21,8 @@ namespace xtaro
             std::getline(std::cin, command);
 
             // Parse command
+            if (command == "exit")
+                break;
 
             std::cout << command << std::endl;   
         }

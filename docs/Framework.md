@@ -1,12 +1,18 @@
 # Framework
 
-## app
+## [app](./framework/app.md)
 
-存放 main 函数的模块
+### xtaro
+
+利用其他各模块，解析参数，运行程序。
+
+### main.cc
+
+程序入口。
 
 
 
-## global
+## [global](./framework/global.md)
 
 ### allocator
 
@@ -14,27 +20,29 @@
 
 ### config
 
-存放配置 Memory Compiler 的配置信息
+- Option：解析用户给定是选项文件；
+- Tech：解析指定工艺库信息；
 
 ### exception
 
 程序中会使用到的基本异常，继承自 `std::exception`。程序中可以直接使用 `std::exception` 类接受所有的异常类型。
 
-### log
+### stringpool
 
-日志模块
+由于 spice 网标中经常出现重复的端口或网线名称。实现 StringPool 类保存 std::string，当需要获得一个字符串时，向 StringPool 申请，如果已经存在，返回已经存在的 std::string 的 c 风格指针（使用一个简单的 String 类经过包装）。
 
-### tech
+### debug
 
-工艺库模块，将从 config 中指定的文件夹中导入工艺库信息到程序中。
+- Logger：日志；
+- Console：命令行输出；
 
 ### util
 
-存在常用的一些工具函数。例如字符串格式化等。
+存在常用的一些工具函数。例如字符串格式化、文件相关操作等。
 
 
 
-## circuit
+## [circuit](./framework/circuit.md)
 
 ### base
 
@@ -50,27 +58,26 @@
 
 
 
-## parse
+## [parse](./framework/parse.md)
 
 各种文件的解析模块：gdsii、json、lib 等；
 
 
 
-## character
+## [character](./framework/character.md)
+
+### command
+
+SPICE 的 .meas 命令的表示，方便产生 .meas 测量与获取结果。
 
 ### simulator
 
-spice 的 .meas 命令的表示、产生 spice 激励与测量文件
+- Simulator：产生 spice 激励与测量命令；
+- SRAMSimulator：产生针对 SRAM 的 spice  激励与测量命令；
 
-### delay
+### character
 
-利用 simulate 模块测量电路的 delay 信息
-
-### setuphold
-
-利用 simulate 模块测量电路的 setup 与 hold 信息
-
-### function
-
-利用 simulate 模块堆电路的功能进行验证
+- FunctionSimulator：使用 SRAMSimulator 对 SRAM 的功能进行验证；
+- DelaySimulator：使用 SRAMSimulator 测量 SRAM 的 delay 信息；
+- SetupHoldSimulator：使用 SRAMSimulator 测量 SRAM 的 setup 与 hold 信息；
 

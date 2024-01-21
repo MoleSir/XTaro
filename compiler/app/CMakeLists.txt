@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(xtaro-main)
+project(xtaro)
 
 set(EXECUTABLE_OUTPUT_PATH ${EXEC_PATH})
 
@@ -14,5 +14,5 @@ file(GLOB INTERPRETER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/interpreter/*.cc)
 file(GLOB XTARO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/xtaro/*.cc)
 set(SRC ${INTERPRETER_SRC} ${XTARO_SRC} main.cc)
 
-add_executable(xtaro-main ${SRC})
-target_link_libraries(xtaro-main global character parse circuit)
+add_executable(xtaro ${SRC})
+target_link_libraries(xtaro global character parse circuit)
