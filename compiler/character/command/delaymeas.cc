@@ -1,5 +1,5 @@
 #include "delaymeas.hh"
-#include "global.hh"
+#include <util/format.hh>
 
 namespace xtaro::character
 {

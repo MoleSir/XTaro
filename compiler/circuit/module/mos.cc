@@ -4,8 +4,8 @@
 // #include <factory/circuitfactory.hh>
 
 #include <tech/tech.hh>
-#include <util/util.hh>
-#include <log/logger.hh>
+#include <util/format.hh>
+#include <debug/logger.hh>
 
 namespace xtaro::circuit
 {

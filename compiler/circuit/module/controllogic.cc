@@ -7,8 +7,7 @@
 
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
-#include <util/util.hh>
-#include <log/logger.hh>
+#include <debug/logger.hh>
 
 namespace xtaro::circuit
 {

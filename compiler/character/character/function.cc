@@ -5,7 +5,7 @@
 
 #include <util/util.hh>
 #include <config/config.hh>
-#include <log/logger.hh>
+#include <debug/logger.hh>
 
 #include <random>
 

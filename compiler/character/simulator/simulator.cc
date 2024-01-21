@@ -2,8 +2,8 @@
 
 #include <command/meas.hh>
 
-#include <util/util.hh>
-#include <log/logger.hh>
+#include <util/format.hh>
+#include <debug/logger.hh>
 #include <exception/msgexception.hh>
 
 #include <string>

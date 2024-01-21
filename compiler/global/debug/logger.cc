@@ -9,8 +9,7 @@
 #include <iostream>
 #include <cstdarg>
 
-#include "../allocator/allocator.hh"
-#include "../util/util.hh"
+#include <allocator/allocator.hh>
 
 namespace xtaro
 {

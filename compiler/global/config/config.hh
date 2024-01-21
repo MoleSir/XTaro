@@ -25,7 +25,6 @@ namespace xtaro
         std::string gdsiiPath{};
         std::string verilogPath{};
 
-
     public:
         void load(const std::string& configFile);
 

@@ -1,7 +1,7 @@
 #include "writedriver.hh"
 #include <base/circuit.hh>
 #include <tech/tech.hh>
-#include <log/logger.hh>
+#include <debug/logger.hh>
 
 namespace xtaro::circuit
 {

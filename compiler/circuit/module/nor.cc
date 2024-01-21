@@ -4,9 +4,9 @@
 #include <module/mos.hh>
 
 #include <allocator/allocator.hh>
-#include <util/util.hh>
+#include <util/format.hh>
 #include <tech/tech.hh>
-#include <log/logger.hh>
+#include <debug/logger.hh>
 #include <exception/msgexception.hh>
 
 namespace xtaro::circuit

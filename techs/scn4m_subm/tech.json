@@ -3,9 +3,9 @@
         "nmos" : "n",
         "pmos" : "p",
         "models" : {
-            "TT" : ["/models/nom/nmos.sp", "/models/nom/pmos.sp"],
-            "FF" : ["/models/ff/nmos.sp", "/models/ff/pmos.sp"],
-            "SS" : ["/models/ss/nmos.sp", "/models/ss/pmos.sp"]
+            "TT" : ["models/nom/nmos.sp", "models/nom/pmos.sp"],
+            "FF" : ["models/ff/nmos.sp", "models/ff/pmos.sp"],
+            "SS" : ["models/ss/nmos.sp", "models/ss/pmos.sp"]
         },
         "period" : 10,
         "supply_voltages" : [4.5, 5.0, 5.5],

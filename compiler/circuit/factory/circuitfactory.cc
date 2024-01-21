@@ -2,7 +2,7 @@
 #include <stringpool/string.hh>
 #include <allocator/allocator.hh>
 #include <tech/tech.hh>
-#include <log/logger.hh>
+#include <debug/logger.hh>
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>
@@ -31,7 +31,7 @@
 #include <module/controllogic.hh>
 #include <module/sram.hh>
 
-#include <util/util.hh>
+#include <util/format.hh>
 
 namespace xtaro::circuit
 {

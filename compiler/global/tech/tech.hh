@@ -20,12 +20,16 @@ namespace xtaro
         std::string trigateSpicePath{};
         std::string writedriverSpicePath{};
 
-
     public:
         void load();
 
     public:
         static Tech* instance();
+
+    private:
+        static void checkDirectoryExits(const std::string& directory);
+        static void checkFileExits(const std::string& file);
+        static void noExitsError(const std::string& path);
 
     private:
         Tech() = default;

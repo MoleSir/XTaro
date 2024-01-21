@@ -3,8 +3,9 @@
 #include <config/config.hh>
 #include <command/voltageatmeas.hh>
 
-#include <util/util.hh>
-#include <log/logger.hh>
+#include <util/format.hh>
+#include <util/math.hh>
+#include <debug/logger.hh>
 
 namespace xtaro::character
 {

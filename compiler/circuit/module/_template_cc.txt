@@ -2,7 +2,7 @@
 
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
-#include <util/util.hh>
+#include <util/format.hh>
 
 namespace xtaro::circuit
 {

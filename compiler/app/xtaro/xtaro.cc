@@ -1,5 +1,9 @@
 #include "xtaro.hh"
-#include <global.hh>
+
+#include <config/config.hh>
+#include <tech/tech.hh>
+#include <debug/logger.hh>
+
 #include <factory/circuitfactory.hh>
 #include <module/sram.hh>
 #include <verilog/verilog.hh>

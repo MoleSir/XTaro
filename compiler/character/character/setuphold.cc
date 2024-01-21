@@ -2,7 +2,7 @@
 // #include <simulator/simulator.hh>
 // #include <simulator/delaymeas.hh>
 
-// #include <log/logger.hh>
+// #include <debug/logger.hh>
 // #include <util/util.hh>
 
 // #include <string>

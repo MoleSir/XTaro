@@ -1,5 +1,5 @@
 #include "voltageatmeas.hh"
-#include "global.hh"
+#include <util/format.hh>
 
 #include <string>
 #include <fstream>
