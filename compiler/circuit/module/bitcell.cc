@@ -1,6 +1,6 @@
 #include "bitcell.hh"
 #include <base/circuit.hh>
-#include <tech/tech.hh>
+#include <config/tech.hh>
 #include <debug/logger.hh>
 
 namespace xtaro::circuit

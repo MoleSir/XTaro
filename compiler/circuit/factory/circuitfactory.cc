@@ -1,7 +1,7 @@
 #include "circuitfactory.hh"
 #include <stringpool/string.hh>
 #include <allocator/allocator.hh>
-#include <tech/tech.hh>
+#include <config/tech.hh>
 #include <debug/logger.hh>
 
 #include <base/circuit.hh>

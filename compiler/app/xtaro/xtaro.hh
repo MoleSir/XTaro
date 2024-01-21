@@ -13,7 +13,7 @@ namespace xtaro
     public:
         static XTaro* instance();
 
-        void init(const std::string& configfile);
+        void init(const std::string& optionFile);
         void createSRAM();
         void saveFiles();
     

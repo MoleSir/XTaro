@@ -14,4 +14,4 @@ compile:
 	cmake --build build
 
 test:
-	./out/bin/xtaro-main ./temp/config.json
+	./out/bin/xtaro-main ./temp/option.json

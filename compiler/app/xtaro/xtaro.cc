@@ -1,7 +1,7 @@
 #include "xtaro.hh"
 
-#include <config/config.hh>
-#include <tech/tech.hh>
+#include <config/option.hh>
+#include <config/tech.hh>
 #include <debug/logger.hh>
 
 #include <factory/circuitfactory.hh>
@@ -13,13 +13,13 @@ namespace xtaro
 {
     XTaro* xTaro {XTaro::instance()};
 
-    void XTaro::init(const std::string& configfile)
+    void XTaro::init(const std::string& optionFile)
     {
         try
         {
-            config->load(configfile);
+            option->load(optionFile);
             
-            logger->open(config->outputPath + "xtaro.log");
+            logger->open(option->outputPath + "xtaro.log");
             logger->info("Init xtaro.");
             logger->setLevel(Logger::Level::DEBUG);
 
@@ -38,9 +38,9 @@ namespace xtaro
         try
         {
             logger->info("Generate SRAM circuit.");
-            circuit::SRAMArguments argument {config->addressWidth, config->wordWidth};
+            circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
             this->_sram = dynamic_cast<circuit::SRAM*>(
-                circuit::factory->create(circuit::ModuleType::SRAM, &argument, config->sramName)
+                circuit::factory->create(circuit::ModuleType::SRAM, &argument, option->sramName)
             );
         }
         catch (const std::exception& err)
@@ -55,11 +55,11 @@ namespace xtaro
         try
         {
             logger->info("Write spice file.");
-            this->_sram->writeSpice(config->spicePath);
+            this->_sram->writeSpice(option->spicePath);
 
             logger->info("Write verilog file.");
-            parse::Verilog verilog {config->addressWidth, config->wordWidth};
-            verilog.writeSRAM(config->verilogPath);
+            parse::Verilog verilog {option->addressWidth, option->wordWidth};
+            verilog.writeSRAM(option->verilogPath);
 
             logger->info("Begin to functional test.");
             character::FunctionSimulator function {this->_sram, PVT{"TT", 3.3, 25}};

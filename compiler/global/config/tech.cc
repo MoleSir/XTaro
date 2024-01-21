@@ -1,5 +1,5 @@
 #include "tech.hh"
-#include <config/config.hh>
+#include <config/option.hh>
 #include <debug/logger.hh>
 #include <util/format.hh>
 #include <exception/msgexception.hh>
@@ -68,7 +68,7 @@ if (!util::fileExists(file))\
     static void checkTechFilesComplete()
     {
         // Check spice file
-        std::string spicepath = config->techPath + "spice/";
+        std::string spicepath = option->techPath + "spice/";
 
         checkDirectoryExits(spicepath);
         checkFileExits(spicepath + "bitcell.sp");
@@ -83,12 +83,12 @@ if (!util::fileExists(file))\
 
     static void assignSpicefilePath()
     {
-        tech->bitcellSpicePath = config->techPath + "spice/bitcell.sp";
-        tech->dffSpicePath = config->techPath + "spice/dff.sp";
-        tech->prechargeSpicePath = config->techPath + "spice/precharge.sp";
-        tech->senseampSpicePath = config->techPath + "spice/sense_amp.sp";
-        tech->trigateSpicePath = config->techPath + "spice/tri_gate.sp";
-        tech->writedriverSpicePath = config->techPath + "spice/write_driver.sp";
+        tech->bitcellSpicePath = option->techPath + "spice/bitcell.sp";
+        tech->dffSpicePath = option->techPath + "spice/dff.sp";
+        tech->prechargeSpicePath = option->techPath + "spice/precharge.sp";
+        tech->senseampSpicePath = option->techPath + "spice/sense_amp.sp";
+        tech->trigateSpicePath = option->techPath + "spice/tri_gate.sp";
+        tech->writedriverSpicePath = option->techPath + "spice/write_driver.sp";
     }
 
     static void assignGDSIIfilePath()
@@ -105,7 +105,7 @@ if (!util::fileExists(file))\
 
     static void loadTechMessage()
     {
-        parse::Json json{ parse::Json::loadFromFile(config->techPath + "tech.json") };
+        parse::Json json{ parse::Json::loadFromFile(option->techPath + "tech.json") };
 
         // Spice tech
         tech->spice = json.get("spice");

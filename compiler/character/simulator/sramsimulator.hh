@@ -3,7 +3,7 @@
 #include "simulator.hh"
 
 #include <module/sram.hh>
-#include <tech/PVT.hh>
+#include <config/PVT.hh>
 
 namespace xtaro::character
 {

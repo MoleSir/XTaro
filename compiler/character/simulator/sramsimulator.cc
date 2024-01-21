@@ -1,6 +1,6 @@
 #include "sramsimulator.hh"
-#include <tech/tech.hh>
-#include <config/config.hh>
+#include <config/tech.hh>
+#include <config/option.hh>
 #include <command/voltageatmeas.hh>
 
 #include <util/format.hh>
@@ -31,16 +31,16 @@ namespace xtaro::character
         // Initial base spice command
         // Include command
         std::string nmosModelPath {
-            config->techPath + tech->spice["models"][this->_pvt.process][0].asString()
+            option->techPath + tech->spice["models"][this->_pvt.process][0].asString()
         };
 
         std::string pmosModelPath {
-            config->techPath + tech->spice["models"][this->_pvt.process][0].asString()
+            option->techPath + tech->spice["models"][this->_pvt.process][0].asString()
         };
 
         this->writeInclude(nmosModelPath);
         this->writeInclude(pmosModelPath);
-        this->writeInclude(config->spicePath);
+        this->writeInclude(option->spicePath);
         this->writeContent('\n');
 
         // Voltage & Temperature

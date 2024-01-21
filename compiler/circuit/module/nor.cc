@@ -5,7 +5,7 @@
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <tech/tech.hh>
+#include <config/tech.hh>
 #include <debug/logger.hh>
 #include <exception/msgexception.hh>
 

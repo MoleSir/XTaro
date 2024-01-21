@@ -4,7 +4,7 @@
 #include <command/voltageatmeas.hh>
 
 #include <util/util.hh>
-#include <config/config.hh>
+#include <config/option.hh>
 #include <debug/logger.hh>
 
 #include <random>
@@ -15,7 +15,7 @@ namespace xtaro::character
         _simulator{std::make_unique<SRAMSimulator>(
             util::format(
                 "%sfunction_%s_%.2f_%.2f.sp", 
-                config->simFolderPath.c_str(),
+                option->simFolderPath.c_str(),
                 pvt.process.c_str(),
                 pvt.voltage,
                 pvt.temperature
@@ -39,7 +39,7 @@ namespace xtaro::character
         this->generateRandomTransactions(periods);
         this->writeRandomTransactions();
         // auto results {
-        //     this->_simulator->run(util::format("%s/function.res", config->outputPath.c_str()))
+        //     this->_simulator->run(util::format("%s/function.res", option->outputPath.c_str()))
         // };
         // return this->checkSimluationReuslts(results);
         return true;

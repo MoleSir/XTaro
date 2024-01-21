@@ -1,4 +1,4 @@
-#include "config.hh"
+#include "option.hh"
 
 #include <exception/msgexception.hh>
 #include <debug/logger.hh>
@@ -19,13 +19,13 @@ namespace xtaro
     static void configOptionalAttributions(parse::Json& json);
     static void configPVTList(parse::Json& json);
 
-    Config* config{Config::instance()};
+    Option* option{Option::instance()};
 
-    void Config::load(const std::string& configFile)
+    void Option::load(const std::string& optionFile)
     {
-        parse::Json json{parse::Json::loadFromFile(configFile)};
+        parse::Json json{parse::Json::loadFromFile(optionFile)};
 
-        // Config attributions
+        // Option attributions
         configNecessaryAttributions(json);
         configOptionalAttributions(json);
         configPVTList(json);
@@ -35,16 +35,16 @@ namespace xtaro
         buildOutputPath();
     }
 
-    // ========================== Config Necessary Attributions ========================== //
+    // ========================== Option Necessary Attributions ========================== //
 
     #define CONFIG_NECESSARY_ATTRIBUTION(attr, field, attrType)\
     parse::Json field ## Json {json.get(attr)};\
     if (!field ## Json.invalid())\
-        config->field = std::move(field ## Json.attrType());\
+        option->field = std::move(field ## Json.attrType());\
     else\
     {\
-        logger->error("'" attr "' not be given in config file.");\
-        throw MessageException("Config", "'" attr "' not be given.");\
+        logger->error("'" attr "' not be given in option file.");\
+        throw MessageException("Option", "'" attr "' not be given.");\
     }
 
     static void configNecessaryAttributions(parse::Json& json)
@@ -53,29 +53,29 @@ namespace xtaro
         CONFIG_NECESSARY_ATTRIBUTION("word_width", wordWidth, asInteger);
     }
 
-    // ========================== Config Optional Attributions ========================== //
+    // ========================== Option Optional Attributions ========================== //
 
     #define CONFIG_OPTIONAL_ATTRIBUTION(attr, field, attrType)\
     parse::Json field ## Json {json.get(attr)};\
     if (!field ## Json.invalid())\
-        config->field = std::move(field ## Json.attrType());
+        option->field = std::move(field ## Json.attrType());
 
     static void configOptionalAttributions(parse::Json& json)
     {
         CONFIG_OPTIONAL_ATTRIBUTION("tech_path", techPath, asString);
-        config->techPath.assign(util::absolutePath(config->techPath));
-        if (config->techPath.back() != '/')
-            config->techPath.push_back('/');
+        option->techPath.assign(util::absolutePath(option->techPath));
+        if (option->techPath.back() != '/')
+            option->techPath.push_back('/');
 
         CONFIG_OPTIONAL_ATTRIBUTION("output_path", outputPath, asString);
-        config->outputPath = util::absolutePath(config->outputPath);
-        if (config->outputPath.back() != '/')
-            config->outputPath.push_back('/');
+        option->outputPath = util::absolutePath(option->outputPath);
+        if (option->outputPath.back() != '/')
+            option->outputPath.push_back('/');
 
         CONFIG_OPTIONAL_ATTRIBUTION("sram_name", sramName, asString);
     }
 
-    // ========================== Config PVT List ========================== //
+    // ========================== Option PVT List ========================== //
 
     static void configPVTList(parse::Json& json)
     {
@@ -83,52 +83,52 @@ namespace xtaro
         if (!processCorners.invalid())
         {
             for (std::size_t i = 0; i < processCorners.size(); ++i)
-                config->processCorners.emplace_back( processCorners[i].asString() );
+                option->processCorners.emplace_back( processCorners[i].asString() );
         }
 
         parse::Json supplyVoltages {json.get("supply_voltages")};
         if (!supplyVoltages.invalid())
         {
             for (std::size_t i = 0; i < supplyVoltages.size(); ++i)
-                config->supplyVoltages.emplace_back( supplyVoltages[i].asDecimal() );
+                option->supplyVoltages.emplace_back( supplyVoltages[i].asDecimal() );
         }
 
         parse::Json temperatures {json.get("temperatures")};
         if (!temperatures.invalid())
         {
             for (std::size_t i = 0; i < temperatures.size(); ++i)
-                config->temperatures.emplace_back( temperatures[i].asDecimal() );
+                option->temperatures.emplace_back( temperatures[i].asDecimal() );
         }
     }
 
     static void buildOutputPath()
     {
-        if (!util::directoryExists(config->outputPath))
+        if (!util::directoryExists(option->outputPath))
         {
-            if (!std::filesystem::create_directories(config->outputPath))
+            if (!std::filesystem::create_directories(option->outputPath))
                 throw MessageException(
-                    "Load Config", 
-                    util::format("Create output path '%s'", config->outputPath.c_str())
+                    "Load Option", 
+                    util::format("Create output path '%s'", option->outputPath.c_str())
                 );
         }
 
-        std::filesystem::create_directories(config->sramFolderPath);
-        std::filesystem::create_directories(config->simFolderPath);
+        std::filesystem::create_directories(option->sramFolderPath);
+        std::filesystem::create_directories(option->simFolderPath);
     }
 
     static void buildOutputFilesName()
     {
-        config->sramFolderPath = config->outputPath + "sram/";
-        config->simFolderPath = config->outputPath + "simulation/";
+        option->sramFolderPath = option->outputPath + "sram/";
+        option->simFolderPath = option->outputPath + "simulation/";
 
-        config->spicePath = util::format("%s%s.sp", config->sramFolderPath.c_str(), config->sramName.c_str());
-        config->gdsiiPath = util::format("%s%s.gds", config->sramFolderPath.c_str(), config->sramName.c_str());
-        config->verilogPath = util::format("%s%s.v", config->sramFolderPath.c_str(), config->sramName.c_str());
+        option->spicePath = util::format("%s%s.sp", option->sramFolderPath.c_str(), option->sramName.c_str());
+        option->gdsiiPath = util::format("%s%s.gds", option->sramFolderPath.c_str(), option->sramName.c_str());
+        option->verilogPath = util::format("%s%s.v", option->sramFolderPath.c_str(), option->sramName.c_str());
     }
 
-    Config* Config::instance()
+    Option* Option::instance()
     {
-        static Config _config{};
-        return &_config;
+        static Option _option{};
+        return &_option;
     }   
 }

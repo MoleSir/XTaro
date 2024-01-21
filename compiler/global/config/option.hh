@@ -6,7 +6,7 @@
 namespace xtaro
 {
     
-    class Config
+    class Option
     {
     public:
     ////////////////////////////////////////////////////////
@@ -35,16 +35,16 @@ namespace xtaro
     /////////////////////////////////////////////////////////
     public:
         void load(const std::string& configFile);
-        static Config* instance();
+        static Option* instance();
 
     private:
-        Config() = default;
-        ~Config() noexcept = default;
-        Config(const Config&) = delete;
-        Config(Config&&) = delete;
-        Config& operator = (const Config&) = delete;
-        Config& operator = (Config&&) = delete;
+        Option() = default;
+        ~Option() noexcept = default;
+        Option(const Option&) = delete;
+        Option(Option&&) = delete;
+        Option& operator = (const Option&) = delete;
+        Option& operator = (Option&&) = delete;
     };
 
-    extern Config* config;
+    extern Option* option;
 }

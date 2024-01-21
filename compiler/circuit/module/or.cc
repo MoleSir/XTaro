@@ -5,7 +5,7 @@
 #include <factory/circuitfactory.hh>
 
 #include <allocator/allocator.hh>
-#include <tech/tech.hh>
+#include <config/tech.hh>
 #include <util/format.hh>
 #include <debug/logger.hh>
 #include <exception/msgexception.hh>

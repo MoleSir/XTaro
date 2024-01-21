@@ -6,7 +6,7 @@
 #include <factory/circuitfactory.hh>
 #include <stringpool/string.hh>
 #include <module/mos.hh>
-#include <tech/tech.hh>
+#include <config/tech.hh>
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
