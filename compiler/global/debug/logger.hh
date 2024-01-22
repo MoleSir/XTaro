@@ -2,52 +2,45 @@
 
 #include <string>
 #include <fstream>
-#include <stdexcept>
+#include <array>
 
 namespace xtaro
 {
-    
+    enum class LoggerLevel
+    {
+        DEBUG = 0, 
+        INFO, 
+        WARNING, 
+        ERROR, 
+        FATAL, 
+        SIZE,
+    };
+    #define LOGGER_LEVEL_SIZE (static_cast<std::size_t>(LoggerLevel::SIZE))
+
     class Logger
     {
     public:
-        enum 
-        {
-            MAX_BUFFER_SIZE = 256,
-        };
-
-        enum Level
-        {
-            DEBUG = 0, 
-            INFO, 
-            WARNING, 
-            ERROR, 
-            FATAL, 
-            COUNT,
-        };
-    
-        static Logger* instance() noexcept;
+        static Logger* instance();
     
     public:
         void open(const std::string& fileName);
         void close();
-
-        void setLevel(Logger::Level level) noexcept
-        { this->_level = level; }
+        void setLevel(LoggerLevel level);
 
     public:
-        void debug(const char* format, ...);
+        void debug(const char* fmt, ...);
         void debug(const std::string& message);
 
-        void info(const char* format, ...);
+        void info(const char* fmt, ...);
         void info(const std::string& message);
 
-        void warning(const char* format, ...);
+        void warning(const char* fmt, ...);
         void warning(const std::string& message);
 
-        void error(const char* format, ...); 
+        void error(const char* fmt, ...); 
         void error(const std::string& message);
 
-        void fatal(const char* format, ...);
+        void fatal(const char* fmt, ...);
         void fatal(const std::string& message);
 
     private:
@@ -59,15 +52,18 @@ namespace xtaro
         Logger& operator = (Logger&&) = delete;
 
     private:
-        static const char* _levelStrings[Level::COUNT];
-        static char _buffer[MAX_BUFFER_SIZE];
+        void log(LoggerLevel level, const char* fmt, va_list args);
+        void log(LoggerLevel level, const std::string& message);
+
+        void logDateTime();
+        void logLevel(LoggerLevel level);
 
     private:
-        void log(Logger::Level level, const char* format, va_list args);
+        static std::array<const char*, LOGGER_LEVEL_SIZE> levelStrings;
 
     private:
-        std::ofstream _fileOut;
-        Logger::Level _level;
+        std::ofstream _outfile;
+        LoggerLevel _level;
     };
 
     extern Logger* logger;

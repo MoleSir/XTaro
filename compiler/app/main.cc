@@ -1,4 +1,5 @@
 #include "xtaro/xtaro.hh"
+#include <debug/console.hh>
 
 using namespace xtaro;
 

@@ -33,7 +33,7 @@ namespace xtaro
         
         logger->open(option->outputPath + "xtaro.log");
         logger->info("Init xtaro.");
-        logger->setLevel(Logger::Level::DEBUG);
+        logger->setLevel(LoggerLevel::DEBUG);
 
         tech->load();
     }

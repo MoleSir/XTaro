@@ -10,21 +10,27 @@
 #include <cstdarg>
 
 #include <allocator/allocator.hh>
+#include <util/format.hh>
 
 namespace xtaro
 {
+    #define INT(l) static_cast<int>(l)
+
     Logger* logger = Logger::instance();
 
-    const char* Logger::_levelStrings[Level::COUNT] = {
+    std::array<const char*, LOGGER_LEVEL_SIZE> Logger::levelStrings {
         "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"
     };
 
-    char Logger::_buffer[Logger::MAX_BUFFER_SIZE] = {0};
-
     Logger::Logger():
-        _fileOut{}, _level{Logger::Level::DEBUG} {}
+        _outfile{}, _level{LoggerLevel::DEBUG} {}
+
+    void Logger::setLevel(LoggerLevel level)
+    {
+        this->_level = level;
+    }
          
-    Logger* Logger::instance() noexcept
+    Logger* Logger::instance()
     {
         static Logger _logger;
         return &_logger;
@@ -32,117 +38,114 @@ namespace xtaro
 
     void Logger::open(const std::string& fileName)
     {
-        this->_fileOut.open(fileName);
+        this->_outfile.open(fileName);
     }
 
     void Logger::close()
     {
-        this->_fileOut.close();
+        this->_outfile.close();
     }
 
-    void Logger::log(Logger::Level level, const char* format, va_list args)
+    void Logger::log(LoggerLevel level, const char* fmt, va_list args)
+    {
+        this->log(level, util::vformat(fmt, args));
+    }
+
+    void Logger::log(LoggerLevel level, const std::string& message)
     {
         // Check level
         if (this->_level > level) 
             return;
 
-        // Current time to string
+        this->logDateTime();
+        this->logLevel(level);
+
+        // Log message
+        this->_outfile << message << '\n';
+
+        // Flush file
+        this->_outfile.flush();
+    }
+
+    void Logger::logDateTime()
+    {
         time_t current_ticks = std::time(NULL);
         struct tm* time = std::localtime(&current_ticks);
 
-        char timeStr[32] = {0};
-        std::memset(timeStr, 0, sizeof(timeStr));
-        std::strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", time);
-
-        // Format data time and file stringF
-        const char* formatContext = "[%s] %s > ";
-        int size = std::snprintf(Logger::_buffer, 128, formatContext, timeStr, Logger::_levelStrings[level]);
-        if (size < 0)
-        {
-            this->_fileOut << "Log failed.\n";
-            return;
-        }
-        Logger::_buffer[size] = '\0';
-        this->_fileOut << Logger::_buffer;
-
-        // Format mutable params: infomation
-        size = std::vsnprintf(Logger::_buffer, 128, format, args);
-        if (size < 0)
-        {
-            this->_fileOut << "Log failed.\n";
-            return;
-        }
-        Logger::_buffer[size] = '\0';
-        this->_fileOut << Logger::_buffer;
-
-        // Flush file
-        this->_fileOut << '\n';
-        this->_fileOut.flush();
+        char dateTime[32] = {0};
+        std::memset(dateTime, 0, sizeof(dateTime));
+        std::strftime(dateTime, sizeof(dateTime), "%Y-%m-%d %H:%M:%S", time);
+        this->_outfile << '[' << dateTime << ']';
+    }
+    
+    void Logger::logLevel(LoggerLevel level)
+    {
+        this->_outfile << ' ' << Logger::levelStrings[INT(level)] << " > ";
     }
 
-    void Logger::debug(const char* format, ...)
+    void Logger::debug(const char* fmt, ...)
     {
         va_list args;
-        va_start(args, format);
-        this->log(Logger::Level::DEBUG, format, args);
+        va_start(args, fmt);
+        this->log(LoggerLevel::DEBUG, fmt, args);
         va_end(args);
     }
 
     void Logger::debug(const std::string& message)
     {
-        this->debug(message.c_str());
+        this->log(LoggerLevel::DEBUG, message);
     }
 
-    void Logger::info(const char* format, ...)
+    void Logger::info(const char* fmt, ...)
     {
         va_list args;
-        va_start(args, format);
-        this->log(Logger::Level::INFO, format, args);
+        va_start(args, fmt);
+        this->log(LoggerLevel::INFO, fmt, args);
         va_end(args);
     }
 
     void Logger::info(const std::string& message)
     {
-        this->info(message.c_str());
+        this->log(LoggerLevel::INFO, message);
     }
 
-    void Logger::warning(const char* format, ...)
+    void Logger::warning(const char* fmt, ...)
     {
         va_list args;
-        va_start(args, format);
-        this->log(Logger::Level::WARNING, format, args);
+        va_start(args, fmt);
+        this->log(LoggerLevel::WARNING, fmt, args);
         va_end(args);
     }
 
     void Logger::warning(const std::string& message)
     {
-        this->warning(message.c_str());
+        this->log(LoggerLevel::WARNING, message);
     }
 
-    void Logger::error(const char* format, ...)
+    void Logger::error(const char* fmt, ...)
     {
         va_list args;
-        va_start(args, format);
-        this->log(Logger::Level::ERROR, format, args);
+        va_start(args, fmt);
+        this->log(LoggerLevel::ERROR, fmt, args);
         va_end(args);
     }
 
     void Logger::error(const std::string& message)
     {
-        this->error(message.c_str());
+        this->log(LoggerLevel::ERROR, message);
     }
 
-    void Logger::fatal(const char* format, ...)
+    void Logger::fatal(const char* fmt, ...)
     {
         va_list args;
-        va_start(args, format);
-        this->log(Logger::Level::FATAL, format, args);
+        va_start(args, fmt);
+        this->log(LoggerLevel::FATAL, fmt, args);
         va_end(args);
     }
 
     void Logger::fatal(const std::string& message)
     {
-        this->fatal(message.c_str());
+        this->log(LoggerLevel::FATAL, message);
     }
 
 }
