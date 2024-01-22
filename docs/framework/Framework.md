@@ -1,6 +1,6 @@
 # Framework
 
-## [app](./framework/app.md)
+## [app](./app/README.md)
 
 ### xtaro
 
@@ -12,7 +12,7 @@
 
 
 
-## [global](./framework/global.md)
+## [global](./global/README.md)
 
 ### allocator
 
@@ -42,7 +42,7 @@
 
 
 
-## [circuit](./framework/circuit.md)
+## [circuit](./circuit/README.md)
 
 ### base
 
@@ -58,13 +58,13 @@
 
 
 
-## [parse](./framework/parse.md)
+## [parse](./parse/README.md)
 
 各种文件的解析模块：gdsii、json、lib 等；
 
 
 
-## [character](./framework/character.md)
+## [character](./character/README.md)
 
 ### command
 

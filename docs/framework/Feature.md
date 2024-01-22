@@ -15,7 +15,7 @@
 
 ### 1.1 生成 SRAM 的具体电路
 
-[输出 SRAM 的结构](./sram-circuit/SRAM电路实现.md)
+[输出 SRAM 的结构](../sram-circuit/SRAM电路实现.md)
 
 ### 1.2 .lib 文件的生成
 
@@ -55,13 +55,14 @@
 
 ### 2.2 基本单元
 
-软件采用模块化的设计，使用基本单元，搭建出整个 SRAM 电路。所以工艺库需要给出一些基本单元的 .sp 描述，以下为 OpenRAM 工艺库中提供的基本单元：
+软件采用模块化的设计，使用基本单元，搭建出整个 SRAM 电路。所以工艺库需要给出一些基本单元的 .sp 描述：
 
 - bitcell
 - dff
 - sense amp
 - tri gate
 - writ driver
+- precharge
 
 ### 2.3 工艺信息
 
