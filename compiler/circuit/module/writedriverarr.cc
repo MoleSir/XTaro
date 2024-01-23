@@ -57,14 +57,14 @@ namespace xtaro::circuit
 
     void WriteDriverArray::createCircuits()
     {
-        this->_writedriver = factory->create(ModuleType::WRITE_DRIVER, nullptr);
+        this->_writedriver = factory->create(CircuitType::WRITE_DRIVER, nullptr);
         this->_circuits.emplace(this->_writedriver);
         
         // If word width is too much, 'we_en''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create(ModuleType::FANOUT_BUFFER, &fanoutArguments);
+            this->_fanoutbuf = factory->create(CircuitType::FANOUT_BUFFER, &fanoutArguments);
             this->_circuits.emplace(this->_fanoutbuf);
         }
     } 

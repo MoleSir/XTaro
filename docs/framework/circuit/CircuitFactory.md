@@ -9,17 +9,17 @@
 由于各类电路模块构造函数所需要的参数不同，需要对所有电路统一一个创建接口：
 
 ```c++
-Circuit* create(ModuleType circuitType,
+Circuit* create(CircuitType circuitType,
                 CircuitArguments* arguments,
                 String circuitName = "");
 ```
 
-### 电路模块类型 `ModuleType`
+### 电路模块类型 `CircuitType`
 
 使用一个枚举标记需要创建的模块
 
 ````c++
-    enum class ModuleType
+    enum class CircuitType
     { 
         BITCELL,
 		...
@@ -81,7 +81,7 @@ std::string ANDArguments::toString() const
 
 ```c++
 ANDArguments andArgument{this->_driveCapability, this->_inputSize};
-this->_and = factory->create(ModuleType::AND, &andArgument);
+this->_and = factory->create(CircuitType::AND, &andArgument);
 this->_circuits.insert(this->_and);
 ```
 
@@ -103,7 +103,7 @@ std::array<CircuitMap, MODULESIZE>_circuits{};
 ## `create` 流程
 
 ````c++
-Circuit* CircuitFactory::create(ModuleType circuitType, 
+Circuit* CircuitFactory::create(CircuitType circuitType, 
                                 CircuitArguments* arguments, 
                                 String circuitName)
 ````

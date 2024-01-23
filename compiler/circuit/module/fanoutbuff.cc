@@ -44,7 +44,7 @@ namespace xtaro::circuit
     void FanoutBuffer::createCircuits()
     {   
         INVArguments invArugments {DriveCapability::STRONG_1};
-        this->_inv = factory->create(ModuleType::INV, &invArugments);
+        this->_inv = factory->create(CircuitType::INV, &invArugments);
         this->_circuits.emplace(this->_inv);
     } 
 

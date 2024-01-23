@@ -59,19 +59,19 @@ namespace xtaro::circuit
     {
         // Create INV
         INVArguments invArguments{DriveCapability::NORMAL};
-        this->_inv = factory->create(ModuleType::INV, &invArguments);
+        this->_inv = factory->create(CircuitType::INV, &invArguments);
         this->_circuits.emplace(this->_inv);
 
         // Create decoder if necessary
         if (this->_selectionSize > 1)
         {
             DecoderArguments decoderArgument{this->_selectionSize};
-            this->_decoder = factory->create(ModuleType::DECODER, &decoderArgument);
+            this->_decoder = factory->create(CircuitType::DECODER, &decoderArgument);
             this->_circuits.emplace(this->_decoder);
         }
 
         // Create tristate-gate
-        this->_trigate = factory->create(ModuleType::TRISTATE_GATE, nullptr);
+        this->_trigate = factory->create(CircuitType::TRISTATE_GATE, nullptr);
         this->_circuits.emplace(this->_trigate);
     }
 

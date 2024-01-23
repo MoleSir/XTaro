@@ -51,11 +51,11 @@ namespace xtaro::circuit
     void OR::createCircuits()
     {   
         NORArguments norArgument{this->_driveCapability, this->_inputSize};
-        this->_nor = factory->create(ModuleType::NOR, &norArgument);
+        this->_nor = factory->create(CircuitType::NOR, &norArgument);
         this->_circuits.insert(this->_nor);
 
         INVArguments invArgument{this->_driveCapability};
-        this->_inv = factory->create(ModuleType::INV, &invArgument);
+        this->_inv = factory->create(CircuitType::INV, &invArgument);
         this->_circuits.insert(this->_inv);
     } 
 

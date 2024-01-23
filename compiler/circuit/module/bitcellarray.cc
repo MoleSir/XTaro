@@ -66,7 +66,7 @@ namespace xtaro::circuit
     void BitcellArray::createCircuits()
     {
         // Create 'bitcell' circuit
-        this->_bitcell = factory->create(ModuleType::BITCELL, nullptr);
+        this->_bitcell = factory->create(CircuitType::BITCELL, nullptr);
         this->_circuits.insert(this->_bitcell);
     }
 

@@ -57,14 +57,14 @@ namespace xtaro::circuit
 
     void SenseAmplifierArray::createCircuits()
     {
-        this->_senseamp = factory->create(ModuleType::SENSE_AMPLIFIER, nullptr);
+        this->_senseamp = factory->create(CircuitType::SENSE_AMPLIFIER, nullptr);
         this->_circuits.emplace(this->_senseamp);
         
         // If word width is too much, 'sa_en''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create(ModuleType::FANOUT_BUFFER, &fanoutArguments);
+            this->_fanoutbuf = factory->create(CircuitType::FANOUT_BUFFER, &fanoutArguments);
             this->_circuits.emplace(this->_fanoutbuf);
         }
     } 

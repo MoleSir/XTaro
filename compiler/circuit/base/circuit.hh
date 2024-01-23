@@ -15,6 +15,7 @@
 
 namespace xtaro::circuit
 {
+
     struct CircuitArguments 
     {
         virtual ~CircuitArguments() noexcept = default;

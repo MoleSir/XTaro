@@ -48,26 +48,26 @@ namespace xtaro::circuit
     void ControlLogic::createCircuits()
     {
         INVArguments invArgs{DriveCapability::NORMAL};
-        this->_inv = factory->create(ModuleType::INV, &invArgs);
+        this->_inv = factory->create(CircuitType::INV, &invArgs);
         this->_circuits.emplace(this->_inv);
 
         invArgs.driveCapability = DriveCapability::STRONG_2;
-        this->_powerInv = factory->create(ModuleType::INV, &invArgs);
+        this->_powerInv = factory->create(CircuitType::INV, &invArgs);
         this->_circuits.emplace(this->_powerInv);
 
         ORArguments orArgs{DriveCapability::NORMAL, 2};
-        this->_or2 = factory->create(ModuleType::OR, &orArgs);
+        this->_or2 = factory->create(CircuitType::OR, &orArgs);
         this->_circuits.emplace(this->_or2);
 
         NORArguments norArgs{DriveCapability::NORMAL, 2};
-        this->_nor2 = factory->create(ModuleType::NOR, &norArgs);
+        this->_nor2 = factory->create(CircuitType::NOR, &norArgs);
         this->_circuits.emplace(this->_nor2);
         norArgs.inputSize = 3;
-        this->_nor3 = factory->create(ModuleType::NOR, &norArgs);
+        this->_nor3 = factory->create(CircuitType::NOR, &norArgs);
         this->_circuits.emplace(this->_nor3);
 
         NANDArguments nandArgs{DriveCapability::NORMAL, 2};
-        this->_nand2 = factory->create(ModuleType::NAND, &nandArgs);
+        this->_nand2 = factory->create(CircuitType::NAND, &nandArgs);
         this->_circuits.emplace(this->_nand2);
     }
 

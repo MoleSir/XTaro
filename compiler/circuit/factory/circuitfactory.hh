@@ -1,5 +1,7 @@
 #pragma once
 
+#include "circuittype.hh"
+
 #include <stringpool/string.hh>
 #include <base/circuit.hh>
 
@@ -8,42 +10,11 @@
 
 namespace xtaro::circuit
 {
-    enum class ModuleType
-    { 
-        BITCELL,
-        DFF,
-        PRECHARGE,
-        SENSE_AMPLIFIER,
-        TRISTATE_GATE,
-        WRITE_DRIVER,
-        BITCELL_ARRAY,
-        MOS,
-        INV,
-        NAND,
-        AND,
-        NOR,
-        OR,
-        DECODER,
-        ROW_DECODER,
-        MUX,
-        COLUMN_MUX,
-        FANOUT_BUFFER,
-        SENSE_AMPLIFIER_ARRAY,
-        WRITE_DRIVER_ARRAY,
-        PRECHARGE_ARRAY,
-        REPLICA_BANK,
-        BANK,
-        CONTROL_LOGIC,
-        SRAM,
-        SIZE,
-    };
-
-    #define MODULESIZE static_cast<int>(ModuleType::SIZE)
     
     class CircuitFactory
     {
         using CircuitMap = std::map<std::string, Circuit*>;
-        static const std::array<const char*, MODULESIZE> modulesName;
+        static const std::array<const char*, CIRCUIT_TYPE_SIZE> modulesName;
 
     private:
         CircuitFactory() = default;
@@ -57,20 +28,20 @@ namespace xtaro::circuit
         static CircuitFactory* instance();
 
     public:
-        Circuit* create(ModuleType circuitType,
+        Circuit* create(CircuitType circuitType,
                         CircuitArguments* arguments,
                         String circuitName = "");
 
     private:
-        Circuit* findCircuit(ModuleType circuitType, const std::string& argsList) const;
-        String getDefaultCircuitName(ModuleType circuitType) const;
-        Circuit* createNewCircuit(ModuleType circuitType, 
+        Circuit* findCircuit(CircuitType circuitType, const std::string& argsList) const;
+        String getDefaultCircuitName(CircuitType circuitType) const;
+        Circuit* createNewCircuit(CircuitType circuitType, 
                                   CircuitArguments* arguments,
                                   String circuitName) const;
-        void collectCircuit(ModuleType circuitType, std::string argsList, Circuit* circuit);
+        void collectCircuit(CircuitType circuitType, std::string argsList, Circuit* circuit);
 
     private:
-        std::array<CircuitMap, MODULESIZE>_circuits{};
+        std::array<CircuitMap, CIRCUIT_TYPE_SIZE> _circuits{};
     };
 
     extern CircuitFactory* factory;

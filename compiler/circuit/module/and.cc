@@ -54,11 +54,11 @@ namespace xtaro::circuit
     void AND::createCircuits()
     {   
         NANDArguments nandArgument{this->_driveCapability, this->_inputSize};
-        this->_nand = factory->create(ModuleType::NAND, &nandArgument);
+        this->_nand = factory->create(CircuitType::NAND, &nandArgument);
         this->_circuits.insert(this->_nand);
 
         INVArguments invArgument{this->_driveCapability};
-        this->_inv = factory->create(ModuleType::INV, &invArgument);
+        this->_inv = factory->create(CircuitType::INV, &invArgument);
         this->_circuits.insert(this->_inv);
     } 
 

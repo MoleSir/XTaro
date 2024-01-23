@@ -59,7 +59,7 @@ namespace xtaro::circuit
     void ColumnMux::createCircuits()
     {
         MuxArguments muxArguments{this->_selectionSize};
-        this->_mux = factory->create(ModuleType::MUX, &muxArguments);
+        this->_mux = factory->create(CircuitType::MUX, &muxArguments);
         this->_circuits.emplace(this->_mux);
     } 
 

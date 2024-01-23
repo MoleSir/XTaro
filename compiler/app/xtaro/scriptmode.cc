@@ -43,7 +43,7 @@ namespace xtaro
         logger->info("Generate SRAM circuit.");
         circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
         this->_sram = dynamic_cast<circuit::SRAM*>(
-            circuit::factory->create(circuit::ModuleType::SRAM, &argument, option->sramName)
+            circuit::factory->create(circuit::CircuitType::SRAM, &argument, option->sramName)
         );
     }
 

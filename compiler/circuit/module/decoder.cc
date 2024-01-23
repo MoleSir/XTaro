@@ -71,7 +71,7 @@ namespace xtaro::circuit
     {   
         // Create inv
         INVArguments invArguments{DriveCapability::NORMAL};
-        this->_inv = factory->create(ModuleType::INV, &invArguments);
+        this->_inv = factory->create(CircuitType::INV, &invArguments);
         this->_circuits.emplace(this->_inv);
 
         // Get AND Gate input size
@@ -83,7 +83,7 @@ namespace xtaro::circuit
 
         // Create and
         ANDArguments andArguments{DriveCapability::NORMAL, andGateInputSize};
-        this->_and = factory->create(ModuleType::AND, &andArguments);
+        this->_and = factory->create(CircuitType::AND, &andArguments);
         this->_circuits.emplace(this->_and);
 
         // Create Sub Decoders
@@ -107,7 +107,7 @@ namespace xtaro::circuit
         {
             DecoderArguments argument{subDecodersInputSize[i]};
             Circuit* decoder{ factory->create(
-                ModuleType::DECODER, &argument, util::format("decoder_%d", argument.inputSize)
+                CircuitType::DECODER, &argument, util::format("decoder_%d", argument.inputSize)
             ) };
             this->_circuits.emplace(decoder);
             this->_subDecoders.emplace_back(decoder);

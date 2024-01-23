@@ -37,7 +37,7 @@ namespace xtaro::circuit
 {
     #define INT(v) static_cast<int>(v)
 
-    const std::array<const char*, MODULESIZE> CircuitFactory::modulesName 
+    const std::array<const char*, CIRCUIT_TYPE_SIZE> CircuitFactory::modulesName 
     {   
         "bitcell", 
         "dff",
@@ -66,27 +66,19 @@ namespace xtaro::circuit
         "sram",
     };
 
-#define NDEBUG
-
     CircuitFactory* factory{CircuitFactory::instance()};
 
-    Circuit* CircuitFactory::create(ModuleType circuitType, 
+    Circuit* CircuitFactory::create(CircuitType circuitType, 
                                     CircuitArguments* arguments, 
                                     String circuitName)
     {
         // Is target circuit exits
-#ifndef NDEBUG
-        std::cout << 1 << std::endl;
-#endif
         std::string argsList{ arguments == nullptr ? "" : arguments->toString() };
         Circuit* circuit{this->findCircuit(circuitType, argsList)};
         if (circuit != nullptr)
             return circuit;
 
         // Get circuit's name
-#ifndef NDEBUG
-        std::cout << 2 << std::endl;
-#endif
         // TODO:
         // Well, if a module needs to the same module as its reference circuit.
         // Such as Decoder, the default name will be not right...
@@ -94,20 +86,11 @@ namespace xtaro::circuit
             circuitName = this->getDefaultCircuitName(circuitType);
 
         // Create a new circuit'
-#ifndef NDEBUG
-        std::cout << 3 << std::endl;
-#endif
         circuit = this->createNewCircuit(circuitType, arguments, std::move(circuitName));
 
         // Collect circuit
-#ifndef NDEBUG
-        std::cout << 4 << std::endl;
-#endif
         this->collectCircuit(circuitType, argsList, circuit);
 
-#ifndef NDEBUG
-        std::cout << 5 << std::endl;
-#endif
         return circuit;
     }
 
@@ -117,7 +100,7 @@ namespace xtaro::circuit
         return &_factory;
     }
 
-    Circuit* CircuitFactory::findCircuit(ModuleType circuitType, 
+    Circuit* CircuitFactory::findCircuit(CircuitType circuitType, 
                                          const std::string& argsList) const
     {   
         const auto& circuits{ this->_circuits[INT(circuitType)] };
@@ -128,7 +111,7 @@ namespace xtaro::circuit
         return nullptr;
     }
 
-    String CircuitFactory::getDefaultCircuitName(ModuleType circuitType) const
+    String CircuitFactory::getDefaultCircuitName(CircuitType circuitType) const
     {
         const auto& circuits{ this->_circuits[INT(circuitType)] };
 
@@ -140,48 +123,48 @@ namespace xtaro::circuit
     }
 
     Circuit* CircuitFactory::createNewCircuit(
-             ModuleType circuitType, 
+             CircuitType circuitType, 
              CircuitArguments* arguments,
              String circuitName) const
     {
-#define ALLOCATE_MODULE(ModuleClass)\
-Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));
+        #define ALLOCATE_MODULE(ModuleClass)\
+        Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));
 
-#ifndef NDEBUG
-        std::cout << "create new circuit" << std::endl;
-#endif
         switch (circuitType)
         {
-        case ModuleType::BITCELL: return ALLOCATE_MODULE(Bitcell);
-        case ModuleType::DFF: return ALLOCATE_MODULE(DFF);
-        case ModuleType::PRECHARGE: return ALLOCATE_MODULE(Precharge);
-        case ModuleType::SENSE_AMPLIFIER: return ALLOCATE_MODULE(SenseAmplifier);
-        case ModuleType::TRISTATE_GATE: return ALLOCATE_MODULE(TristateGate);
-        case ModuleType::WRITE_DRIVER: return ALLOCATE_MODULE(WriteDriver);
-        case ModuleType::BITCELL_ARRAY: return ALLOCATE_MODULE(BitcellArray);
-        case ModuleType::MOS: return ALLOCATE_MODULE(MOS);
-        case ModuleType::INV: return ALLOCATE_MODULE(INV);
-        case ModuleType::NAND: return ALLOCATE_MODULE(NAND);
-        case ModuleType::AND: return ALLOCATE_MODULE(AND);
-        case ModuleType::NOR: return ALLOCATE_MODULE(NOR);
-        case ModuleType::OR: return ALLOCATE_MODULE(OR);
-        case ModuleType::DECODER: return ALLOCATE_MODULE(Decoder);
-        case ModuleType::ROW_DECODER: return ALLOCATE_MODULE(RowDecoder);
-        case ModuleType::MUX: return ALLOCATE_MODULE(Mux);
-        case ModuleType::COLUMN_MUX: return ALLOCATE_MODULE(ColumnMux);
-        case ModuleType::FANOUT_BUFFER: return ALLOCATE_MODULE(FanoutBuffer);
-        case ModuleType::SENSE_AMPLIFIER_ARRAY: return ALLOCATE_MODULE(SenseAmplifierArray);
-        case ModuleType::WRITE_DRIVER_ARRAY: return ALLOCATE_MODULE(WriteDriverArray);
-        case ModuleType::PRECHARGE_ARRAY: return ALLOCATE_MODULE(PrechargeArray);
-        case ModuleType::REPLICA_BANK: return ALLOCATE_MODULE(ReplicaBank);
-        case ModuleType::BANK: return ALLOCATE_MODULE(Bank);
-        case ModuleType::CONTROL_LOGIC: return ALLOCATE_MODULE(ControlLogic);
-        case ModuleType::SRAM: return ALLOCATE_MODULE(SRAM);
+        case CircuitType::BITCELL: return ALLOCATE_MODULE(Bitcell);
+        case CircuitType::DFF: return ALLOCATE_MODULE(DFF);
+        case CircuitType::PRECHARGE: return ALLOCATE_MODULE(Precharge);
+        case CircuitType::SENSE_AMPLIFIER: return ALLOCATE_MODULE(SenseAmplifier);
+        case CircuitType::TRISTATE_GATE: return ALLOCATE_MODULE(TristateGate);
+        case CircuitType::WRITE_DRIVER: return ALLOCATE_MODULE(WriteDriver);
+        case CircuitType::BITCELL_ARRAY: return ALLOCATE_MODULE(BitcellArray);
+        case CircuitType::MOS: return ALLOCATE_MODULE(MOS);
+        case CircuitType::INV: return ALLOCATE_MODULE(INV);
+        case CircuitType::NAND: return ALLOCATE_MODULE(NAND);
+        case CircuitType::AND: return ALLOCATE_MODULE(AND);
+        case CircuitType::NOR: return ALLOCATE_MODULE(NOR);
+        case CircuitType::OR: return ALLOCATE_MODULE(OR);
+        case CircuitType::DECODER: return ALLOCATE_MODULE(Decoder);
+        case CircuitType::ROW_DECODER: return ALLOCATE_MODULE(RowDecoder);
+        case CircuitType::MUX: return ALLOCATE_MODULE(Mux);
+        case CircuitType::COLUMN_MUX: return ALLOCATE_MODULE(ColumnMux);
+        case CircuitType::FANOUT_BUFFER: return ALLOCATE_MODULE(FanoutBuffer);
+        case CircuitType::SENSE_AMPLIFIER_ARRAY: return ALLOCATE_MODULE(SenseAmplifierArray);
+        case CircuitType::WRITE_DRIVER_ARRAY: return ALLOCATE_MODULE(WriteDriverArray);
+        case CircuitType::PRECHARGE_ARRAY: return ALLOCATE_MODULE(PrechargeArray);
+        case CircuitType::REPLICA_BANK: return ALLOCATE_MODULE(ReplicaBank);
+        case CircuitType::BANK: return ALLOCATE_MODULE(Bank);
+        case CircuitType::CONTROL_LOGIC: return ALLOCATE_MODULE(ControlLogic);
+        case CircuitType::SRAM: return ALLOCATE_MODULE(SRAM);
         }
+
+        #undef ALLOCATE_MODULE
+
         return nullptr;
     }
 
-    void CircuitFactory::collectCircuit(ModuleType circuitType, 
+    void CircuitFactory::collectCircuit(CircuitType circuitType, 
                                         std::string argsList,
                                         Circuit* circuit)
     {

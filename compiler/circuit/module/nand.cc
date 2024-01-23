@@ -85,8 +85,8 @@ namespace xtaro::circuit
         }
 
         // Create MOS
-        this->_nmos = factory->create(ModuleType::MOS, &nmosArguments);
-        this->_pmos = factory->create(ModuleType::MOS, &pmosArguments);
+        this->_nmos = factory->create(CircuitType::MOS, &nmosArguments);
+        this->_pmos = factory->create(CircuitType::MOS, &pmosArguments);
         this->_circuits.insert(this->_nmos);
         this->_circuits.insert(this->_pmos);
     } 

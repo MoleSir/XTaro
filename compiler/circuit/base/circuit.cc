@@ -136,7 +136,7 @@ namespace xtaro::circuit
             ));
         }
         return ports;
-    }
+    } 
     
     void Circuit::createNetlist()
     {

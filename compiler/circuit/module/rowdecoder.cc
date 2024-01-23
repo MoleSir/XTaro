@@ -55,11 +55,11 @@ namespace xtaro::circuit
     void RowDecoder::createCircuits()
     {
         ANDArguments andArgument{DriveCapability::NORMAL, 2};
-        this->_and = factory->create(ModuleType::AND, &andArgument);
+        this->_and = factory->create(CircuitType::AND, &andArgument);
         this->_circuits.emplace(this->_and);
 
         DecoderArguments decoderArgument{this->_addressSize};
-        this->_decoder = factory->create(ModuleType::DECODER, &decoderArgument);
+        this->_decoder = factory->create(CircuitType::DECODER, &decoderArgument);
         this->_circuits.emplace(this->_decoder);
     } 
 

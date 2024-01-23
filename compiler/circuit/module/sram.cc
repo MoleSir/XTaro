@@ -63,15 +63,15 @@ namespace xtaro::circuit
 
     void SRAM::createCircuits()
     {
-        this->_dff = factory->create(ModuleType::DFF, nullptr);
+        this->_dff = factory->create(CircuitType::DFF, nullptr);
         this->_circuits.emplace(this->_dff);
 
         BankArguments bankArgs{this->_addressWidth, this->_wordWidth};
-        this->_bank = factory->create(ModuleType::BANK, &bankArgs);
+        this->_bank = factory->create(CircuitType::BANK, &bankArgs);
         this->_circuits.emplace(this->_bank);
 
         ControlLogicArguments controlArgs{};
-        this->_controllogic = factory->create(ModuleType::CONTROL_LOGIC, &controlArgs);
+        this->_controllogic = factory->create(CircuitType::CONTROL_LOGIC, &controlArgs);
         this->_circuits.emplace(this->_controllogic);
     } 
 

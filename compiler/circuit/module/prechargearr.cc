@@ -54,14 +54,14 @@ namespace xtaro::circuit
 
     void PrechargeArray::createCircuits()
     {
-        this->_precharge = factory->create(ModuleType::PRECHARGE, nullptr);
+        this->_precharge = factory->create(CircuitType::PRECHARGE, nullptr);
         this->_circuits.emplace(this->_precharge);
         
         // If word width is too much, 'p_en_bar''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create(ModuleType::FANOUT_BUFFER, &fanoutArguments);
+            this->_fanoutbuf = factory->create(CircuitType::FANOUT_BUFFER, &fanoutArguments);
             this->_circuits.emplace(this->_fanoutbuf);
         }
     } 
