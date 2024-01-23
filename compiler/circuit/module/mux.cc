@@ -8,7 +8,7 @@
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 #include <debug/logger.hh>
 
 namespace xtaro::circuit
@@ -29,9 +29,7 @@ namespace xtaro::circuit
         if (this->_selectionSize < 1 || this->_selectionSize > Mux::MAX_SELECTION_SIZE)
         {
             std::string errorMsg {util::format("Mux's selection size '%d' is not a vaild", this->_selectionSize)};
-
-            logger->error(errorMsg);
-            throw MessageException {"Create Mux", errorMsg};
+            debug->reportError("Create Mux", errorMsg);
         }
 
         logger->debug("Create a 'Mux' circuit: '%s'", this->_name.cstr());

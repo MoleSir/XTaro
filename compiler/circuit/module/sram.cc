@@ -8,7 +8,7 @@
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/logger.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -34,8 +34,7 @@ namespace xtaro::circuit
                 )
             };
 
-            logger->error(errorMsg);
-            throw MessageException("Create SRAM", errorMsg);
+            debug->reportError("Create SRAM", errorMsg);
         }
 
         logger->debug("Create a 'SRAM' circuit: '%s'", this->_name.cstr());

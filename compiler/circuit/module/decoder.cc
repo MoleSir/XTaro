@@ -4,11 +4,11 @@
 #include <module/inv.hh>
 #include <factory/circuitfactory.hh>
 
-#include <exception/msgexception.hh>
 #include <allocator/allocator.hh>
 #include <config/tech.hh>
 #include <util/util.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -42,9 +42,7 @@ namespace xtaro::circuit
         if (this->_inputSize <= 1 || this->_inputSize > Decoder::MAX_INPUT_SIZE)
         {
             std::string errorMsg {util::format("Decoder's input size '%d' is not a vaild", this->_inputSize)};
-
-            logger->error(errorMsg);
-            throw MessageException("Create Decoder", errorMsg);
+            debug->reportError("Create Decoder", errorMsg);
         }
 
         logger->debug("Create a 'Decoder' circuit: '%s'", this->_name.cstr());

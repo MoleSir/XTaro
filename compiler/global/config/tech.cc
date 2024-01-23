@@ -1,8 +1,9 @@
 #include "tech.hh"
 #include <config/option.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
 #include <util/format.hh>
-#include <exception/msgexception.hh>
+#include <util/file.hh>
 #include <json/json.hh>
 
 #include <iostream>
@@ -33,24 +34,9 @@ namespace xtaro
 
     // ============================ Check Tech Files Complete =============================== //
 
-#define CHECK_Directory(directory)\
-if (!util::fileExists(spicepath + file))\
-{\
-    logger->error("'" file "' not be given in tech lib.");\
-    throw MessageException("Tech", "'" file "' not be given.");\
-}
-
-#define CHECK_FILE(directory, file)\
-if (!util::fileExists(file))\
-{\
-    logger->error("'" file "' not be given in tech lib.");\
-    throw MessageException("Tech", "'" file "' not be given.");\
-}
-
     static void noExitsError(const std::string& path)
     {
-        logger->error(util::format("'%s' not be given in tech lib.", path.c_str()));
-        throw MessageException("Load tech", util::format("'%s' not be given.", path.c_str()));
+        debug->reportError("Load Tech", util::format("'%s' not be given."));
     }
 
     static void checkDirectoryExits(const std::string& directory)
@@ -110,24 +96,24 @@ if (!util::fileExists(file))\
         // Spice tech
         tech->spice = json.get("spice");
         if (tech->spice.invalid())
-            throw MessageException("Load tech", "No spice tech message.");
+            debug->reportError("Load tech", "No spice tech message.");
 
         tech->drc = json.get("drc");
         if (tech->drc.invalid())
-            throw MessageException("Load tech", "No drc tech message.");
+            debug->reportError("Load tech", "No drc tech message.");
     }
 
     // ============================ Check Tech Message =============================== //
 
     static void checkSpiceMessage()
     {
-        if (!tech->spice.has("nmos")) throw MessageException("Load spice tech", "No 'nmos'.");
-        if (!tech->spice.has("pmos")) throw MessageException("Load spice tech", "No 'pmos'.");
+        if (!tech->spice.has("nmos")) debug->reportError("Load spice tech", "No 'nmos'.");
+        if (!tech->spice.has("pmos")) debug->reportError("Load spice tech", "No 'pmos'.");
     }
 
     static void checkDRCMessage()
     {
-        if (!tech->drc.has("minwidth_poly")) throw MessageException("Load drc tech", "No 'minwidth_poly'.");
+        if (!tech->drc.has("minwidth_poly")) debug->reportError("Load drc tech", "No 'minwidth_poly'.");
     }
 
     static void checkTechMessage()

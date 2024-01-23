@@ -5,9 +5,9 @@
 
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
-#include <exception/msgexception.hh>
 #include <util/format.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -26,9 +26,7 @@ namespace xtaro::circuit
         if (this->_wordWidth < 1)
         {
             std::string errorMsg {util::format("Write Driver Array's word width '%d' < 1", this->_wordWidth)};
-
-            logger->error(errorMsg);
-            throw MessageException("Create Write Driver Array", errorMsg);
+            debug->reportError("Create Write Driver Array", errorMsg);
         }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;

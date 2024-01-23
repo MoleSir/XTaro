@@ -6,7 +6,7 @@
 #include <config/tech.hh>
 #include <util/format.hh>
 #include <debug/logger.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 
 #include <cmath>
 
@@ -32,8 +32,7 @@ namespace xtaro::circuit
                 )
             };
 
-            logger->error(errorMsg);
-            throw MessageException("Create Bitcell Array", errorMsg);
+            debug->reportError("Create Bitcell Array", errorMsg);
         }
 
         logger->debug("Create a 'Bitcell Array' circuit: '%s'", this->_name.cstr());

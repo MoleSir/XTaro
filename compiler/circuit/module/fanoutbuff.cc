@@ -5,7 +5,7 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 #include <debug/logger.hh>
 
 namespace xtaro::circuit
@@ -23,9 +23,7 @@ namespace xtaro::circuit
         if (this->_fanoutSize <= 1 || this->_fanoutSize > MAX_FANOUT)
         {
             std::string errorMsg {util::format("Fanout Buffer's fanout size '%d' invalid", this->_fanoutSize)};
-
-            logger->error(errorMsg);
-            throw MessageException {"Create Fanout Buffer", errorMsg};
+            debug->reportError("Create Fanout Buffer", errorMsg);
         }
 
         logger->debug("Create a 'Fanout Buffer' circuit: '%s'", this->_name.cstr());

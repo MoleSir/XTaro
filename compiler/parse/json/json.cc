@@ -2,9 +2,10 @@
 #include "jsonscanner.hh"
 #include "jsonparser.hh"
 
-#include <exception/msgexception.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
+#include <util/file.hh>
+#include <debug/debug.hh>
 #include <debug/logger.hh>
 
 #include <string>
@@ -27,7 +28,7 @@ namespace xtaro::parse
         // Read json file content
         std::ifstream file{filepath};
         if (!file.is_open())
-            throw MessageException("Load json file", util::format("File '%s' does not exit.", filepath.c_str()));
+            debug->reportError("Load json file", util::format("File '%s' does not exit.", filepath.c_str()));
 
         std::string content {util::readFile(file)};
         file.close();
@@ -288,7 +289,7 @@ namespace xtaro::parse
     {
         this->ensureJsonTyep(JsonType::ARRAY);
         if (index < 0) 
-            throw MessageException("Json array", "Array index < 0.");
+            debug->reportError("Json array", "Array index < 0.");
         
         return (this->_value._array)->at(index);
     }
@@ -345,7 +346,8 @@ namespace xtaro::parse
 
         if (this->isObject()) return this->_value._object->size();
         if (this->isArray()) return this->_value._array->size();
-        throw MessageException("Json type", util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
+        debug->reportError("Json type", util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
+        return -1;
     }
 
     void Json::remove(int index)
@@ -384,7 +386,7 @@ namespace xtaro::parse
     void Json::ensureValid() const
     {
         if (this->_invalid)
-            throw MessageException("Json", "Use an invalid json.");
+            debug->reportError("Json", "Use an invalid json.");
     }
 
     void Json::ensureJsonTyep(JsonType type) const
@@ -392,7 +394,7 @@ namespace xtaro::parse
         this->ensureValid();
 
         if (type != this->_type)
-            throw MessageException(
+            debug->reportError(
                 "Json type",
                 util::format("Json Type mismatch, excepted %s but got %s",
                              Json::_jsonTypeString[type], 

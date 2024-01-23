@@ -1,7 +1,7 @@
 #include "jsonparser.hh"
 #include "json.hh"
 
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 #include <iostream>
 
 namespace xtaro::parse
@@ -35,9 +35,10 @@ namespace xtaro::parse
             return Json(token.decimal());
             break;
         default:
-            throw MessageException("Parse json", "Not an valid json value");
+            debug->reportError("Parse json", "Not an valid json value");
             break;
         }
+        return Json{};
     }
 
     Json JsonParser::parseObject()
@@ -95,25 +96,24 @@ namespace xtaro::parse
     bool JsonParser::checkTokenType(JsonTokenType type)
     {
         if (this->isEnd())
-            throw MessageException("Parse json", "Tokens ended prematurely");
+            debug->reportError("Parse json", "Tokens ended prematurely");
         return this->_iterator->type() == type;
     }
 
     JsonToken& JsonParser::ensureTokenType(JsonTokenType type, const char* message)
     {
         if (this->isEnd())
-            throw MessageException("Parse json", "Tokens ended prematurely");
+            debug->reportError("Parse json", "Tokens ended prematurely");
         
-        if (this->_iterator->type() == type)
-            return *(this->_iterator++);
-        else
-            throw MessageException("Parse json", message);
+        if (this->_iterator->type() != type)
+            debug->reportError("Parse json", message);
+        return *(this->_iterator++);
     }
 
     JsonToken& JsonParser::advanceToken()
     {
         if (this->isEnd())
-            throw MessageException("Parse json", "Tokens ended prematurely");
+            debug->reportError("Parse json", "Tokens ended prematurely");
         return *(this->_iterator++);
     }
 }

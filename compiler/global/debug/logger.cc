@@ -22,9 +22,6 @@ namespace xtaro
         "DEBUG", "INFO", "WARNING", "ERROR", "FATAL"
     };
 
-    Logger::Logger():
-        _outfile{}, _level{LoggerLevel::DEBUG} {}
-
     void Logger::setLevel(LoggerLevel level)
     {
         this->_level = level;

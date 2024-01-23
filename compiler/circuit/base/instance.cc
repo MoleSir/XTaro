@@ -5,8 +5,8 @@
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <exception/msgexception.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
 
 #include <string>
 #include <map>
@@ -65,8 +65,7 @@ namespace xtaro::circuit
                              this->_connectCount)
             };
 
-            logger->error(errorMsg);
-            throw MessageException("Generate spice", errorMsg);
+            debug->reportError("Generate Instance spice", errorMsg);
         }
 
         // Xins A B C D cir

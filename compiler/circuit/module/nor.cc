@@ -7,7 +7,7 @@
 #include <util/format.hh>
 #include <config/tech.hh>
 #include <debug/logger.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -28,9 +28,7 @@ namespace xtaro::circuit
         if (this->_inputSize < 2)
         {
             std::string errorMsg {util::format("NOR gate's input size '%d' < 2", this->_inputSize)};
-
-            logger->error(errorMsg);
-            throw MessageException("Create NOR", errorMsg);
+            debug->reportError("Create NOR", errorMsg);
         }
 
         logger->debug("Create a 'NOR' circuit: '%s'", this->_name.cstr());

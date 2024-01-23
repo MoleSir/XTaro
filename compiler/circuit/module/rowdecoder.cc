@@ -6,8 +6,9 @@
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
+#include <util/math.hh>
 #include <debug/logger.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -26,9 +27,7 @@ namespace xtaro::circuit
         if (this->_addressSize < 2)
         {
             std::string errorMsg {util::format("'Row Decoder's address size '%d' < 2", this->_addressSize)};
-
-            logger->error(errorMsg);
-            throw MessageException("Create 'Row Decoder", errorMsg);
+            debug->reportError("Create 'Row Decoder", errorMsg);
         }
 
         logger->debug("Create a 'Row Decoder' circuit: '%s'", this->_name.cstr());

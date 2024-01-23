@@ -44,14 +44,6 @@ namespace xtaro
         void fatal(const std::string& message);
 
     private:
-        Logger();
-        ~Logger() noexcept = default;
-        Logger(const Logger&) = delete;
-        Logger(Logger&&) = delete;
-        Logger& operator = (const Logger&) = delete;
-        Logger& operator = (Logger&&) = delete;
-
-    private:
         void log(LoggerLevel level, const char* fmt, va_list args);
         void log(LoggerLevel level, const std::string& message);
 
@@ -59,11 +51,19 @@ namespace xtaro
         void logLevel(LoggerLevel level);
 
     private:
+        Logger() = default;
+        ~Logger() noexcept = default;
+        Logger(const Logger&) = delete;
+        Logger(Logger&&) = delete;
+        Logger& operator = (const Logger&) = delete;
+        Logger& operator = (Logger&&) = delete;
+
+    private:
         static std::array<const char*, LOGGER_LEVEL_SIZE> levelStrings;
 
     private:
-        std::ofstream _outfile;
-        LoggerLevel _level;
+        std::ofstream _outfile{};
+        LoggerLevel _level{LoggerLevel::DEBUG};
     };
 
     extern Logger* logger;

@@ -10,8 +10,8 @@
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <exception/msgexception.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -30,12 +30,9 @@ namespace xtaro::circuit
         _inv{nullptr}
     {
         if (this->_inputSize < 2)
-        {
-            std::string errorMsg {util::format("AND gate's input size '%d' < 2", this->_inputSize)};
-
-            logger->error(errorMsg);
-            throw MessageException("Create AND", errorMsg);
-        }
+            debug->reportError(
+                "Create AND", util::format("AND gate's input size '%d' < 2", this->_inputSize)
+            );
 
         logger->debug("Create a 'AND' circuit: '%s'", this->_name.cstr());
         this->createNetlist();

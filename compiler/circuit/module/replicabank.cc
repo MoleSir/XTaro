@@ -7,7 +7,7 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 #include <debug/logger.hh>
 
 namespace xtaro::circuit
@@ -32,9 +32,7 @@ namespace xtaro::circuit
                     this->_bitcellSize, LINKED_BITCELL_SIZE
                 )
             };
-
-            logger->error(errorMsg);
-            throw MessageException {"Create Replica Bank", errorMsg};
+            debug->reportError("Create Replica Bank", errorMsg);
         }
 
         logger->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());

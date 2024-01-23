@@ -13,7 +13,7 @@
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/logger.hh>
-#include <exception/msgexception.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -49,8 +49,7 @@ namespace xtaro::circuit
                 )
             };
 
-            logger->error(errorMsg);
-            throw MessageException("Create Bank", errorMsg);
+            debug->reportError("Create Bank", errorMsg);
         }
 
         if (this->_addressWidth > 4)

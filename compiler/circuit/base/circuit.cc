@@ -4,8 +4,9 @@
 #include "port.hh"
 
 #include <allocator/allocator.hh>
-#include <exception/msgexception.hh>
 #include <debug/logger.hh>
+#include <debug/debug.hh>
+
 #include <util/file.hh>
 #include <util/format.hh>
 
@@ -82,8 +83,7 @@ namespace xtaro::circuit
                              netsName.size())
             };
 
-            logger->error(errorMsg);
-            throw MessageException("Connect Instance", errorMsg);
+            debug->reportError("Connect Instance", errorMsg);
         }
 
         std::vector<Net*> nets = this->createNets(netsName);
