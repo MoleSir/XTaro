@@ -48,7 +48,7 @@ namespace xtaro
         const std::string& errorType, 
         const std::string& errorReason) const
     {
-        this->reportError(errorType, errorType, this->_reportWay);
+        this->reportError(errorType, errorReason, this->_reportWay);
     }
 
     void Debug::exit(int code)

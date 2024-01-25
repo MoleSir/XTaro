@@ -12,7 +12,7 @@ namespace xtaro
         "   -i, --interactive  Interactive mode.\n"
         "\n"
         "Exit status:\n"
-        "   0  if Ok\n"
+        "   0  if Ok"
     };
 
     void XTaro::runHelpMode(const std::vector<std::string>& arguments)
