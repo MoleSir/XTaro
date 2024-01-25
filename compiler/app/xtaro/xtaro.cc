@@ -7,25 +7,25 @@
 
 namespace xtaro
 {
-    XTaro* xTaro {XTaro::instance()};
-
-    std::map<std::string, RunMode> XTaro::argvMap {
-        {"-h", RunMode::HELP},
-        {"--help", RunMode::HELP},
-        {"-v", RunMode::VERION},
-        {"--version", RunMode::VERION},
-        {"-i", RunMode::INTERPRETER},
-        {"--interactive", RunMode::INTERPRETER},
-        {"-l", RunMode::SCRIPT},
-        {"--load", RunMode::SCRIPT},
+    XTaro::Mode XTaro::mode {XTaro::Mode::NONE};
+    
+    std::map<std::string, XTaro::Mode> XTaro::argvMap {
+        {"-h", XTaro::Mode::HELP},
+        {"--help", XTaro::Mode::HELP},
+        {"-v", XTaro::Mode::VERION},
+        {"--version", XTaro::Mode::VERION},
+        {"-i", XTaro::Mode::INTERPRETER},
+        {"--interactive", XTaro::Mode::INTERPRETER},
+        {"-l", XTaro::Mode::SCRIPT},
+        {"--load", XTaro::Mode::SCRIPT},
     };
 
     std::vector<std::string> 
-    XTaro::parseArgv(int argc, const char* argv[])
+    XTaro::parse(int argc, const char* argv[])
     {
         if (argc == 1)
         {
-            this->_runMode = RunMode::INTERPRETER;
+            XTaro::mode = XTaro::Mode::INTERPRETER;
             return {};
         }
 
@@ -47,30 +47,27 @@ namespace xtaro
             std::exit(10);
         }
 
-        this->_runMode = iter->second;
-        if (this->_runMode == RunMode::SCRIPT)
+        XTaro::mode = iter->second;
+        if (XTaro::mode == XTaro::Mode::SCRIPT)
             return {arguments[1]};
         return {};
     }
 
     void XTaro::run(const std::vector<std::string>& arguments)
     {
-        switch (this->_runMode)
+        switch (XTaro::mode)
         {
-        case RunMode::HELP: 
-            return this->runHelpMode(arguments);
-        case RunMode::VERION:
-            return this->runVersionMode(arguments);
-        case RunMode::INTERPRETER:
-            return this->runInterpreterMode(arguments);
-        case RunMode::SCRIPT:
-            return this->runScriptMode(arguments);
+        case XTaro::Mode::HELP: 
+            return XTaro::runHelpMode(arguments);
+        case XTaro::Mode::VERION:
+            return XTaro::runVersionMode(arguments);
+        case XTaro::Mode::INTERPRETER:
+            return XTaro::runInterpreterMode(arguments);
+        case XTaro::Mode::SCRIPT:
+            return XTaro::runScriptMode(arguments);
+        case XTaro::Mode::NONE:
+            return;
         }
     }
 
-    XTaro* XTaro::instance()
-    {
-        static XTaro _xTaro{};
-        return &_xTaro;
-    }
 }

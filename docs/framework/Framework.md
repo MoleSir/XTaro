@@ -23,10 +23,6 @@
 - Option：解析用户给定是选项文件；
 - Tech：解析指定工艺库信息；
 
-### exception
-
-程序中会使用到的基本异常，继承自 `std::exception`。程序中可以直接使用 `std::exception` 类接受所有的异常类型。
-
 ### stringpool
 
 由于 spice 网标中经常出现重复的端口或网线名称。实现 StringPool 类保存 std::string，当需要获得一个字符串时，向 StringPool 申请，如果已经存在，返回已经存在的 std::string 的 c 风格指针（使用一个简单的 String 类经过包装）。
@@ -35,6 +31,8 @@
 
 - Logger：日志；
 - Console：命令行输出；
+- Exception：程序中会使用到的基本异常，继承自 `std::exception`。程序中可以直接使用 `std::exception` 类接受所有的异常类型。
+- Debug：使用 Logger 与 Console 进行调试信息输出，可以动态选择；
 
 ### util
 

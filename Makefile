@@ -23,4 +23,4 @@ i:
 	./out/bin/xtaro -i
 
 l:
-	./out/bin/xtaro -l ./temp/option.json
+	./out/bin/xtaro -l ./test/option.json

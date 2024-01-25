@@ -78,7 +78,7 @@
 
 ## Report 9
 
-- 生成 SRAM 网标（待调试）
+- 生成 SRAM 网表（调试中）
 - 生成 Verilog
 - Function 功能验证
 - MBIST ？

@@ -1,10 +1,10 @@
-#include "xtaro/xtaro.hh"
-#include <debug/console.hh>
+#include <xtaro/xtaro.hh>
 
 using namespace xtaro;
 
 int main(int argc, const char* argv[])
 {
-    xTaro->run(xTaro->parseArgv(argc, argv));
+    auto arguments {XTaro::parse(argc, argv)};
+    XTaro::run(arguments);
     return 0;
 }

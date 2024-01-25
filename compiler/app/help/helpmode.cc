@@ -1,10 +1,9 @@
-#include "xtaro.hh"
+#include <xtaro/xtaro.hh>
 #include <iostream>
 
-namespace xtaro
+namespace xtaro 
 {
-    // TODO Exit status
-    const char* XTaro::helpMessage {
+    static const char* helpMessage {
         "Usage: xtaro [options] file\n"
         "Options:\n"
         "   -h, --help         Display this information.\n"
@@ -18,7 +17,6 @@ namespace xtaro
 
     void XTaro::runHelpMode(const std::vector<std::string>& arguments)
     {
-        std::cout << XTaro::helpMessage << std::endl;
+        std::cout << helpMessage << std::endl;
     }
-
 }

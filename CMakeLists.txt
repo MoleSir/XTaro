@@ -6,6 +6,7 @@ project(XTaroProject)
 set(LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/out/lib)
 set(EXEC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/out/bin)
 
+set(APP_PATH ${CMAKE_CURRENT_SOURCE_DIR}/compiler/app)
 set(GLOBAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/compiler/global)
 set(SIMULATE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/compiler/simulate)
 set(CIRCUIT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/compiler/circuit)

@@ -1,33 +1,26 @@
-#include "xtaro.hh"
+#include "scriptxtaro.hh"
 
 #include <config/option.hh>
 #include <config/tech.hh>
 #include <debug/logger.hh>
 
-#include <factory/circuitfactory.hh>
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
 #include <character/function.hh>
 
+#include <iostream>
+#include <memory>
+
 namespace xtaro
 {
-        
-    void XTaro::runScriptMode(const std::vector<std::string>& arguments)
+
+    ScriptXtaro* ScriptXtaro::instance()
     {
-        try
-        {
-            this->init(arguments[0]);
-            this->createSRAM();
-            this->saveFiles();
-        }
-        catch (const std::exception& err)
-        {
-            std::cout << err.what() << std::endl;
-            std::exit(12);
-        }
+        static ScriptXtaro _xtaro;
+        return &_xtaro;
     }
 
-    void XTaro::init(const std::string& optionFile)
+    void ScriptXtaro::init(const std::string& optionFile)
     {
         option->load(optionFile);
         
@@ -38,16 +31,14 @@ namespace xtaro
         tech->load();
     }
 
-    void XTaro::createSRAM()
+    void ScriptXtaro::createSRAM()
     {
         logger->info("Generate SRAM circuit.");
         circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
-        this->_sram = dynamic_cast<circuit::SRAM*>(
-            circuit::factory->create(circuit::CircuitType::SRAM, &argument, option->sramName)
-        );
+        this->_sram = std::make_unique<circuit::SRAM>(option->sramName, &argument);
     }
 
-    void XTaro::saveFiles()
+    void ScriptXtaro::saveFiles()
     {
         logger->info("Write spice file.");
         this->_sram->writeSpice(option->spicePath);
@@ -57,7 +48,7 @@ namespace xtaro
         verilog.writeSRAM(option->verilogPath);
 
         logger->info("Begin to functional test.");
-        character::FunctionSimulator function {this->_sram, PVT{"TT", 3.3, 25}};
+        character::FunctionSimulator function {this->_sram.get(), PVT{"TT", 3.3, 25}};
         std::cout << function.randomTest() << std::endl;
     }
 
