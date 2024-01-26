@@ -1,6 +1,6 @@
 #include "xxx.hh"
 
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 

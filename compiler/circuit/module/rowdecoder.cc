@@ -2,7 +2,7 @@
 
 #include <module/and.hh>
 #include <module/decoder.hh>
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 
 #include <allocator/allocator.hh>
 #include <util/format.hh>
@@ -53,11 +53,11 @@ namespace xtaro::circuit
     void RowDecoder::createCircuits()
     {
         ANDArguments andArgument{DriveCapability::NORMAL, 2};
-        this->_and = factory->create(CircuitType::AND, &andArgument);
+        this->_and = factory->create("and", &andArgument);
         this->_circuits.emplace(this->_and);
 
         DecoderArguments decoderArgument{this->_addressSize};
-        this->_decoder = factory->create(CircuitType::DECODER, &decoderArgument);
+        this->_decoder = factory->create("decoder", &decoderArgument);
         this->_circuits.emplace(this->_decoder);
     } 
 

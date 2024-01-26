@@ -60,6 +60,7 @@ namespace xtaro::parse
         case '7':
         case '8':
         case '9':
+        case '-':
             this->scanNumberToken(); break;
         case '"':
             this->scanStringToken(); break;

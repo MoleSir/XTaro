@@ -2,7 +2,7 @@
 
 #include <module/and.hh>
 #include <module/inv.hh>
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 
 #include <allocator/allocator.hh>
 #include <config/tech.hh>
@@ -68,7 +68,7 @@ namespace xtaro::circuit
     {   
         // Create inv
         INVArguments invArguments{DriveCapability::NORMAL};
-        this->_inv = factory->create(CircuitType::INV, &invArguments);
+        this->_inv = factory->create("inv", &invArguments);
         this->_circuits.emplace(this->_inv);
 
         // Get AND Gate input size
@@ -80,11 +80,11 @@ namespace xtaro::circuit
 
         // Create and
         ANDArguments andArguments{DriveCapability::NORMAL, andGateInputSize};
-        this->_and = factory->create(CircuitType::AND, &andArguments);
+        this->_and = factory->create("and", &andArguments);
         this->_circuits.emplace(this->_and);
 
         // Create Sub Decoders
-        if (this->_inputSize >= Decoder::MAX_SIMPLE_INPUT_SIZE)
+        if (this->_inputSize > Decoder::MAX_SIMPLE_INPUT_SIZE)
             this->createSubDecoders();
     }
 
@@ -102,9 +102,9 @@ namespace xtaro::circuit
 
         for (std::size_t i = 0; i < subDecodersInputSize.size(); ++i)
         {
-            DecoderArguments argument{subDecodersInputSize[i]};
+            DecoderArguments argument {subDecodersInputSize[i]};
             Circuit* decoder{ factory->create(
-                CircuitType::DECODER, &argument, util::format("decoder_%d", argument.inputSize)
+                "decoder", &argument, util::format("decoder_%d", argument.inputSize)
             ) };
             this->_circuits.emplace(decoder);
             this->_subDecoders.emplace_back(decoder);

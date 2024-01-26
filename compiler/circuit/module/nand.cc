@@ -1,6 +1,6 @@
 #include "nand.hh"
 
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 #include <module/mos.hh>
 #include <config/tech.hh>
 
@@ -82,8 +82,8 @@ namespace xtaro::circuit
         }
 
         // Create MOS
-        this->_nmos = factory->create(CircuitType::MOS, &nmosArguments);
-        this->_pmos = factory->create(CircuitType::MOS, &pmosArguments);
+        this->_nmos = factory->create("mos", &nmosArguments);
+        this->_pmos = factory->create("mos", &pmosArguments);
         this->_circuits.insert(this->_nmos);
         this->_circuits.insert(this->_pmos);
     } 

@@ -30,7 +30,6 @@ namespace xtaro::circuit
         BANK,
         CONTROL_LOGIC,
         SRAM,
-        DRAM,
         SIZE,
     };
 

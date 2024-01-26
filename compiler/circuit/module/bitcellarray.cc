@@ -1,7 +1,7 @@
 #include "bitcellarray.hh"
 #include <base/circuit.hh>
 #include <allocator/allocator.hh>
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 
 #include <config/tech.hh>
 #include <util/format.hh>
@@ -64,7 +64,7 @@ namespace xtaro::circuit
     void BitcellArray::createCircuits()
     {
         // Create 'bitcell' circuit
-        this->_bitcell = factory->create(CircuitType::BITCELL, nullptr);
+        this->_bitcell = factory->create("bitcell", nullptr);
         this->_circuits.insert(this->_bitcell);
     }
 

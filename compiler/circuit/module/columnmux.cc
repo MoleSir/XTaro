@@ -2,7 +2,7 @@
 
 #include <module/mux.hh>
 
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
@@ -57,7 +57,7 @@ namespace xtaro::circuit
     void ColumnMux::createCircuits()
     {
         MuxArguments muxArguments{this->_selectionSize};
-        this->_mux = factory->create(CircuitType::MUX, &muxArguments);
+        this->_mux = factory->create("mux", &muxArguments);
         this->_circuits.emplace(this->_mux);
     } 
 

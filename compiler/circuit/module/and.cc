@@ -3,7 +3,7 @@
 #include <module/nand.hh>
 #include <module/inv.hh>
 
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 #include <stringpool/string.hh>
 #include <module/mos.hh>
 #include <config/tech.hh>
@@ -50,11 +50,11 @@ namespace xtaro::circuit
     void AND::createCircuits()
     {   
         NANDArguments nandArgument{this->_driveCapability, this->_inputSize};
-        this->_nand = factory->create(CircuitType::NAND, &nandArgument);
+        this->_nand = factory->create("nand", &nandArgument);
         this->_circuits.insert(this->_nand);
 
         INVArguments invArgument{this->_driveCapability};
-        this->_inv = factory->create(CircuitType::INV, &invArgument);
+        this->_inv = factory->create("inv", &invArgument);
         this->_circuits.insert(this->_inv);
     } 
 

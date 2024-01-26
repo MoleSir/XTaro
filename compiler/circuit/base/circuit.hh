@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 #include <fstream>
+#include <string_view>
 
 namespace xtaro::circuit
 {
@@ -92,6 +93,8 @@ namespace xtaro::circuit
             This method equal to call 'addInstance(instanceName, citcuit)' and 'connectWith(instance, nets)'.
         */
         Instance* addInstance(String instanceName, Circuit* circuit, const std::vector<String>& nets);
+
+        Circuit* addCircuit(const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName = "");
 
         /*
             Write this circuit's spcice description into 'filename'.

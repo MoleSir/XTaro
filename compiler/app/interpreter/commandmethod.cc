@@ -1,5 +1,7 @@
 #include "interpreterxtaro.hh"
 
+#include <factory/factory.hh>
+
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
 #include <character/function.hh>
@@ -37,14 +39,15 @@ namespace xtaro
             debug->info("Load Tech...");
             tech->load();
             debug->info("Load Tech successfully!");
+
+            this->_loadOptionSucc = true;
         }
         catch (const std::exception& err)
         {
             debug->error("'load_option' failed~");
+            // TODO: Reset option and tech
             return;
         }
-
-        this->_loadOptionSucc = true;
     }
 
     void InterpreterXTaro::catOption()
@@ -68,14 +71,16 @@ namespace xtaro
             circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
             this->_sram = std::make_unique<circuit::SRAM>(option->sramName, &argument);
             debug->info("Generate SRAM circuit successfully!");
+            
+            this->_compileSucc = true;
         }
         catch (const std::exception& err) 
         {
             debug->error("'compile' failed~");
+            circuit::factory->reset();
+            this->_sram.reset();
             return;
         }
-        
-        this->_compileSucc = true;
     }
 
     void InterpreterXTaro::save()

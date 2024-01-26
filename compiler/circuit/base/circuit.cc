@@ -5,6 +5,7 @@
 
 #include <allocator/allocator.hh>
 #include <debug/debug.hh>
+#include <factory/factory.hh>
 
 #include <util/file.hh>
 #include <util/format.hh>
@@ -136,6 +137,14 @@ namespace xtaro::circuit
         }
         return ports;
     } 
+
+    Circuit* Circuit::addCircuit(
+        const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName)
+    {
+        Circuit* cir {factory->create("bitcell_array", arguments, circuitName)};
+        this->_circuits.emplace(cir);
+        return cir;
+    }
     
     void Circuit::createNetlist()
     {

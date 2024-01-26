@@ -45,7 +45,7 @@ namespace xtaro::character
         this->writeContent('\n');
 
         // Voltage & Temperature
-        this->writeDCVoltage("vdd", "vdd", this->_pvt.temperature);
+        this->writeDCVoltage("vdd", "vdd", this->_pvt.voltage);
         this->writeTemperature(this->_pvt.temperature);
         this->writeContent('\n');
 

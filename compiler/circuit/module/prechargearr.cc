@@ -3,7 +3,7 @@
 #include <module/precharge.hh>
 #include <module/fanoutbuff.hh>
 
-#include <factory/circuitfactory.hh>
+#include <factory/factory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
@@ -51,14 +51,14 @@ namespace xtaro::circuit
 
     void PrechargeArray::createCircuits()
     {
-        this->_precharge = factory->create(CircuitType::PRECHARGE, nullptr);
+        this->_precharge = factory->create("precharge", nullptr);
         this->_circuits.emplace(this->_precharge);
         
         // If word width is too much, 'p_en_bar''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create(CircuitType::FANOUT_BUFFER, &fanoutArguments);
+            this->_fanoutbuf = factory->create("fanout_buffer", &fanoutArguments);
             this->_circuits.emplace(this->_fanoutbuf);
         }
     } 
