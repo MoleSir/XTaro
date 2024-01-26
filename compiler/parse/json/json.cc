@@ -28,7 +28,7 @@ namespace xtaro::parse
         // Read json file content
         std::ifstream file{filepath};
         if (!file.is_open())
-            debug->error("Load json file", util::format("File '%s' does not exit.", filepath.c_str()));
+            debug->fatal("Load json file", util::format("File '%s' does not exit.", filepath.c_str()));
 
         std::string content {util::readFile(file)};
         file.close();
@@ -289,7 +289,7 @@ namespace xtaro::parse
     {
         this->ensureJsonTyep(JsonType::ARRAY);
         if (index < 0) 
-            debug->error("Json array", "Array index < 0.");
+            debug->fatal("Json array", "Array index < 0.");
         
         return (this->_value._array)->at(index);
     }
@@ -346,7 +346,7 @@ namespace xtaro::parse
 
         if (this->isObject()) return this->_value._object->size();
         if (this->isArray()) return this->_value._array->size();
-        debug->error("Json type", util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
+        debug->fatal("Json type", util::format("%s has no size.", Json::_jsonTypeString[this->_type]));
         return -1;
     }
 
@@ -386,7 +386,7 @@ namespace xtaro::parse
     void Json::ensureValid() const
     {
         if (this->_invalid)
-            debug->error("Json", "Use an invalid json.");
+            debug->fatal("Json", "Use an invalid json.");
     }
 
     void Json::ensureJsonTyep(JsonType type) const
@@ -394,7 +394,7 @@ namespace xtaro::parse
         this->ensureValid();
 
         if (type != this->_type)
-            debug->error(
+            debug->fatal(
                 "Json type",
                 util::format("Json Type mismatch, excepted %s but got %s",
                              Json::_jsonTypeString[type], 

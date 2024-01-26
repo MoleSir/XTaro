@@ -82,7 +82,7 @@ namespace xtaro::circuit
                              netsName.size())
             };
 
-            debug->error("Connect Instance", errorMsg);
+            debug->fatal("Connect Instance", errorMsg);
         }
 
         std::vector<Net*> nets = this->createNets(netsName);

@@ -64,7 +64,7 @@ namespace xtaro::circuit
                              this->_connectCount)
             };
 
-            debug->error("Generate Instance spice", errorMsg);
+            debug->fatal("Generate Instance spice", errorMsg);
         }
 
         // Xins A B C D cir

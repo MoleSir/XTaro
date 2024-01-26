@@ -43,7 +43,7 @@ namespace xtaro
     if (!field ## Json.invalid())\
         option->field = std::move(field ## Json.attrType());\
     else\
-        debug->error("Load Option", "'" attr "' not be given.");
+        debug->fatal("Load Option", "'" attr "' not be given.");
 
     static void configNecessaryAttributions(parse::Json& json)
     {
@@ -104,7 +104,7 @@ namespace xtaro
         if (!util::directoryExists(option->outputPath))
         {
             if (!std::filesystem::create_directories(option->outputPath))
-                debug->error(
+                debug->fatal(
                     "Load Option", 
                     util::format("Create output path '%s'", option->outputPath.c_str())
                 );

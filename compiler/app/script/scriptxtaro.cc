@@ -78,7 +78,7 @@ namespace xtaro
                 if (result)
                     debug->info("Functional test pass");
                 else
-                    debug->error("Functional test failed");
+                    debug->fatal("Functional test failed");
             }
         }
         catch (const std::exception& err)

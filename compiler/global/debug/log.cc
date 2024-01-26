@@ -83,10 +83,10 @@ namespace xtaro
         this->log(" ERROR ", message);
     }
 
-    // void Log::fatal(const std::string& message)
-    // {
-    //     this->check();
-    //     this->log("FATAL", message);
-    // }
+    void Log::fatal(const std::string& message)
+    {
+        this->check();
+        this->log(" FATAL ", message);
+    }
 
 }

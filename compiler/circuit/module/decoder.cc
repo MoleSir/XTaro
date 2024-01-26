@@ -41,7 +41,7 @@ namespace xtaro::circuit
         if (this->_inputSize <= 1 || this->_inputSize > Decoder::MAX_INPUT_SIZE)
         {
             std::string errorMsg {util::format("Decoder's input size '%d' is not a vaild", this->_inputSize)};
-            debug->error("Create Decoder", errorMsg);
+            debug->fatal("Create Decoder", errorMsg);
         }
 
         debug->debug("Create a 'Decoder' circuit: '%s'", this->_name.cstr());

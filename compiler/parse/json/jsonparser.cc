@@ -35,7 +35,7 @@ namespace xtaro::parse
             return Json(token.decimal());
             break;
         default:
-            debug->error("Parse json", "Not an valid json value");
+            debug->fatal("Parse json", "Not an valid json value");
             break;
         }
         return Json{};
@@ -96,24 +96,24 @@ namespace xtaro::parse
     bool JsonParser::checkTokenType(JsonTokenType type)
     {
         if (this->isEnd())
-            debug->error("Parse json", "Tokens ended prematurely");
+            debug->fatal("Parse json", "Tokens ended prematurely");
         return this->_iterator->type() == type;
     }
 
     JsonToken& JsonParser::ensureTokenType(JsonTokenType type, const char* message)
     {
         if (this->isEnd())
-            debug->error("Parse json", "Tokens ended prematurely");
+            debug->fatal("Parse json", "Tokens ended prematurely");
         
         if (this->_iterator->type() != type)
-            debug->error("Parse json", message);
+            debug->fatal("Parse json", message);
         return *(this->_iterator++);
     }
 
     JsonToken& JsonParser::advanceToken()
     {
         if (this->isEnd())
-            debug->error("Parse json", "Tokens ended prematurely");
+            debug->fatal("Parse json", "Tokens ended prematurely");
         return *(this->_iterator++);
     }
 }

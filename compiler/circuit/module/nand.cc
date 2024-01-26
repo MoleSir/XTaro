@@ -27,7 +27,7 @@ namespace xtaro::circuit
         if (this->_inputSize < 2)
         {
             std::string errorMsg {util::format("NAND gate's input size '%d' < 2", this->_inputSize)};
-            debug->error("Create NAND", errorMsg);
+            debug->fatal("Create NAND", errorMsg);
         }
 
         debug->debug("Create a 'NAND' circuit: '%s'", this->_name.cstr());

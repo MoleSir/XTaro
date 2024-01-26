@@ -22,6 +22,7 @@ namespace xtaro
         void info(const std::string& message);
         void warning(const std::string& message);
         void error(const std::string& message);
+        void fatal(const std::string& message);
 
     private:
         void check() const;

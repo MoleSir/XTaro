@@ -15,6 +15,7 @@ namespace xtaro
         INFO,
         WARNING,
         ERROR,
+        FATAL,
     };
 
     class Debug
@@ -35,8 +36,11 @@ namespace xtaro
         void warning(const char* fmt, ...);
         void warning(const std::string& message);
     
+        void error(const char* fmt, ...);
         void error(const std::string& message);
-        void error(const std::string& type, const std::string& reason);
+
+        void fatal(const std::string& message);
+        void fatal(const std::string& type, const std::string& reason);
 
     public:
         void setLevel(DebugLevel level);

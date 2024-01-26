@@ -120,7 +120,7 @@ namespace xtaro::character
             auto iter {results.find(measName)};
             if (iter == results.end())
             {
-                debug->info("The .MEAS task '%s' failed!", measName.c_str());
+                debug->error("The .MEAS task '%s' failed!", measName.c_str());
                 return false;                
             }
             else

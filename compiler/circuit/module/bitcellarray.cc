@@ -31,7 +31,7 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->error("Create Bitcell Array", errorMsg);
+            debug->fatal("Create Bitcell Array", errorMsg);
         }
 
         debug->debug("Create a 'Bitcell Array' circuit: '%s'", this->_name.cstr());

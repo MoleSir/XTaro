@@ -25,10 +25,10 @@ namespace xtaro
         this->print("\e[31m ERROR \e[0m", message);
     }
 
-    // void Console::fatal(const std::string& message) const
-    // {
-    //     this->print("\e[31mFATAL\e[0m", message);
-    // }
+    void Console::fatal(const std::string& message) const
+    {
+        this->print("\e[31m FATAL \e[0m", message);
+    }
     
     void Console::print(const char* level, const std::string& message) const
     {

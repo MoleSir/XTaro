@@ -28,7 +28,7 @@ namespace xtaro::circuit
         if (this->_inputSize < 2)
         {
             std::string errorMsg {util::format("OR gate's input size '%d' < 2", this->_inputSize)};
-            debug->error("Create OR", errorMsg);
+            debug->fatal("Create OR", errorMsg);
         }
 
         debug->debug("Create a 'OR' circuit: '%s'", this->_name.cstr());

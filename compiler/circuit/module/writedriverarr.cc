@@ -25,7 +25,7 @@ namespace xtaro::circuit
         if (this->_wordWidth < 1)
         {
             std::string errorMsg {util::format("Write Driver Array's word width '%d' < 1", this->_wordWidth)};
-            debug->error("Create Write Driver Array", errorMsg);
+            debug->fatal("Create Write Driver Array", errorMsg);
         }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;
