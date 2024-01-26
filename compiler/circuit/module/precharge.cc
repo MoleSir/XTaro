@@ -1,14 +1,14 @@
 #include "precharge.hh"
 #include <base/circuit.hh>
 #include <config/tech.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
     Precharge::Precharge(String name, PrechargeArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->prechargeSpicePath}
     {
-        logger->debug("Create a 'Precharge' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Precharge' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

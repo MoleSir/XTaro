@@ -1,11 +1,10 @@
 #include "mos.hh"
 #include <base/circuit.hh>
 #include <allocator/allocator.hh>
-// #include <factory/circuitfactory.hh>
 
 #include <config/tech.hh>
 #include <util/format.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -28,7 +27,7 @@ namespace xtaro::circuit
         else
             this->_name = tech->spice["pmos"].asString();
 
-        logger->debug("Create a 'MOS' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'MOS' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

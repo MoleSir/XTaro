@@ -5,7 +5,6 @@
 
 #include <config/tech.hh>
 #include <util/format.hh>
-#include <debug/logger.hh>
 #include <debug/debug.hh>
 
 #include <cmath>
@@ -32,10 +31,10 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->reportError("Create Bitcell Array", errorMsg);
+            debug->error("Create Bitcell Array", errorMsg);
         }
 
-        logger->debug("Create a 'Bitcell Array' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Bitcell Array' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

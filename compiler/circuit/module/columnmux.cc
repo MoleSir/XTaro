@@ -6,7 +6,6 @@
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
-#include <debug/logger.hh>
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -26,10 +25,10 @@ namespace xtaro::circuit
         if (this->_selectionSize < 1)
         {
             std::string errorMsg {util::format("Column Mux's selection size '%d' < 1", this->_selectionSize)};
-            debug->reportError("Create Column Mux", errorMsg);
+            debug->error("Create Column Mux", errorMsg);
         }
 
-        logger->debug("Create a 'Column Mux' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Column Mux' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

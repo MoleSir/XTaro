@@ -5,7 +5,7 @@
 
 #include <util/util.hh>
 #include <config/option.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 #include <random>
 
@@ -120,7 +120,7 @@ namespace xtaro::character
             auto iter {results.find(measName)};
             if (iter == results.end())
             {
-                logger->error("The .MEAS task '%s' failed!", measName.c_str());
+                debug->info("The .MEAS task '%s' failed!", measName.c_str());
                 return false;                
             }
             else

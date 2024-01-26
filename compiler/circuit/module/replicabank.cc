@@ -8,7 +8,6 @@
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
-#include <debug/logger.hh>
 
 namespace xtaro::circuit
 {
@@ -32,10 +31,10 @@ namespace xtaro::circuit
                     this->_bitcellSize, LINKED_BITCELL_SIZE
                 )
             };
-            debug->reportError("Create Replica Bank", errorMsg);
+            debug->error("Create Replica Bank", errorMsg);
         }
 
-        logger->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

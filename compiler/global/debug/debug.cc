@@ -1,6 +1,6 @@
 #include "debug.hh"
 
-#include <debug/logger.hh>
+#include <debug/log.hh>
 #include <debug/console.hh>
 #include <debug/exception.hh>
 
@@ -18,41 +18,117 @@ namespace xtaro
         return &_debug;
     }
 
-    void Debug::setReportWay(ReportWay way)
+    void Debug::setLevel(DebugLevel way)
     {
-        this->_reportWay = way;
+        this->_level = way;
     }
 
-    static int operator | (ReportWay way1, ReportWay way2)
+    void Debug::init(const std::string& logfile)
     {
-        return static_cast<int>(way1) | static_cast<int>(way2); 
+        this->_log = std::make_unique<Log>(logfile);
+        this->_console = std::make_unique<Console>();
     }
 
-    void Debug::reportError(
-        const std::string& errorType, 
-        const std::string& errorReason,
-        ReportWay reportWay) const
+    void Debug::debug(const char* fmt, ...)
     {
-        std::string message {
-            util::format("[%s] error! because: [%s]", errorType.c_str(), errorReason.c_str())
-        };
+        if (!this->check(DebugLevel::DEBUG)) return;
 
-        if (reportWay | ReportWay::LOG)
-            logger->error(message);
-        if (reportWay | ReportWay::CONSOLE)
-            console->error(message);
-        throw MessageException {std::move(message)};    
+        va_list(args);
+        va_start(args, fmt);
+        std::string message {util::vformat(fmt, args)};
+        va_end(args);
+
+        this->debug(message);
     }
 
-    void Debug::reportError(
-        const std::string& errorType, 
-        const std::string& errorReason) const
+    void Debug::debug(const std::string& message)
     {
-        this->reportError(errorType, errorReason, this->_reportWay);
+        if (!this->check(DebugLevel::DEBUG)) return;
+
+        this->_log->debug(message);
+        this->_console->debug(message);
     }
 
-    void Debug::exit(int code)
+    void Debug::info(const char* fmt, ...)
     {
-        std::exit(code);
+        if (!this->check(DebugLevel::INFO)) return;
+
+        va_list(args);
+        va_start(args, fmt);
+        std::string message {util::vformat(fmt, args)};
+        va_end(args);
+
+        this->info(message);
     }
+
+    void Debug::info(const std::string& message)
+    {
+        if (!this->check(DebugLevel::INFO)) return;
+
+        this->_log->info(message);
+        this->_console->info(message);
+    }
+
+    void Debug::warning(const char* fmt, ...)
+    {
+        if (!this->check(DebugLevel::WARNING)) return;
+
+        va_list(args);
+        va_start(args, fmt);
+        std::string message {util::vformat(fmt, args)};
+        va_end(args);
+
+        this->warning(message);
+    }
+ 
+    void Debug::warning(const std::string& message)
+    {
+        if (!this->check(DebugLevel::WARNING)) return;
+
+        this->_log->warning(message);
+        this->_console->warning(message);
+    }
+    
+    void Debug::error(const std::string& message)
+    {
+        if (this->check(DebugLevel::ERROR))
+        {
+            this->_log->error(message);
+            this->_console->error(message);
+        }
+        throw MessageException{message};
+    }
+
+    void Debug::error(const std::string& type, const std::string& reason)
+    {
+        if (this->check(DebugLevel::ERROR))
+        {
+            std::string message {
+                util::format("[%s] error, because: [%s]", type.c_str(), reason.c_str())
+            };
+            this->_log->error(message);
+            this->_console->error(message);
+
+            throw MessageException{std::move(message)};
+        }
+        throw TypeReasonException{type, reason};
+    }
+
+    bool Debug::check(DebugLevel level) const
+    {
+        this->checkInit();
+        return this->checkLevel(level);
+    }
+
+    void Debug::checkInit() const
+    {
+        if (this->_log.get() == nullptr || this->_console.get() == nullptr)
+            throw TypeReasonException{"Debug Message", "'debug' object is not be initialized"};
+    }
+
+    bool Debug::checkLevel(DebugLevel level) const
+    {
+        return this->_level <= level;
+    }
+
 }

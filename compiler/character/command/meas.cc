@@ -1,6 +1,6 @@
 #include "meas.hh"
 
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 #include <util/format.hh>
 #include <regex>
 #include <iostream>
@@ -25,7 +25,7 @@ namespace xtaro::character
             std::regex_search(context, nameResultMatch, nameResultRegex);
         if (success == false)
         {
-            logger->warning(util::format(
+            debug->warning(util::format(
                 "Get '%s'.meas result failed!", this->_name.c_str()).c_str());
             return false;
         }

@@ -2,7 +2,6 @@
 #include <stringpool/string.hh>
 #include <allocator/allocator.hh>
 #include <config/tech.hh>
-#include <debug/logger.hh>
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>

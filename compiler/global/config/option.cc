@@ -1,7 +1,7 @@
 #include "option.hh"
 
 #include <debug/debug.hh>
-#include <debug/logger.hh>
+
 #include <json/json.hh>
 #include <util/format.hh>
 #include <util/file.hh>
@@ -43,7 +43,7 @@ namespace xtaro
     if (!field ## Json.invalid())\
         option->field = std::move(field ## Json.attrType());\
     else\
-        debug->reportError("Load Option", "'" attr "' not be given.");
+        debug->error("Load Option", "'" attr "' not be given.");
 
     static void configNecessaryAttributions(parse::Json& json)
     {
@@ -104,7 +104,7 @@ namespace xtaro
         if (!util::directoryExists(option->outputPath))
         {
             if (!std::filesystem::create_directories(option->outputPath))
-                debug->reportError(
+                debug->error(
                     "Load Option", 
                     util::format("Create output path '%s'", option->outputPath.c_str())
                 );

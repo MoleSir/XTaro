@@ -4,7 +4,7 @@
 
 #include <util/util.hh>
 #include <debug/debug.hh>
-#include <debug/logger.hh>
+
 #include <debug/exception.hh>
 
 #include <string>
@@ -21,7 +21,7 @@ namespace xtaro::character
     {
         this->_simulationFile.open(this->_simulationFilename);
         if (!this->_simulationFile.is_open())
-            debug->reportError(
+            debug->error(
                 "Generate spice simulate file",
                 util::format("Open '%d' failed!", this->_simulationFilename.c_str())
             );
@@ -105,7 +105,7 @@ namespace xtaro::character
         this->checkFileWritable();
 
         if (times.size() != voltages.size())
-            debug->reportError(
+            debug->error(
                 "Write PWL volatage",
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
             );
@@ -140,7 +140,7 @@ namespace xtaro::character
         this->checkFileWritable();
 
         if (times.size() != voltages.size())
-            debug->reportError(
+            debug->error(
                 "Write PWL volatage",
                 util::format("Time size '%d' != Voltage size '%d'", times.size(), voltages.size())
             );
@@ -265,7 +265,7 @@ namespace xtaro::character
     void Simulator::checkFileWritable() const
     {
         if (!this->_simulationFile.is_open())
-            debug->reportError(
+            debug->error(
                 "Write spice simulation",
                 "The simulation file already closed."
             );

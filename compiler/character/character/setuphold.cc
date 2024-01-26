@@ -2,7 +2,7 @@
 // #include <simulator/simulator.hh>
 // #include <simulator/delaymeas.hh>
 
-// #include <debug/logger.hh>
+// 
 // #include <util/util.hh>
 
 // #include <string>
@@ -42,12 +42,12 @@
 //         double passingSetupHoldTime = 
 //             mode == TimeMode::SETUP ? (-1 * setupholdTime) : setupholdTime;
         
-//         logger->debug("Ideal time: %f", passingSetupHoldTime);
+//         debug->debug("Ideal time: %f", passingSetupHoldTime);
 
 //         while (true)
 //         {
 //             double dataArriveTime = (feasibleBound + infeasibleBound) / 2.0;
-//             logger->debug("Data arrive time: %f", dataArriveTime);
+//             debug->debug("Data arrive time: %f", dataArriveTime);
 //             double clkToQ = this->simulate(direction, mode, dataArriveTime, success);
 
 //             setupholdTime = (dataArriveTime - 2.0 * this->_period);
@@ -56,18 +56,18 @@
 
 //             if (success == true && (clkToQ < 1.1 * idealClkQ))
 //             {
-//                 logger->debug("PASS Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
+//                 debug->debug("PASS Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
 //                 feasibleBound = dataArriveTime;
 //             }
 //             else
 //             {
-//                 logger->debug("FAIL Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
+//                 debug->debug("FAIL Clk-to-Q: %f Setup/Hold: %f", clkToQ, setupholdTime);
 //                 infeasibleBound = dataArriveTime;
 //             }
 
 //             double maxBound = infeasibleBound > feasibleBound ? infeasibleBound : feasibleBound;
 //             double relativeRatio = fabs(infeasibleBound - feasibleBound) / fabs(maxBound);
-//             logger->debug("Relative ratio: %f", relativeRatio);
+//             debug->debug("Relative ratio: %f", relativeRatio);
 //             if (relativeRatio < 0.001)
 //                 break;
 //         };

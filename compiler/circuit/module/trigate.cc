@@ -1,14 +1,14 @@
 #include "trigate.hh"
 #include <base/circuit.hh>
 #include <config/tech.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
     TristateGate::TristateGate(String name, TristateGateArguments* arguments) :
         Circuit{std::move(name), DeviceType::SUBCKT, tech->trigateSpicePath}
     {
-        logger->debug("Create a 'Tristate Gate' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Tristate Gate' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

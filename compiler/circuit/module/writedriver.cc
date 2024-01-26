@@ -1,14 +1,14 @@
 #include "writedriver.hh"
 #include <base/circuit.hh>
 #include <config/tech.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
     WriteDriver::WriteDriver(String name, WriteDriverArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->writedriverSpicePath}
     {
-        logger->debug("Create a 'Write Driver' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Write Driver' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

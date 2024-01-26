@@ -1,17 +1,20 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 namespace xtaro
 {
-    enum class ReportWay
+    
+    class Log;
+    class Console;
+
+    enum class DebugLevel
     {
-        NONE = 0,
-
-        LOG       = (0x1 << 1), 
-        CONSOLE   = (0x1 << 2),
-
-        ALL = (LOG | CONSOLE)
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
     };
 
     class Debug
@@ -20,20 +23,28 @@ namespace xtaro
         static Debug* instance();
 
     public:
-        void setReportWay(ReportWay way);
+        void init(const std::string& logfile);
 
     public:
-        void reportError(
-             const std::string& errorType, 
-             const std::string& errorReason,
-             ReportWay reportWay) const;
+        void debug(const char* fmt, ...);
+        void debug(const std::string& message);
 
-        void reportError(
-             const std::string& errorType, 
-             const std::string& errorReason) const;
+        void info(const char* fmt, ...);
+        void info(const std::string& message);
+    
+        void warning(const char* fmt, ...);
+        void warning(const std::string& message);
+    
+        void error(const std::string& message);
+        void error(const std::string& type, const std::string& reason);
 
-    public: 
-        void exit(int code);
+    public:
+        void setLevel(DebugLevel level);
+
+    private:
+        bool check(DebugLevel level) const;
+        bool checkLevel(DebugLevel level) const;
+        void checkInit() const;
 
     private:
         Debug() = default;
@@ -44,7 +55,10 @@ namespace xtaro
         Debug& operator = (Debug&&) = delete;
     
     private:
-        ReportWay _reportWay{ReportWay::ALL};
+        DebugLevel _level{DebugLevel::INFO};
+
+        std::unique_ptr<Log> _log{nullptr};
+        std::unique_ptr<Console> _console{nullptr};
     };
 
     extern Debug* debug;

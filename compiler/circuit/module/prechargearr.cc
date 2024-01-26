@@ -6,7 +6,6 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <debug/logger.hh>
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -26,13 +25,13 @@ namespace xtaro::circuit
         if (this->_wordWidth < 1)
         {
             std::string errorMsg {util::format("Precharge Array's word width '%d' < 1", this->_wordWidth)};
-            debug->reportError("Create Precharge Array", errorMsg);
+            debug->error("Create Precharge Array", errorMsg);
         }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;
         if (this->_wordWidth % MAX_FANOUT != 0) this->_fanoutSize += 1;
         
-        logger->debug("Create a 'Precharge Array' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Precharge Array' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

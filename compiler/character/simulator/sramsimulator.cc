@@ -5,7 +5,7 @@
 
 #include <util/format.hh>
 #include <util/math.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::character
 {
@@ -94,7 +94,7 @@ namespace xtaro::character
         auto iter {this->_memoryState.find(address)};
         if (iter == this->_memoryState.end())
         {   
-            logger->warning("Try to read an unset address 0x%x, this transaction will be ignored.");
+            debug->warning("Try to read an unset address 0x%x, this transaction will be ignored.");
             return false;
         }
 
@@ -205,7 +205,7 @@ namespace xtaro::character
     {
         unsigned int newAddr {this->_addrMask & address};
         if (newAddr != address)
-            logger->warning("The address 0x%x out of range(0x%x)", address, this->_addrMask);
+            debug->warning("The address 0x%x out of range(0x%x)", address, this->_addrMask);
         return newAddr;
     }
     
@@ -213,7 +213,7 @@ namespace xtaro::character
     {
         unsigned int newWord {this->_wordMask & word};
         if (newWord != word)
-            logger->warning("The word 0x%x out of range(0x%x)", word, this->_wordMask);
+            debug->warning("The word 0x%x out of range(0x%x)", word, this->_wordMask);
         return newWord;
     }
 

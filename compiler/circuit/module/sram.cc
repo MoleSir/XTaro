@@ -7,7 +7,6 @@
 #include <factory/circuitfactory.hh>
 #include <allocator/allocator.hh>
 #include <util/format.hh>
-#include <debug/logger.hh>
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -34,10 +33,10 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->reportError("Create SRAM", errorMsg);
+            debug->error("Create SRAM", errorMsg);
         }
 
-        logger->debug("Create a 'SRAM' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'SRAM' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

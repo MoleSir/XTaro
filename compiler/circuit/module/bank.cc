@@ -12,7 +12,6 @@
 #include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
-#include <debug/logger.hh>
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -49,7 +48,7 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->reportError("Create Bank", errorMsg);
+            debug->error("Create Bank", errorMsg);
         }
 
         if (this->_addressWidth > 4)
@@ -64,7 +63,7 @@ namespace xtaro::circuit
             }
         }
 
-        logger->debug("Create a 'Bank' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Bank' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 

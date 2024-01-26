@@ -2,7 +2,7 @@
 
 #include <config/option.hh>
 #include <config/tech.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
@@ -26,9 +26,9 @@ namespace xtaro
         {
             option->load(optionFile);
             
-            logger->open(option->outputPath + "xtaro.log");
-            logger->info("Init xtaro.");
-            logger->setLevel(LoggerLevel::DEBUG);
+            debug->init(option->outputPath + "xtaro.log");
+            debug->info("Init XTaro.");
+            debug->setLevel(DebugLevel::DEBUG);
 
             tech->load();
         }
@@ -43,7 +43,7 @@ namespace xtaro
     {
         try
         {
-            logger->info("Generate SRAM circuit.");
+            debug->info("Generate SRAM circuit.");
             circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
             this->_sram = std::make_unique<circuit::SRAM>(option->sramName, &argument);
         }
@@ -58,27 +58,27 @@ namespace xtaro
     {
         try
         {
-            logger->info("Write spice file.");
+            debug->info("Write spice file.");
             this->_sram->writeSpice(option->spicePath);
 
-            logger->info("Write verilog file.");
+            debug->info("Write verilog file.");
             parse::Verilog verilog {option->addressWidth, option->wordWidth};
             verilog.writeSRAM(option->verilogPath);
 
-            logger->info("Begin to functional test.");
+            debug->info("Begin to functional test.");
             std::vector<PVT> pvts {this->pvtLists()};
             for (const PVT& pvt : pvts)
             {
-                logger->info(
+                debug->info(
                     "Begin to functional test in 'PVT(%s, %f, %f)'", 
                     pvt.process.c_str(), pvt.voltage, pvt.temperature
                 );
                 character::FunctionSimulator function {this->_sram.get(), pvt};
                 bool result {function.randomTest()};
                 if (result)
-                    logger->info("Functional test pass");
+                    debug->info("Functional test pass");
                 else
-                    logger->error("Functional test failed");
+                    debug->error("Functional test failed");
             }
         }
         catch (const std::exception& err)

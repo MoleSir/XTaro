@@ -6,7 +6,7 @@
 
 #include <allocator/allocator.hh>
 #include <util/util.hh>
-#include <debug/logger.hh>
+#include <debug/debug.hh>
 
 namespace xtaro::circuit
 {
@@ -21,7 +21,7 @@ namespace xtaro::circuit
         _nmos{nullptr},
         _pmos{nullptr}
     {
-        logger->debug("Create a 'INV' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'INV' circuit: '%s'", this->_name.cstr());
         this->createNetlist();
     }
 
