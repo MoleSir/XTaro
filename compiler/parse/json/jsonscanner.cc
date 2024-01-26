@@ -64,7 +64,7 @@ namespace xtaro::parse
         case '"':
             this->scanStringToken(); break;
         default:
-            debug->fatal("Scan Json", util::format("Unkown character '%c'.", ch));
+            debug->errorWithException("Scan Json", util::format("Unkown character '%c'.", ch));
             break;
         }
     }
@@ -116,42 +116,42 @@ namespace xtaro::parse
     void JsonScanner::scanNullToken()
     {
         if (this->advanceChar() != 'u')
-            debug->fatal("Scan json", "Except 'null'");
+            debug->errorWithException("Scan json", "Except 'null'");
         if (this->advanceChar() != 'l')
-            debug->fatal("Scan json", "Except 'null'");
+            debug->errorWithException("Scan json", "Except 'null'");
         if (this->advanceChar() != 'l')
-            debug->fatal("Scan json", "Except 'null'");
+            debug->errorWithException("Scan json", "Except 'null'");
         this->addToken(JsonTokenType::NONE);
     }
 
     void JsonScanner::scanTrueToken()
     {
         if (this->advanceChar() != 'r')
-            debug->fatal("Scan json", "Except 'true'");
+            debug->errorWithException("Scan json", "Except 'true'");
         if (this->advanceChar() != 'u')
-            debug->fatal("Scan json", "Except 'true'");
+            debug->errorWithException("Scan json", "Except 'true'");
         if (this->advanceChar() != 'e')
-            debug->fatal("Scan json", "Except 'true'");
+            debug->errorWithException("Scan json", "Except 'true'");
         this->addToken(true);
     }
 
     void JsonScanner::scanFalseToken()
     {
         if (this->advanceChar() != 'a')
-            debug->fatal("Scan json", "Except 'false'");
+            debug->errorWithException("Scan json", "Except 'false'");
         if (this->advanceChar() != 'l')
-            debug->fatal("Scan json", "Except 'false'");
+            debug->errorWithException("Scan json", "Except 'false'");
         if (this->advanceChar() != 's')
-            debug->fatal("Scan json", "Except 'false'");
+            debug->errorWithException("Scan json", "Except 'false'");
         if (this->advanceChar() != 'e')
-            debug->fatal("Scan json", "Except 'false'");
+            debug->errorWithException("Scan json", "Except 'false'");
         this->addToken(false);
     }
 
     char JsonScanner::advanceChar()
     {
         if (this->isEnd())
-            debug->fatal("Scan json", "File ended prematurely");
+            debug->errorWithException("Scan json", "File ended prematurely");
         char ch = this->peekChar();
         this->_currentIndex += 1;
         return ch;

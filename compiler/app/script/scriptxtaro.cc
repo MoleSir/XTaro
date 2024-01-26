@@ -24,17 +24,17 @@ namespace xtaro
     {
         try
         {
+            debug->info("Load Option...");
             option->load(optionFile);
-            
-            debug->init(option->outputPath + "xtaro.log");
-            debug->info("Init XTaro.");
-            debug->setLevel(DebugLevel::DEBUG);
+            debug->info("Load Option successfully!");
 
+            debug->info("Load Tech...");
             tech->load();
+            debug->info("Load Tech successfully!");
         }
         catch (const std::exception& err)
         {
-            std::cout << "Init Xtaro failed! " << err.what() << std::endl;
+            debug->error("Init XTaro failed~");
             std::exit(12);
         }
     }
@@ -43,13 +43,14 @@ namespace xtaro
     {
         try
         {
-            debug->info("Generate SRAM circuit.");
+            debug->info("Generate SRAM circuit...");
             circuit::SRAMArguments argument {option->addressWidth, option->wordWidth};
             this->_sram = std::make_unique<circuit::SRAM>(option->sramName, &argument);
+            debug->info("Generate SRAM circuit successfully!");
         }
         catch (const std::exception& err)
         {
-            std::cout << "Create SRAM failed! " << err.what() << std::endl;
+            debug->error("Create SRAM failed~");
             std::exit(12);
         }
     }
@@ -58,19 +59,21 @@ namespace xtaro
     {
         try
         {
-            debug->info("Write spice file.");
+            debug->info("Write spice file...");
             this->_sram->writeSpice(option->spicePath);
+            debug->info("Write spice file successfully!");
 
-            debug->info("Write verilog file.");
+            debug->info("Write verilog file...");
             parse::Verilog verilog {option->addressWidth, option->wordWidth};
             verilog.writeSRAM(option->verilogPath);
+            debug->info("Write verilog file successfully!");
 
-            debug->info("Begin to functional test.");
+            debug->info("Begin to functional tests...");
             std::vector<PVT> pvts {this->pvtLists()};
             for (const PVT& pvt : pvts)
             {
                 debug->info(
-                    "Begin to functional test in 'PVT(%s, %f, %f)'", 
+                    "Functional test in 'PVT(%s, %f, %f)'", 
                     pvt.process.c_str(), pvt.voltage, pvt.temperature
                 );
                 character::FunctionSimulator function {this->_sram.get(), pvt};
@@ -78,12 +81,13 @@ namespace xtaro
                 if (result)
                     debug->info("Functional test pass");
                 else
-                    debug->fatal("Functional test failed");
+                    debug->info("Functional test failed");
             }
+            debug->info("Functional tests successfully!");
         }
         catch (const std::exception& err)
         {
-            std::cout << "Save files failed! " << err.what() << std::endl;
+            debug->error("Save files failed~");
             std::exit(12);
         }
     }

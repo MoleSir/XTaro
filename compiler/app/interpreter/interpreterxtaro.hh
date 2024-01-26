@@ -16,49 +16,61 @@ namespace xtaro
 
     class InterpreterXTaro
     {
-        enum class Command
-        {
-            NONE,
-            LOAD_OPTION,
-            COMPILE,
-            FUNCTION_TEST,
-            EXIT,
-        };
+        using CommandMethod = std::function<void(void)>; 
 
     public:
         static InterpreterXTaro* instance();
-
-    public:
-        void interprete(std::string line);
+        void interprete();
+        void getCommandLine();
 
     private:
-        bool parse(std::string commandLine);
+        bool parse();
         void execute();
 
     private:
-        std::vector<std::string> splitCommandLine(const std::string& commandLine);
+        std::vector<std::string> splitCommandLine();
 
     private:
         void loadOption();
+        void catOption();
+
         void compile();
+        
+        void save();
+        void saveSpice();
+        void saveVerilog();
+        
         void functionTest();
+        
         void exit();
+        void clear();
 
     private:
-        InterpreterXTaro() = default;
+        bool checkOption() const;
+        bool checkCompile() const;
+
+        void clearCurrentInput();
+        
+    private:
+        InterpreterXTaro();
         ~InterpreterXTaro() noexcept = default;
         InterpreterXTaro(const InterpreterXTaro&) = delete;
-        InterpreterXTaro(InterpreterXTaro&&) = delete;
+        InterpreterXTaro(InterpreterXTaro&&) noexcept = delete;
         InterpreterXTaro& operator = (const InterpreterXTaro&) = delete;
-        InterpreterXTaro& operator = (InterpreterXTaro&&) = delete;
+        InterpreterXTaro& operator = (InterpreterXTaro&&) noexcept = delete;
 
     private:
-        static std::map<std::string, Command> commandMap;
+        std::map<std::string, CommandMethod> _methodMap{};
 
-    private:
-        std::vector<std::string> _historyCommands{};
-        Command _command{Command::NONE};
+        std::string _commandLine{};
+        std::vector<std::string> _historyCommands{"clear"};
+
+        CommandMethod _method{nullptr};
         std::vector<std::string> _arguments{};
+
+        bool _loadOptionSucc{false};
+        bool _compileSucc{false};
+        std::unique_ptr<circuit::SRAM> _sram{nullptr};
     };
 
 }

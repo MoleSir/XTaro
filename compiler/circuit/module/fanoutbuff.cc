@@ -22,7 +22,7 @@ namespace xtaro::circuit
         if (this->_fanoutSize <= 1 || this->_fanoutSize > MAX_FANOUT)
         {
             std::string errorMsg {util::format("Fanout Buffer's fanout size '%d' invalid", this->_fanoutSize)};
-            debug->fatal("Create Fanout Buffer", errorMsg);
+            debug->errorWithException("Create Fanout Buffer", errorMsg);
         }
 
         debug->debug("Create a 'Fanout Buffer' circuit: '%s'", this->_name.cstr());

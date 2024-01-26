@@ -26,7 +26,7 @@ namespace xtaro::circuit
         if (this->_addressSize < 2)
         {
             std::string errorMsg {util::format("'Row Decoder's address size '%d' < 2", this->_addressSize)};
-            debug->fatal("Create 'Row Decoder", errorMsg);
+            debug->errorWithException("Create 'Row Decoder", errorMsg);
         }
 
         debug->debug("Create a 'Row Decoder' circuit: '%s'", this->_name.cstr());

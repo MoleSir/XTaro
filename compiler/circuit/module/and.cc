@@ -29,7 +29,7 @@ namespace xtaro::circuit
         _inv{nullptr}
     {
         if (this->_inputSize < 2)
-            debug->fatal(
+            debug->errorWithException(
                 "Create AND", util::format("AND gate's input size '%d' < 2", this->_inputSize)
             );
 

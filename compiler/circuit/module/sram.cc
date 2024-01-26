@@ -33,7 +33,7 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->fatal("Create SRAM", errorMsg);
+            debug->errorWithException("Create SRAM", errorMsg);
         }
 
         debug->debug("Create a 'SRAM' circuit: '%s'", this->_name.cstr());

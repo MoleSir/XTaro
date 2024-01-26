@@ -25,7 +25,7 @@ namespace xtaro::circuit
         if (this->_selectionSize < 1)
         {
             std::string errorMsg {util::format("Column Mux's selection size '%d' < 1", this->_selectionSize)};
-            debug->fatal("Create Column Mux", errorMsg);
+            debug->errorWithException("Create Column Mux", errorMsg);
         }
 
         debug->debug("Create a 'Column Mux' circuit: '%s'", this->_name.cstr());

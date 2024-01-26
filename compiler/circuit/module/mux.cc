@@ -28,7 +28,7 @@ namespace xtaro::circuit
         if (this->_selectionSize < 1 || this->_selectionSize > Mux::MAX_SELECTION_SIZE)
         {
             std::string errorMsg {util::format("Mux's selection size '%d' is not a vaild", this->_selectionSize)};
-            debug->fatal("Create Mux", errorMsg);
+            debug->errorWithException("Create Mux", errorMsg);
         }
 
         debug->debug("Create a 'Mux' circuit: '%s'", this->_name.cstr());

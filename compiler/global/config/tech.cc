@@ -36,7 +36,7 @@ namespace xtaro
 
     static void noExitsError(const std::string& path)
     {
-        debug->fatal("Load Tech", util::format("'%s' not be given."));
+        debug->errorWithException("Load Tech", util::format("'%s' not be given."));
     }
 
     static void checkDirectoryExits(const std::string& directory)
@@ -96,24 +96,24 @@ namespace xtaro
         // Spice tech
         tech->spice = json.get("spice");
         if (tech->spice.invalid())
-            debug->fatal("Load tech", "No spice tech message.");
+            debug->errorWithException("Load tech", "No spice tech message.");
 
         tech->drc = json.get("drc");
         if (tech->drc.invalid())
-            debug->fatal("Load tech", "No drc tech message.");
+            debug->errorWithException("Load tech", "No drc tech message.");
     }
 
     // ============================ Check Tech Message =============================== //
 
     static void checkSpiceMessage()
     {
-        if (!tech->spice.has("nmos")) debug->fatal("Load spice tech", "No 'nmos'.");
-        if (!tech->spice.has("pmos")) debug->fatal("Load spice tech", "No 'pmos'.");
+        if (!tech->spice.has("nmos")) debug->errorWithException("Load spice tech", "No 'nmos'.");
+        if (!tech->spice.has("pmos")) debug->errorWithException("Load spice tech", "No 'pmos'.");
     }
 
     static void checkDRCMessage()
     {
-        if (!tech->drc.has("minwidth_poly")) debug->fatal("Load drc tech", "No 'minwidth_poly'.");
+        if (!tech->drc.has("minwidth_poly")) debug->errorWithException("Load drc tech", "No 'minwidth_poly'.");
     }
 
     static void checkTechMessage()

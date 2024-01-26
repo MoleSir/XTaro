@@ -31,7 +31,7 @@ namespace xtaro::circuit
                     this->_bitcellSize, LINKED_BITCELL_SIZE
                 )
             };
-            debug->fatal("Create Replica Bank", errorMsg);
+            debug->errorWithException("Create Replica Bank", errorMsg);
         }
 
         debug->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());

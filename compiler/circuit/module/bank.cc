@@ -48,7 +48,7 @@ namespace xtaro::circuit
                 )
             };
 
-            debug->fatal("Create Bank", errorMsg);
+            debug->errorWithException("Create Bank", errorMsg);
         }
 
         if (this->_addressWidth > 4)

@@ -25,7 +25,7 @@ namespace xtaro::circuit
         if (this->_wordWidth < 1)
         {
             std::string errorMsg {util::format("Sense Amplifier Array's word width '%d' < 1", this->_wordWidth)};
-            debug->fatal("Create Sense Amplifier Array", errorMsg);
+            debug->errorWithException("Create Sense Amplifier Array", errorMsg);
         }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;

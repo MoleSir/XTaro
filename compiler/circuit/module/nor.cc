@@ -27,7 +27,7 @@ namespace xtaro::circuit
         if (this->_inputSize < 2)
         {
             std::string errorMsg {util::format("NOR gate's input size '%d' < 2", this->_inputSize)};
-            debug->fatal("Create NOR", errorMsg);
+            debug->errorWithException("Create NOR", errorMsg);
         }
 
         debug->debug("Create a 'NOR' circuit: '%s'", this->_name.cstr());

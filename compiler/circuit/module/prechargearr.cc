@@ -25,7 +25,7 @@ namespace xtaro::circuit
         if (this->_wordWidth < 1)
         {
             std::string errorMsg {util::format("Precharge Array's word width '%d' < 1", this->_wordWidth)};
-            debug->fatal("Create Precharge Array", errorMsg);
+            debug->errorWithException("Create Precharge Array", errorMsg);
         }
 
         this->_fanoutSize = this->_wordWidth / MAX_FANOUT;

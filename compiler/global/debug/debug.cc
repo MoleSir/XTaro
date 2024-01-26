@@ -103,30 +103,18 @@ namespace xtaro
 
     void Debug::error(const std::string& message)
     {
-        if (this->check(DebugLevel::ERROR))
-        {
-            this->_log->error(message);
-            this->_console->error(message);
-        }
-        throw MessageException{message};
+        if (!this->check(DebugLevel::ERROR)) return;
+
+        this->_log->error(message);
+        this->_console->error(message);
     }
 
-    void Debug::fatal(const std::string& message)
-    {
-        if (this->check(DebugLevel::FATAL))
-        {
-            this->_log->error(message);
-            this->_console->error(message);
-        }
-        throw MessageException{message};
-    }
-
-    void Debug::fatal(const std::string& type, const std::string& reason)
+    void Debug::errorWithException(const std::string& type, const std::string& reason)
     {
         if (this->check(DebugLevel::ERROR))
         {
             std::string message {
-                util::format("[%s] fatal, because: [%s]", type.c_str(), reason.c_str())
+                util::format("[%s] error, because: [%s]", type.c_str(), reason.c_str())
             };
             this->_log->error(message);
             this->_console->error(message);
@@ -134,6 +122,29 @@ namespace xtaro
             throw MessageException{std::move(message)};
         }
         throw TypeReasonException{type, reason};
+    }
+
+    void Debug::fatal(int status, const char* fmt, ...)
+    {
+        if (!this->check(DebugLevel::WARNING)) return;
+
+        va_list(args);
+        va_start(args, fmt);
+        std::string message {util::vformat(fmt, args)};
+        va_end(args);
+
+        this->fatal(status, message);
+    }
+
+    void Debug::fatal(int status, const std::string& message)
+    {
+        if (this->check(DebugLevel::FATAL))
+        {
+            this->_log->error(message);
+            this->_console->error(message);
+        }
+
+        std::exit(status);
     }
 
     bool Debug::check(DebugLevel level) const

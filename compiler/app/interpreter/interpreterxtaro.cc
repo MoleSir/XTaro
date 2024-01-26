@@ -1,20 +1,44 @@
 #include "interpreterxtaro.hh"
-#include <debug/exception.hh>
+
+#include <module/sram.hh>
+#include <verilog/verilog.hh>
+#include <character/function.hh>
+
+#include <config/option.hh>
+#include <config/tech.hh>
 #include <util/format.hh>
+#include <util/sys.hh>
 #include <debug/debug.hh>
+#include <debug/exception.hh>
 
 #include <iostream>
+#include <functional>
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
 
 namespace xtaro 
 {
-    std::map<std::string, InterpreterXTaro::Command> 
-    InterpreterXTaro::commandMap 
+
+    InterpreterXTaro::InterpreterXTaro() : 
+        _methodMap 
+        {
+            {std::string{"load_option"}, std::bind(&InterpreterXTaro::loadOption, this)},
+            {std::string{"cat_option"}, std::bind(&InterpreterXTaro::catOption, this)},
+
+            {std::string{"compile"}, std::bind(&InterpreterXTaro::compile, this)},
+
+            {std::string{"save"}, std::bind(&InterpreterXTaro::save, this)},
+            {std::string{"saveSpice"}, std::bind(&InterpreterXTaro::saveSpice, this)},
+            {std::string{"saveVerilog"}, std::bind(&InterpreterXTaro::saveVerilog, this)},
+            
+            {std::string{"function_test"}, std::bind(&InterpreterXTaro::functionTest, this)},
+            
+            {std::string{"exit"}, std::bind(&InterpreterXTaro::exit, this)},
+            {std::string{"clear"}, std::bind(&InterpreterXTaro::clear, this)},
+        }
     {
-        {std::string{"load_option"}, Command::LOAD_OPTION},
-        {std::string{"compile"}, Command::COMPILE},
-        {std::string{"function_test"}, Command::FUNCTION_TEST},
-        {std::string{"exit"}, Command::EXIT},
-    };
+    }
 
     InterpreterXTaro* InterpreterXTaro::instance()
     {
@@ -22,77 +46,149 @@ namespace xtaro
         return &_xtaro;
     }
 
-    void InterpreterXTaro::interprete(std::string commandLine)
+    void InterpreterXTaro::interprete()
     {
-        if (this->parse(std::move(commandLine)))
+        if (this->parse())
             this->execute();
     }
 
-    void InterpreterXTaro::loadOption()
+    void InterpreterXTaro::getCommandLine()
     {
-        std::cout << "loadOption" << std::endl;
+        std::cout << "XTaro> ";
+
+        this->_commandLine.clear();
+        auto history {this->_historyCommands.rbegin()};
+
+        bool finish{false};
+        while (!finish)
+        {
+            char ch {util::getCharNoEcho()};
+
+            switch (ch)
+            {
+            case '\n':
+            {
+                std::cout << std::endl;
+                finish = true;
+                break;
+            }
+            case 127:
+            {
+                if (this->_commandLine.empty()) break;
+                this->_commandLine.pop_back();
+                std::putchar('\b');
+                std::putchar(' ');
+                std::putchar('\b');
+                break;
+            }
+            case '\33':
+            case '\34':
+            {
+                this->clearCurrentInput();
+                this->_commandLine.assign(*history);
+                std::cout << this->_commandLine;
+                
+                if (ch == '\33')
+                {
+                    auto next {history + 1};
+                    if (next != this->_historyCommands.rend())
+                        history = next;
+                }
+                else 
+                {
+                if (history != this->_historyCommands.rbegin())
+                    --history; 
+                }
+
+                // Jump two left charachters
+                util::getCharNoEcho(), util::getCharNoEcho();
+                continue;
+            }
+            default:
+            {
+                this->_commandLine.push_back(ch);
+                std::putchar(ch);
+                break;
+            }
+            }
+        }
     }
 
-    void InterpreterXTaro::compile()
+    bool InterpreterXTaro::checkOption() const
     {
-        std::cout << "compile" << std::endl;
+        if (this->_loadOptionSucc == false)
+        {
+            debug->error("XTaro has not been configed, please 'load_option xx.json' firstly~");
+            return false;
+        }
+        return true;
     }
 
-    void InterpreterXTaro::functionTest()
+    bool InterpreterXTaro::checkCompile() const
     {
-        std::cout << "functionTest" << std::endl;
+        if (this->_compileSucc == false)
+        {
+            debug->error("SRAM has not been compiled, please 'compile' firstly~");
+            return false;
+        }
+        return true;
     }
 
-    void InterpreterXTaro::exit()
+    void InterpreterXTaro::clearCurrentInput()
     {
-        throw InterpreterExit{};
+        for (std::size_t i = 0; i < this->_commandLine.size(); ++i)
+        {
+            std::putchar('\b');
+            std::putchar(' ');
+            std::putchar('\b');
+        }
+        this->_commandLine.clear();
     }
 
     void InterpreterXTaro::execute()
     {
-        switch (this->_command)
-        {
-        case Command::LOAD_OPTION:   return this->loadOption();
-        case Command::COMPILE:       return this->compile();
-        case Command::FUNCTION_TEST: return this->functionTest();
-        case Command::EXIT:          return this->exit();
-        default: return;
-        }
+        if (this->_method != nullptr)
+            this->_method();
     }
 
-    bool InterpreterXTaro::parse(std::string commandLine)
+    bool InterpreterXTaro::parse()
     {
-        this->_command = Command::NONE;
-        this->_arguments.clear();
+        if (this->_commandLine.empty()) return false;
+
+        // Save command line
+        this->_historyCommands.emplace_back(std::move(this->_commandLine));
 
         // Split command line into small tokens
-        std::vector<std::string> tokens {this->splitCommandLine(commandLine)};
+        std::vector<std::string> tokens {this->splitCommandLine()};
 
-        // first token is command
-        auto res {InterpreterXTaro::commandMap.find(tokens[0])};
-        if (res == commandMap.end())
+        // First token is command
+        auto res {this->_methodMap.find(tokens[0])};
+        if (res == this->_methodMap.end())
         {
-            std::cout << util::format("Unkonw command: '%s'", tokens[0].c_str()) << std::endl;
+            debug->error("Unkonw command: '%s'~", tokens[0].c_str());
             return false;
         }
 
-        this->_command = res->second;
+        this->_method = nullptr;
+        this->_arguments.clear();
+
+        this->_method = res->second;
 
         // other tokens are arguments   
         for (std::size_t i = 1; i < tokens.size(); ++i)
             this->_arguments.emplace_back(std::move(tokens[i]));        
 
-        // Save command line
-        this->_historyCommands.emplace_back(std::move(commandLine));
         return true;
     }
 
     std::vector<std::string> 
-    InterpreterXTaro::splitCommandLine(const std::string& commandLine)
+    InterpreterXTaro::splitCommandLine()
     {
         std::vector<std::string> tokens {};
         std::size_t begin {0};
         std::size_t end {0};
+
+        const std::string& commandLine {this->_historyCommands.back()};
 
         while (begin < commandLine.size())
         {

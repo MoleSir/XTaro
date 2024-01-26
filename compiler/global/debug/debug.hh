@@ -38,9 +38,10 @@ namespace xtaro
     
         void error(const char* fmt, ...);
         void error(const std::string& message);
+        void errorWithException(const std::string& type, const std::string& reason);
 
-        void fatal(const std::string& message);
-        void fatal(const std::string& type, const std::string& reason);
+        void fatal(int status, const char* fmt, ...);
+        void fatal(int status, const std::string& message);
 
     public:
         void setLevel(DebugLevel level);
@@ -59,7 +60,7 @@ namespace xtaro
         Debug& operator = (Debug&&) = delete;
     
     private:
-        DebugLevel _level{DebugLevel::INFO};
+        DebugLevel _level{DebugLevel::DEBUG};
 
         std::unique_ptr<Log> _log{nullptr};
         std::unique_ptr<Console> _console{nullptr};
