@@ -36,6 +36,8 @@ namespace xtaro
             
             {std::string{"exit"}, std::bind(&InterpreterXTaro::exit, this)},
             {std::string{"clear"}, std::bind(&InterpreterXTaro::clear, this)},
+
+            {std::string{"set_debug_level"}, std::bind(&InterpreterXTaro::setDebugLevel, this)},
         }
     {
     }
@@ -57,7 +59,7 @@ namespace xtaro
         std::cout << "XTaro> ";
 
         this->_commandLine.clear();
-        auto history {this->_historyCommands.rbegin()};
+        auto history {this->_historyCommands.begin()};
 
         bool finish{false};
         while (!finish)
@@ -82,26 +84,44 @@ namespace xtaro
                 break;
             }
             case '\33':
-            case '\34':
             {
+                // Page Up and Page Down start with '\33', follow by '[A' or '[B'
+                util::getCharNoEcho();
+                ch = util::getCharNoEcho();
+                
+                switch (ch)
+                {
+                // Page Up
+                case 'A':
+                {
+                    auto current = history;
+                    if (++history == this->_historyCommands.end())
+                        history = current;
+                    break;
+                }
+                // Page Up
+                case 'B':
+                {
+                    if (history != this->_historyCommands.begin())
+                        --history;
+                    break;
+                }
+                // Page Left
+                case 'D':
+                {
+                    break;
+                }
+                case 'C':
+                {
+                    break;
+                }
+                default: break;
+                }
+
                 this->clearCurrentInput();
                 this->_commandLine.assign(*history);
                 std::cout << this->_commandLine;
-                
-                if (ch == '\33')
-                {
-                    auto next {history + 1};
-                    if (next != this->_historyCommands.rend())
-                        history = next;
-                }
-                else 
-                {
-                if (history != this->_historyCommands.rbegin())
-                    --history; 
-                }
 
-                // Jump two left charachters
-                util::getCharNoEcho(), util::getCharNoEcho();
                 continue;
             }
             default:
@@ -156,7 +176,9 @@ namespace xtaro
         if (this->_commandLine.empty()) return false;
 
         // Save command line
-        this->_historyCommands.emplace_back(std::move(this->_commandLine));
+        auto front {++this->_historyCommands.begin()};
+        if (this->_commandLine != *front)
+            this->_historyCommands.emplace(front, std::move(this->_commandLine));
 
         // Split command line into small tokens
         std::vector<std::string> tokens {this->splitCommandLine()};
@@ -188,7 +210,7 @@ namespace xtaro
         std::size_t begin {0};
         std::size_t end {0};
 
-        const std::string& commandLine {this->_historyCommands.back()};
+        const std::string& commandLine {*(++this->_historyCommands.begin())};
 
         while (begin < commandLine.size())
         {

@@ -2,11 +2,20 @@
 #include <cstdlib>
 #include <iostream>
 
+#ifdef __linux__
 #include <termios.h>
 #include <unistd.h>
+#elif  _WIN32
+#include <conio.h>
+#elif __APPLE__
+static_assert(false);
+#else
+static_assert(false);
+#endif
 
 namespace xtaro::util
 {
+
     int execute(const std::string& command) noexcept
     {
         return std::system(command.c_str());
@@ -19,6 +28,7 @@ namespace xtaro::util
 
     char getCharNoEcho()
     {
+    #ifdef __linux__
         struct termios oldt, newt;
         char ch;
 
@@ -41,6 +51,13 @@ namespace xtaro::util
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 
         return ch;
+    #elif _WIN32
+        return getch();
+    #elif __APPLE__
+        static_assert(false);
+    #else
+        static_assert(false);
+    #endif
     }
 
 }

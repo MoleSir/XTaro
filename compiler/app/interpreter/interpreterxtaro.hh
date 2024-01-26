@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 #include <map>
+#include <list>
 
 namespace xtaro
 {
@@ -45,6 +46,8 @@ namespace xtaro
         void exit();
         void clear();
 
+        void setDebugLevel();
+
     private:
         bool checkOption() const;
         bool checkCompile() const;
@@ -63,7 +66,7 @@ namespace xtaro
         std::map<std::string, CommandMethod> _methodMap{};
 
         std::string _commandLine{};
-        std::vector<std::string> _historyCommands{"clear"};
+        std::list<std::string> _historyCommands{"", ""};
 
         CommandMethod _method{nullptr};
         std::vector<std::string> _arguments{};

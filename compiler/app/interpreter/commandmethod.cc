@@ -8,6 +8,7 @@
 #include <config/option.hh>
 #include <config/tech.hh>
 #include <util/format.hh>
+#include <util/sys.hh>
 #include <debug/debug.hh>
 
 #include <iostream>
@@ -21,7 +22,7 @@ namespace xtaro
     {
         if (this->_arguments.size() == 0)
         {
-            debug->error("Command 'load_option' needs one argument as option file");
+            debug->error("Command 'load_option' needs one argument as option file~");
             return;
         }
 
@@ -52,6 +53,9 @@ namespace xtaro
 
         std::cout << "word width:    " << option->wordWidth << std::endl;
         std::cout << "address width: " << option->addressWidth << std::endl;
+
+        std::cout << "tech path:     " << option->techPath << std::endl;
+        std::cout << "output path:   " << option->outputPath << std::endl;
     }
 
     void InterpreterXTaro::compile()
@@ -205,7 +209,39 @@ namespace xtaro
 
     void InterpreterXTaro::clear()
     {
-        std::system("clear");
+    #ifdef __linux__
+        util::execute("clear");
+    #elif  _WIN32
+        util::execute("cls");
+    #elif __APPLE__
+        util::execute("clear");
+    #else
+        static_assert(false);
+    #endif
     }
 
+    void InterpreterXTaro::setDebugLevel()
+    {
+        if (this->_arguments.size() != 1)
+        {
+            debug->error("Command 'set_debug_level' needs one argument as new level~");
+            return;
+        }
+
+        const std::string& level {this->_arguments[0]};
+        if (std::strncmp(level.c_str(), "DEBUG", 5) == 0)
+            debug->setLevel(DebugLevel::DEBUG);
+        else if (std::strncmp(level.c_str(), "INFO", 4) == 0)
+            debug->setLevel(DebugLevel::INFO);
+        else if (std::strncmp(level.c_str(), "WARNING", 7) == 0)
+            debug->setLevel(DebugLevel::WARNING);
+        else if (std::strncmp(level.c_str(), "ERROR", 5) == 0)
+            debug->setLevel(DebugLevel::ERROR);
+        else if (std::strncmp(level.c_str(), "FATAL", 5) == 0)
+            debug->setLevel(DebugLevel::FATAL);
+        else
+        {
+            debug->error("'%s' is not a debug level~", level.c_str());
+        }
+    }
 }
