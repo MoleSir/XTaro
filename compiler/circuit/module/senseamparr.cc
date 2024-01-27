@@ -3,8 +3,6 @@
 #include <module/senseamp.hh>
 #include <module/fanoutbuff.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -54,15 +52,13 @@ namespace xtaro::circuit
 
     void SenseAmplifierArray::createCircuits()
     {
-        this->_senseamp = factory->create("sense_amp", nullptr);
-        this->_circuits.emplace(this->_senseamp);
+        this->_senseamp = this->addCircuit("sense_amp", nullptr);
         
         // If word width is too much, 'sa_en''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create("fanout_buffer", &fanoutArguments);
-            this->_circuits.emplace(this->_fanoutbuf);
+            this->_fanoutbuf = this->addCircuit("fanout_buffer", &fanoutArguments);
         }
     } 
 

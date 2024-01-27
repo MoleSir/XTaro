@@ -2,8 +2,6 @@
 
 #include <module/inv.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -41,8 +39,7 @@ namespace xtaro::circuit
     void FanoutBuffer::createCircuits()
     {   
         INVArguments invArugments {DriveCapability::STRONG_1};
-        this->_inv = factory->create("inv", &invArugments);
-        this->_circuits.emplace(this->_inv);
+        this->_inv = this->addCircuit("inv", &invArugments);
     } 
 
     void FanoutBuffer::createInstances() 

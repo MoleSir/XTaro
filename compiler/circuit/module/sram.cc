@@ -4,8 +4,6 @@
 #include <module/bank.hh>
 #include <module/controllogic.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -61,16 +59,13 @@ namespace xtaro::circuit
 
     void SRAM::createCircuits()
     {
-        this->_dff = factory->create("dff", nullptr);
-        this->_circuits.emplace(this->_dff);
+        this->_dff = this->addCircuit("dff", nullptr);
 
         BankArguments bankArgs{this->_addressWidth, this->_wordWidth};
-        this->_bank = factory->create("bank", &bankArgs);
-        this->_circuits.emplace(this->_bank);
+        this->_bank = this->addCircuit("bank", &bankArgs);
 
         ControlLogicArguments controlArgs{};
-        this->_controllogic = factory->create("control_logic", &controlArgs);
-        this->_circuits.emplace(this->_controllogic);
+        this->_controllogic = this->addCircuit("control_logic", &controlArgs);
     } 
 
     void SRAM::createInstances() 

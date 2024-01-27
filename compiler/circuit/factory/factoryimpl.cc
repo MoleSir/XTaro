@@ -1,8 +1,4 @@
 #include "factoryimpl.hh"
-#include <stringpool/string.hh>
-#include <allocator/allocator.hh>
-#include <config/tech.hh>
-#include <debug/debug.hh>
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>
@@ -31,9 +27,16 @@
 #include <module/controllogic.hh>
 #include <module/sram.hh>
 
+#include <stringpool/string.hh>
+#include <allocator/allocator.hh>
+#include <config/tech.hh>
+#include <debug/debug.hh>
 #include <util/format.hh>
 
+#include <string>
+#include <unordered_map>
 #include <string_view>
+#include <array>
 
 namespace xtaro::circuit
 {

@@ -4,8 +4,6 @@
 #include <module/precharge.hh>
 #include <module/writedriver.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -52,14 +50,9 @@ namespace xtaro::circuit
 
     void ReplicaBank::createCircuits()
     {   
-        this->_bitcell = factory->create("bitcell", nullptr);
-        this->_circuits.emplace(this->_bitcell);
-
-        this->_prechage = factory->create("precharge", nullptr);
-        this->_circuits.emplace(this->_prechage);
-
-        this->_writedriver = factory->create("write_driver", nullptr);
-        this->_circuits.emplace(this->_writedriver);
+        this->_bitcell     = this->addCircuit("bitcell", nullptr);
+        this->_prechage    = this->addCircuit("precharge", nullptr);
+        this->_writedriver = this->addCircuit("write_driver", nullptr);
     } 
 
     void ReplicaBank::createInstances() 

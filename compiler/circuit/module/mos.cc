@@ -1,6 +1,5 @@
 #include "mos.hh"
 #include <base/circuit.hh>
-#include <allocator/allocator.hh>
 
 #include <config/tech.hh>
 #include <util/format.hh>

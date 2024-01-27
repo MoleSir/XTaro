@@ -141,7 +141,7 @@ namespace xtaro::circuit
     Circuit* Circuit::addCircuit(
         const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName)
     {
-        Circuit* cir {factory->create("bitcell_array", arguments, circuitName)};
+        Circuit* cir {factory->create(circuitTypeName, arguments, circuitName)};
         this->_circuits.emplace(cir);
         return cir;
     }

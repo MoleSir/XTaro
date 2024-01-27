@@ -5,6 +5,7 @@
 
 namespace xtaro::circuit
 {
+
     Port::Port(String name, PortType type):
         _name{std::move(name)},
         _type{type},
@@ -13,5 +14,4 @@ namespace xtaro::circuit
 
     }
 
-    
 }

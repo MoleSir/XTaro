@@ -8,6 +8,7 @@
 
 namespace xtaro::circuit
 {
+    
     class Net;
     class Circuit;
     class Instance;

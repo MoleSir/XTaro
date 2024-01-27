@@ -1,11 +1,11 @@
 #include "factory.hh"
-#include "circuittype.hh"
-
-#include <base/circuit.hh>
 #include "factoryimpl.hh"
 
-#include <array>
-#include <unordered_map>
+#include <base/circuit.hh>
+
+#include <string>
+#include <string_view>
+#include <memory>
 
 namespace xtaro::circuit
 {
@@ -37,7 +37,5 @@ namespace xtaro::circuit
         static CircuitFactory _factory;
         return &_factory;
     }
-
-
 
 }

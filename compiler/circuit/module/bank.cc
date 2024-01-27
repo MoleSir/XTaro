@@ -8,8 +8,6 @@
 #include <module/writedriverarr.hh>
 #include <module/senseamparr.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/debug.hh>
@@ -92,35 +90,28 @@ namespace xtaro::circuit
     void Bank::createCircuits()
     {
         BitcellArrayArguments bitcellArrayArguments {this->_rowSize, this->_columnSize};
-        this->_bitcellArray = 
-            this->addCircuit("bitcell_array", &bitcellArrayArguments);
+        this->_bitcellArray = this->addCircuit("bitcell_array", &bitcellArrayArguments);
 
         RowDecoderArguments rowDecoderArguments {this->_rowAddressWidth};
-        this->_rowDecoder = factory->create("row_decoder", &rowDecoderArguments);
-        this->_circuits.emplace(this->_rowDecoder);
+        this->_rowDecoder = this->addCircuit("row_decoder", &rowDecoderArguments);
 
         if (this->_columnAddressWidth > 0)
         {
             ColumnMuxArguments columnMuxrArguments {this->_columnAddressWidth, this->_wordWidth};
-            this->_columnMux = factory->create("column_mux", &columnMuxrArguments);
-            this->_circuits.emplace(this->_columnMux);
+            this->_columnMux = this->addCircuit("column_mux", &columnMuxrArguments);
         }
 
         ReplicaBankArguments rblArguments {this->_rowSize};
-        this->_replicaBank = factory->create("replica_bank", &rblArguments);
-        this->_circuits.emplace(this->_replicaBank);
+        this->_replicaBank = this->addCircuit("replica_bank", &rblArguments);
 
         PrechargeArrayArguments preArguments {this->_wordWidth};
-        this->_prechargeArray = factory->create("precharge_array", &preArguments);
-        this->_circuits.emplace(this->_prechargeArray);
+        this->_prechargeArray = this->addCircuit("precharge_array", &preArguments);
 
         WriteDriverArrayArguments wriArguments {this->_wordWidth};
-        this->_writedriverArray = factory->create("write_driver_array", &wriArguments);
-        this->_circuits.emplace(this->_writedriverArray);
+        this->_writedriverArray = this->addCircuit("write_driver_array", &wriArguments);
 
         SenseAmplifierArrayArguments seaArguments {this->_wordWidth};
-        this->_senseampArray = factory->create("sense_amp_array", &seaArguments);
-        this->_circuits.emplace(this->_senseampArray);
+        this->_senseampArray = this->addCircuit("sense_amp_array", &seaArguments);
     }
 
     void Bank::createInstances() 

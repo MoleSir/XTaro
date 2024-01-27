@@ -5,8 +5,6 @@
 #include <module/nor.hh>
 #include <module/nand.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -48,27 +46,21 @@ namespace xtaro::circuit
     void ControlLogic::createCircuits()
     {
         INVArguments invArgs{DriveCapability::NORMAL};
-        this->_inv = factory->create("inv", &invArgs);
-        this->_circuits.emplace(this->_inv);
+        this->_inv = this->addCircuit("inv", &invArgs);
 
         invArgs.driveCapability = DriveCapability::STRONG_2;
-        this->_powerInv = factory->create("inv", &invArgs);
-        this->_circuits.emplace(this->_powerInv);
+        this->_powerInv = this->addCircuit("inv", &invArgs);
 
         ORArguments orArgs{DriveCapability::NORMAL, 2};
-        this->_or2 = factory->create("or", &orArgs);
-        this->_circuits.emplace(this->_or2);
+        this->_or2 = this->addCircuit("or", &orArgs);
 
         NORArguments norArgs{DriveCapability::NORMAL, 2};
-        this->_nor2 = factory->create("nor", &norArgs);
-        this->_circuits.emplace(this->_nor2);
+        this->_nor2 = this->addCircuit("nor", &norArgs);
         norArgs.inputSize = 3;
-        this->_nor3 = factory->create("nor", &norArgs);
-        this->_circuits.emplace(this->_nor3);
+        this->_nor3 = this->addCircuit("nor", &norArgs);
 
         NANDArguments nandArgs{DriveCapability::NORMAL, 2};
-        this->_nand2 = factory->create("nand", &nandArgs);
-        this->_circuits.emplace(this->_nand2);
+        this->_nand2 = this->addCircuit("nand", &nandArgs);
     }
 
     void ControlLogic::createInstances() 

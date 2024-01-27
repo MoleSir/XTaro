@@ -4,8 +4,6 @@
 #include <module/inv.hh>
 #include <module/trigate.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/debug.hh>
@@ -56,20 +54,17 @@ namespace xtaro::circuit
     {
         // Create INV
         INVArguments invArguments{DriveCapability::NORMAL};
-        this->_inv = factory->create("inv", &invArguments);
-        this->_circuits.emplace(this->_inv);
+        this->_inv = this->addCircuit("inv", &invArguments);
 
         // Create decoder if necessary
         if (this->_selectionSize > 1)
         {
             DecoderArguments decoderArgument{this->_selectionSize};
-            this->_decoder = factory->create("decoder", &decoderArgument);
-            this->_circuits.emplace(this->_decoder);
+            this->_decoder = this->addCircuit("decoder", &decoderArgument);
         }
 
         // Create tristate-gate
-        this->_trigate = factory->create("tristate_gate", nullptr);
-        this->_circuits.emplace(this->_trigate);
+        this->_trigate = this->addCircuit("tristate_gate", nullptr);
     }
 
     void Mux::createInstances() 

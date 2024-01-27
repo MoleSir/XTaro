@@ -3,8 +3,6 @@
 #include <module/writedriver.hh>
 #include <module/fanoutbuff.hh>
 
-#include <factory/factory.hh>
-#include <allocator/allocator.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -54,15 +52,13 @@ namespace xtaro::circuit
 
     void WriteDriverArray::createCircuits()
     {
-        this->_writedriver = factory->create("write_driver", nullptr);
-        this->_circuits.emplace(this->_writedriver);
+        this->_writedriver = this->addCircuit("write_driver", nullptr);
         
         // If word width is too much, 'we_en''s fan-out too much...
         if (this->_fanoutSize > 1)
         {
             FanoutBufferArguments fanoutArguments {this->_fanoutSize};
-            this->_fanoutbuf = factory->create("fanout_buffer", &fanoutArguments);
-            this->_circuits.emplace(this->_fanoutbuf);
+            this->_fanoutbuf = this->addCircuit("fanout_buffer", &fanoutArguments);
         }
     } 
 

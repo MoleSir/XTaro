@@ -94,6 +94,9 @@ namespace xtaro::circuit
         */
         Instance* addInstance(String instanceName, Circuit* circuit, const std::vector<String>& nets);
 
+        /*
+            Add a Cricuit object to this circuit.
+        */
         Circuit* addCircuit(const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName = "");
 
         /*

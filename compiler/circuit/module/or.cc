@@ -2,9 +2,7 @@
 
 #include <module/nor.hh>
 #include <module/inv.hh>
-#include <factory/factory.hh>
 
-#include <allocator/allocator.hh>
 #include <config/tech.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
@@ -48,12 +46,10 @@ namespace xtaro::circuit
     void OR::createCircuits()
     {   
         NORArguments norArgument{this->_driveCapability, this->_inputSize};
-        this->_nor = factory->create("nor", &norArgument);
-        this->_circuits.insert(this->_nor);
+        this->_nor = this->addCircuit("nor", &norArgument);
 
         INVArguments invArgument{this->_driveCapability};
-        this->_inv = factory->create("inv", &invArgument);
-        this->_circuits.insert(this->_inv);
+        this->_inv = this->addCircuit("inv", &invArgument);
     } 
 
     void OR::createInstances() 

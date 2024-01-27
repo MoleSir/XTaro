@@ -1,10 +1,8 @@
 #include "inv.hh"
 
-#include <factory/factory.hh>
 #include <module/mos.hh>
 #include <config/tech.hh>
 
-#include <allocator/allocator.hh>
 #include <util/util.hh>
 #include <debug/debug.hh>
 
@@ -71,10 +69,8 @@ namespace xtaro::circuit
         }
 
         // Create MOS
-        this->_nmos = factory->create("mos", &nmosArguments);
-        this->_pmos = factory->create("mos", &pmosArguments);
-        this->_circuits.insert(this->_nmos);
-        this->_circuits.insert(this->_pmos);
+        this->_nmos = this->addCircuit("mos", &nmosArguments);
+        this->_pmos = this->addCircuit("mos", &pmosArguments);
     } 
 
     void INV::createInstances() 
