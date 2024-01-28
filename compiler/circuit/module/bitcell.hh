@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class Bitcell : public Circuit
     {
     public:
-        Bitcell(String name, BitcellArguments* arguments);
+        Bitcell(const std::string_view& name, BitcellArguments* arguments);
         virtual ~Bitcell() noexcept override = default;
 
     private:

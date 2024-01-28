@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -33,7 +32,7 @@ namespace xtaro::circuit
         };
 
     public:
-        ReplicaBank(String name, ReplicaBankArguments* arguments);
+        ReplicaBank(const std::string_view& name, ReplicaBankArguments* arguments);
         virtual ~ReplicaBank() noexcept override = default;
 
     private:

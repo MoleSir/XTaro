@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    DFF::DFF(String name, DFFArguments* arguments) :
+    DFF::DFF(const std::string_view& name, DFFArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->dffSpicePath}
     {
-        debug->debug("Create a 'DFF' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'DFF' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

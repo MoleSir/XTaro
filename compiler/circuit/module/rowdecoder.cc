@@ -3,6 +3,8 @@
 #include <module/and.hh>
 #include <module/decoder.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/debug.hh>
@@ -14,7 +16,7 @@ namespace xtaro::circuit
         return util::format("as%d", this->addressSize);
     }
 
-    RowDecoder::RowDecoder(String name, RowDecoderArguments* arguments) :
+    RowDecoder::RowDecoder(const std::string_view& name, RowDecoderArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _addressSize{arguments->addressSize},
         _wlSize{util::power(2, this->_addressSize)},
@@ -27,7 +29,7 @@ namespace xtaro::circuit
             debug->errorWithException("Create 'Row Decoder", errorMsg);
         }
 
-        debug->debug("Create a 'Row Decoder' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Row Decoder' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
@@ -37,11 +39,11 @@ namespace xtaro::circuit
 
         // Input Ports
         for (int i = 0; i < this->_addressSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
         
         // Output Ports
         for (int i = 0; i < this->_wlSize; ++i)
-            this->addPort(util::format("wl%d", i), PortType::OUTPUT);
+            this->addPort(stringFactory->get("wl%d", i), PortType::OUTPUT);
 
         // vdd & gnd
         this->addPort("vdd", PortType::INOUT);
@@ -63,14 +65,14 @@ namespace xtaro::circuit
         Instance* decoder{ this->addInstance("decoder", this->_decoder) };
 
         // Connect decoder
-        std::vector<String> decoderPorts{};
+        std::vector<std::string_view> decoderPorts{};
 
         for (int i = 0; i < this->_addressSize; ++i)
-            decoderPorts.emplace_back(util::format("A%d", i));
+            decoderPorts.emplace_back(stringFactory->get("A%d", i));
 
-        std::vector<String> outputPorts{};
+        std::vector<std::string_view> outputPorts{};
         for (int i = 0; i < this->_wlSize; ++i)
-            decoderPorts.emplace_back( util::format("Y%d", i) );
+            decoderPorts.emplace_back( stringFactory->get("Y%d", i) );
         
         decoderPorts.emplace_back("vdd");
         decoderPorts.emplace_back("gnd");
@@ -80,9 +82,9 @@ namespace xtaro::circuit
         // Create AND gates 
         for (int i = 0; i < this->_wlSize; ++i)
         {
-            Instance* andGate{ this->addInstance(util::format("and%d", i), this->_and) };
+            Instance* andGate{ this->addInstance(stringFactory->get("and%d", i), this->_and) };
             this->connectWith(andGate, {
-                "wl_en", util::format("Y%d", i), util::format("wl%d", i), "vdd", "gnd"
+                "wl_en", stringFactory->get("Y%d", i), stringFactory->get("wl%d", i), "vdd", "gnd"
             });
         }
     }

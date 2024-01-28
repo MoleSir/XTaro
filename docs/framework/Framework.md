@@ -23,10 +23,6 @@
 - Option：解析用户给定是选项文件；
 - Tech：解析指定工艺库信息；
 
-### stringpool
-
-由于 spice 网标中经常出现重复的端口或网线名称。实现 StringPool 类保存 std::string，当需要获得一个字符串时，向 StringPool 申请，如果已经存在，返回已经存在的 std::string 的 c 风格指针（使用一个简单的 String 类经过包装）。
-
 ### debug
 
 - Logger：日志；
@@ -52,7 +48,8 @@
 
 ### factory
 
-总是使用 CircuitFactory 创建各个模块类的对象
+- CircuitFactory：总是使用 CircuitFactory 创建各个模块类的对象；
+- StringFactory：由于 spice 网标中经常出现重复的端口或网线名称。实现 StringPool 类保存 std::string，当需要获得一个字符串时，向 StringPool 申请，如果已经存在，返回已经存在的 std::string 的 c 风格指针（std::string_view）封装；
 
 
 

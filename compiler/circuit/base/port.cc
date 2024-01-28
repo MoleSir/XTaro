@@ -6,8 +6,8 @@
 namespace xtaro::circuit
 {
 
-    Port::Port(String name, PortType type):
-        _name{std::move(name)},
+    Port::Port(const std::string_view& name, PortType type):
+        _name{name},
         _type{type},
         _net{nullptr}
     {

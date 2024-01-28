@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
-
 #include <string>
 #include <string_view>
 #include <memory>
@@ -30,13 +28,13 @@ namespace xtaro::circuit
 
         Circuit* create(const std::string_view& circuitType,
                         CircuitArguments* arguments,
-                        String circuitName = "");
+                        const std::string_view& circuitName = "");
 
     private:
         class Impl;
         std::unique_ptr<Impl> _impl;
     };
 
-    extern CircuitFactory* factory;
+    extern CircuitFactory* circuitFactory;
 
 }

@@ -1,6 +1,6 @@
 #include "interpreterxtaro.hh"
 
-#include <factory/factory.hh>
+#include <factory/circuitfactory.hh>
 
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
@@ -77,7 +77,7 @@ namespace xtaro
         catch (const std::exception& err) 
         {
             debug->error("'compile' failed~");
-            circuit::factory->reset();
+            circuit::circuitFactory->reset();
             this->_sram.reset();
             return;
         }

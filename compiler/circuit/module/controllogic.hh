@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -25,7 +24,7 @@ namespace xtaro::circuit
     class ControlLogic : public Circuit
     {
     public:
-        ControlLogic(String name, ControlLogicArguments* arguments);
+        ControlLogic(const std::string_view& name, ControlLogicArguments* arguments);
         virtual ~ControlLogic() noexcept override = default;
 
     private:

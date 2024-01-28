@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -33,7 +32,7 @@ namespace xtaro::circuit
         };
 
     public:
-        PrechargeArray(String name, PrechargeArrayArguments* arguments);
+        PrechargeArray(const std::string_view& name, PrechargeArrayArguments* arguments);
         virtual ~PrechargeArray() noexcept override = default;
 
     private:

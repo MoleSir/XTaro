@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    Bitcell::Bitcell(String name, BitcellArguments* arguments) :
+    Bitcell::Bitcell(const std::string_view& name, BitcellArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->bitcellSpicePath}
     {
-        debug->debug("Create a 'Bitcell' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Bitcell' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

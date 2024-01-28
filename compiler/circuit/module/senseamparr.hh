@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -33,7 +32,7 @@ namespace xtaro::circuit
         };
 
     public:
-        SenseAmplifierArray(String name, SenseAmplifierArrayArguments* arguments);
+        SenseAmplifierArray(const std::string_view& name, SenseAmplifierArrayArguments* arguments);
         virtual ~SenseAmplifierArray() noexcept override = default;
 
     private:

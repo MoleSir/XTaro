@@ -1,7 +1,6 @@
 #pragma once
 
-#include "factory.hh"
-#include "circuittype.hh"
+#include "circuitfactory.hh"
 
 #include <string>
 #include <unordered_map>
@@ -10,6 +9,38 @@
 
 namespace xtaro::circuit
 {
+
+    enum class CircuitType
+    { 
+        BITCELL,
+        DFF,
+        PRECHARGE,
+        SENSE_AMPLIFIER,
+        TRISTATE_GATE,
+        WRITE_DRIVER,
+        BITCELL_ARRAY,
+        MOS,
+        INV,
+        NAND,
+        AND,
+        NOR,
+        OR,
+        DECODER,
+        ROW_DECODER,
+        MUX,
+        COLUMN_MUX,
+        FANOUT_BUFFER,
+        SENSE_AMPLIFIER_ARRAY,
+        WRITE_DRIVER_ARRAY,
+        PRECHARGE_ARRAY,
+        REPLICA_BANK,
+        BANK,
+        CONTROL_LOGIC,
+        SRAM,
+        SIZE,
+    };
+
+    #define CIRCUIT_TYPE_SIZE static_cast<int>(CircuitType::SIZE)
 
     class CircuitFactory::Impl
     {
@@ -29,25 +60,24 @@ namespace xtaro::circuit
 
         Circuit* create(const std::string_view& circuitTypeName,
                         CircuitArguments* arguments,
-                        String circuitName);
+                        std::string_view circuitName);
 
     private:
         static CircuitType getCircuitType(const std::string_view& circuitType);
 
         Circuit* findCircuit(CircuitType circuitType, const std::string& argsList) const;
         
-        String getDefaultCircuitName(const std::string_view& circuitTypeName,
-                                     CircuitType circuitType) const;
+        std::string_view getDefaultCircuitName(const std::string_view& circuitTypeName,
+                                               CircuitType circuitType) const;
         
         Circuit* createNewCircuit(CircuitType circuitType, 
                                   CircuitArguments* arguments,
-                                  String circuitName) const;
+                                  const std::string_view& circuitName) const;
         
         void collectCircuit(CircuitType circuitType, std::string argsList, Circuit* circuit);
 
     private:
         std::array<CircuitMap, CIRCUIT_TYPE_SIZE> _circuits;
     };
-
-    extern CircuitFactory* factory;
+    
 }

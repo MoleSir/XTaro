@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -34,7 +33,7 @@ namespace xtaro::circuit
     class SRAM : public Circuit
     {
     public:
-        SRAM(String name, SRAMArguments* arguments);
+        SRAM(const std::string_view& name, SRAMArguments* arguments);
         virtual ~SRAM() noexcept override = default;
 
     private:

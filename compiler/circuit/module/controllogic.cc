@@ -5,6 +5,8 @@
 #include <module/nor.hh>
 #include <module/nand.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <debug/debug.hh>
 
 namespace xtaro::circuit
@@ -14,7 +16,7 @@ namespace xtaro::circuit
         return "_";
     }
 
-    ControlLogic::ControlLogic(String name, ControlLogicArguments* arguments) :
+    ControlLogic::ControlLogic(const std::string_view& name, ControlLogicArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _inv{nullptr},
         _powerInv{nullptr},
@@ -23,7 +25,7 @@ namespace xtaro::circuit
         _nor3{nullptr},
         _nand2{nullptr}
     {
-        debug->debug("Create a 'Control Logic' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Control Logic' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    Precharge::Precharge(String name, PrechargeArguments* arguments) :
+    Precharge::Precharge(const std::string_view& name, PrechargeArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->prechargeSpicePath}
     {
-        debug->debug("Create a 'Precharge' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Precharge' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

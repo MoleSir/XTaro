@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -33,7 +32,7 @@ namespace xtaro::circuit
         };
 
     public:
-        WriteDriverArray(String name, WriteDriverArrayArguments* arguments);
+        WriteDriverArray(const std::string_view& name, WriteDriverArrayArguments* arguments);
         virtual ~WriteDriverArray() noexcept override = default;
 
     private:

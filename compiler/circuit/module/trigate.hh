@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class TristateGate : public Circuit
     {
     public:
-        TristateGate(String name, TristateGateArguments* arguments);
+        TristateGate(const std::string_view& name, TristateGateArguments* arguments);
         virtual ~TristateGate() noexcept override = default;
 
     private:

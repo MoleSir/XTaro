@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    SenseAmplifier::SenseAmplifier(String name, SenseAmplifierArguments* arguments) :
+    SenseAmplifier::SenseAmplifier(const std::string_view& name, SenseAmplifierArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->senseampSpicePath}
     {
-        debug->debug("Create a 'Sense Amplifier' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Sense Amplifier' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

@@ -52,7 +52,7 @@ namespace xtaro::character
         // Instantiation of the SRAM
         std::vector<std::string> nets {this->_sram->portsName()};
         this->writeInstance(
-            this->_sram->name().cstr(),
+            this->_sram->name().data(),
             "sram",
             nets
         );

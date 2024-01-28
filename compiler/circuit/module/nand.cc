@@ -3,6 +3,8 @@
 #include <module/mos.hh>
 #include <config/tech.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -15,7 +17,7 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    NAND::NAND(String name, NANDArguments* arguments) :
+    NAND::NAND(const std::string_view& name, NANDArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
@@ -28,14 +30,14 @@ namespace xtaro::circuit
             debug->errorWithException("Create NAND", errorMsg);
         }
 
-        debug->debug("Create a 'NAND' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'NAND' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void NAND::createPorts()
     {
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
 
         this->addPort("Z", PortType::OUTPUT);
         this->addPort("vdd", PortType::INOUT);
@@ -89,25 +91,25 @@ namespace xtaro::circuit
         // PMOS
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* pmos{ this->addInstance(util::format("nand_pmos%d", i), this->_pmos)};
-            this->connectWith(pmos, {"Z", util::format("A%d", i), "vdd", "vdd"});
+            Instance* pmos{ this->addInstance(stringFactory->get("nand_pmos%d", i), this->_pmos)};
+            this->connectWith(pmos, {"Z", stringFactory->get("A%d", i), "vdd", "vdd"});
         }
 
         // NMOS
-        std::vector<String> net{};
+        std::vector<std::string_view> net{};
         for (int i = 0; i < this->_inputSize - 1; ++i)
-            net.emplace_back( util::format("net%d", i) );
+            net.emplace_back( stringFactory->get("net%d", i) );
 
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* nmos{this->addInstance(util::format("nand_nmos%d", i), this->_nmos)};
+            Instance* nmos{this->addInstance(stringFactory->get("nand_nmos%d", i), this->_nmos)};
 
             if (i == 0)
-                this->connectWith(nmos, {"Z", util::format("A%d", i), net[0], "gnd"});
+                this->connectWith(nmos, {"Z", stringFactory->get("A%d", i), net[0], "gnd"});
             else if (i == this->_inputSize - 1)
-                this->connectWith(nmos, {net.back(), util::format("A%d", i), "gnd", "gnd"});
+                this->connectWith(nmos, {net.back(), stringFactory->get("A%d", i), "gnd", "gnd"});
             else
-                this->connectWith(nmos, {net[i - 1], util::format("A%d", i), net[i], "gnd"});
+                this->connectWith(nmos, {net[i - 1], stringFactory->get("A%d", i), net[i], "gnd"});
         }
     }
 }

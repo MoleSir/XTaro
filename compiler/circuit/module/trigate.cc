@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    TristateGate::TristateGate(String name, TristateGateArguments* arguments) :
+    TristateGate::TristateGate(const std::string_view& name, TristateGateArguments* arguments) :
         Circuit{std::move(name), DeviceType::SUBCKT, tech->trigateSpicePath}
     {
-        debug->debug("Create a 'Tristate Gate' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Tristate Gate' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

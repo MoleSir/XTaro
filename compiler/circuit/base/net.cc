@@ -3,8 +3,8 @@
 namespace xtaro::circuit
 {
 
-    Net::Net(String name):
-        _name{std::move(name)}
+    Net::Net(const std::string_view& name):
+        _name{name}
     {}
 
 }

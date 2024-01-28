@@ -3,6 +3,8 @@
 #include <module/and.hh>
 #include <module/inv.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <config/tech.hh>
 #include <util/util.hh>
 #include <debug/debug.hh>
@@ -28,7 +30,7 @@ namespace xtaro::circuit
         return util::format("is%d", this->inputSize);
     }
 
-    Decoder::Decoder(String name, DecoderArguments* arguments) :
+    Decoder::Decoder(const std::string_view& name, DecoderArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _inputSize{arguments->inputSize},
         _outputSize{ util::power(2, this->_inputSize) },
@@ -42,7 +44,7 @@ namespace xtaro::circuit
             debug->errorWithException("Create Decoder", errorMsg);
         }
 
-        debug->debug("Create a 'Decoder' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Decoder' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
@@ -50,12 +52,12 @@ namespace xtaro::circuit
     {
         // Input Ports
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
         
         // Output Ports
         int outputSize{ util::power(2, this->_inputSize) };
         for (int i = 0; i < outputSize; ++i)
-            this->addPort(util::format("Y%d", i), PortType::OUTPUT);
+            this->addPort(stringFactory->get("Y%d", i), PortType::OUTPUT);
 
         // vdd & gnd
         this->addPort("vdd", PortType::INOUT);
@@ -100,7 +102,7 @@ namespace xtaro::circuit
         {
             DecoderArguments argument {subDecodersInputSize[i]};
             Circuit* decoder{ this->addCircuit(
-                "decoder", &argument, util::format("decoder_%d", argument.inputSize)
+                "decoder", &argument, stringFactory->get("decoder_%d", argument.inputSize)
             ) };
             this->_subDecoders.emplace_back(decoder);
         }
@@ -108,18 +110,18 @@ namespace xtaro::circuit
 
     void Decoder::createSimpleInstances()
     {
-        std::vector<String> inputPorts{};
-        std::vector<String> inputPortsInt{};
+        std::vector<std::string_view> inputPorts{};
+        std::vector<std::string_view> inputPortsInt{};
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            inputPorts.emplace_back( util::format("A%d", i) );
-            inputPortsInt.emplace_back( util::format("A%d_bar", i) );
+            inputPorts.emplace_back( stringFactory->get("A%d", i) );
+            inputPortsInt.emplace_back( stringFactory->get("A%d_bar", i) );
         }
 
         // Create INV for input 
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* inv{ this->addInstance(util::format("inv%d", i), this->_inv) };
+            Instance* inv{ this->addInstance(stringFactory->get("inv%d", i), this->_inv) };
             this->connectWith(inv, {inputPorts[i], inputPortsInt[i], "vdd", "gnd"});
         }
 
@@ -129,11 +131,11 @@ namespace xtaro::circuit
         {
             // Well, the literal 'and' is a C++ keyword ...
             Instance* andGate{ this->addInstance(
-                util::format("and%d", i), this->_and
+                stringFactory->get("and%d", i), this->_and
             ) };
             
             // Create nets list to connect with 'andInstance'
-            std::vector<String> nets{};
+            std::vector<std::string_view> nets{};
             for (int j = 0; j < this->_inputSize; ++j)
             {
                 // 'i' is the AND gate's index. Each AND gate's inputs are [A0/A0_int, A1/A1_int ... An/An_int]
@@ -146,7 +148,7 @@ namespace xtaro::circuit
                 nets.emplace_back( bitOne ? inputPorts[j] : inputPortsInt[j] );
             }
 
-            nets.emplace_back( util::format("Y%d", i) );
+            nets.emplace_back( stringFactory->get("Y%d", i) );
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
 
@@ -168,18 +170,18 @@ namespace xtaro::circuit
             
             // Create decoder instance
             Instance* decoder{ this->addInstance(
-                util::format("decoder%d", decoderIdx), this->_subDecoders[decoderIdx]
+                stringFactory->get("decoder%d", decoderIdx), this->_subDecoders[decoderIdx]
             ) };
             
             // Connect nets
             // Create the nets' name
-            std::vector<String> nets{};
+            std::vector<std::string_view> nets{};
             // Input ports
             for (int i = 0; i < subDecoderInputSize; ++i)
-                nets.emplace_back( util::format("A%d", inputPortIndex++) );
+                nets.emplace_back( stringFactory->get("A%d", inputPortIndex++) );
             // Output ports
             for (int outputIdx = 0; outputIdx < util::power(2, subDecoderInputSize); ++outputIdx)
-                nets.emplace_back( util::format("Y_%d_%d", decoderIdx, outputIdx) );
+                nets.emplace_back( stringFactory->get("Y_%d_%d", decoderIdx, outputIdx) );
             // vdd & gnd
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
@@ -192,11 +194,11 @@ namespace xtaro::circuit
         {
             // Create AND gate instance
             Instance* andGate{ this->addInstance(
-                util::format("and%d", andGateIdx), this->_and
+                stringFactory->get("and%d", andGateIdx), this->_and
             ) };
         
             // Connect nets...
-            std::vector<String> nets{};
+            std::vector<std::string_view> nets{};
             
             // For each decoder, get an output line as AND gate's input
             // emmm... this algo is hard to explain, so TODO!!!
@@ -211,11 +213,11 @@ namespace xtaro::circuit
                     mask = (mask << 1) + 1;
 
                 int decoderOutputIdx{ (andGateIdx >> prefixSum) & mask };
-                nets.emplace_back(util::format("Y_%d_%d", decoderIdx, decoderOutputIdx));
+                nets.emplace_back(stringFactory->get("Y_%d_%d", decoderIdx, decoderOutputIdx));
             }
 
             // Output & vdd & gnd
-            nets.emplace_back(util::format("Y%d", andGateIdx));
+            nets.emplace_back(stringFactory->get("Y%d", andGateIdx));
             nets.emplace_back("vdd");
             nets.emplace_back("gnd");
 

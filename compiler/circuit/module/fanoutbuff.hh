@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -33,7 +32,7 @@ namespace xtaro::circuit
         };
 
     public:
-        FanoutBuffer(String name, FanoutBufferArguments* arguments);
+        FanoutBuffer(const std::string_view& name, FanoutBufferArguments* arguments);
         virtual ~FanoutBuffer() noexcept override = default;
 
     private:

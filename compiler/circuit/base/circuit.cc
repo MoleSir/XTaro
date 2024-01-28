@@ -5,7 +5,7 @@
 
 #include <allocator/allocator.hh>
 #include <debug/debug.hh>
-#include <factory/factory.hh>
+#include <factory/circuitfactory.hh>
 
 #include <util/file.hh>
 #include <util/format.hh>
@@ -20,8 +20,8 @@
 namespace xtaro::circuit
 {
 
-    Circuit::Circuit(String name, DeviceType type, const std::string& spicefile) :
-        _name{std::move(name)},
+    Circuit::Circuit(const std::string_view& name, DeviceType type, const std::string& spicefile) :
+        _name{name},
         _type{type},
         _ports{},
         _circuits{},
@@ -52,33 +52,33 @@ namespace xtaro::circuit
             Allocator::free<Net>(kv.second);
     }
 
-    void Circuit::addPort(String name, PortType type)
+    void Circuit::addPort(const std::string_view& name, PortType type)
     {
         Port* port { Allocator::alloc<Port>(name, type) };
         this->_ports.emplace_back(port);
     }
 
-    void Circuit::addPorts(const std::vector<String>& portsName, PortType portType)
+    void Circuit::addPorts(const std::vector<std::string_view>& portsName, PortType portType)
     {
-        for (const String& portName : portsName)
+        for (const std::string_view& portName : portsName)
             this->addPort(portName, portType);
     }
 
-    Instance* Circuit::addInstance(String instanceName, Circuit* circuit)
+    Instance* Circuit::addInstance(const std::string_view& instanceName, Circuit* circuit)
     {
         Instance* instance = Allocator::alloc<Instance>(instanceName, circuit);
         this->_instances.emplace_back(instance);
         return instance;
     }
 
-    void Circuit::connectWith(Instance* instance, const std::vector<String>& netsName)
+    void Circuit::connectWith(Instance* instance, const std::vector<std::string_view>& netsName)
     {
         if (instance->ports().size() != netsName.size())
         {
             std::string errorMsg {
                 util::format("In circuit '%s', when connect with instance '%s', port size '%d' != Net size '%d'", 
-                             this->_name.cstr(),
-                             instance->name().cstr(),
+                             this->_name.data(),
+                             instance->name().data(),
                              instance->ports().size(), 
                              netsName.size())
             };
@@ -90,7 +90,7 @@ namespace xtaro::circuit
         instance->connectNets(nets);
     }
 
-    Instance* Circuit::addInstance(String instanceName, Circuit* circuit, const std::vector<String>& netsName)
+    Instance* Circuit::addInstance(const std::string_view& instanceName, Circuit* circuit, const std::vector<std::string_view>& netsName)
     {
         Instance* instance {this->addInstance(instanceName, circuit)};
         this->connectWith(instance, netsName);
@@ -101,11 +101,11 @@ namespace xtaro::circuit
     {
         std::vector<std::string> names{};     
         for (Port* port : this->_ports)
-            names.emplace_back(std::string{port->name().cstr()});
+            names.emplace_back(std::string{port->name().data()});
         return names;
     }
 
-    std::vector<Net*> Circuit::createNets(const std::vector<String>& netsName)
+    std::vector<Net*> Circuit::createNets(const std::vector<std::string_view>& netsName)
     {
         std::vector<Net*> nets(netsName.size(), nullptr);
         for (std::size_t i = 0; i < nets.size(); ++i)
@@ -139,9 +139,9 @@ namespace xtaro::circuit
     } 
 
     Circuit* Circuit::addCircuit(
-        const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName)
+        const std::string_view& circuitTypeName, CircuitArguments* arguments, const std::string_view& circuitName)
     {
-        Circuit* cir {factory->create(circuitTypeName, arguments, circuitName)};
+        Circuit* cir {circuitFactory->create(circuitTypeName, arguments, circuitName)};
         this->_circuits.emplace(cir);
         return cir;
     }
@@ -180,7 +180,7 @@ namespace xtaro::circuit
             }
 
             // Write .SUBCKT line
-            file << "\n.SUBCKT " << this->_name.cstr() << '\n';
+            file << "\n.SUBCKT " << this->_name.data() << '\n';
             // Write ports, each line has 15 ports
             int portsSize{0};
             for (Port* port : this->_ports)
@@ -203,7 +203,7 @@ namespace xtaro::circuit
             }
 
             // Write .END
-            file << ".ENDS " << this->_name.cstr() << '\n';
+            file << ".ENDS " << this->_name.data() << '\n';
         }
         else
         {

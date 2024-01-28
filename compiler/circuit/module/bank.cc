@@ -8,6 +8,8 @@
 #include <module/writedriverarr.hh>
 #include <module/senseamparr.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/debug.hh>
@@ -19,7 +21,7 @@ namespace xtaro::circuit
         return util::format("aw%d_ww%d", this->addressWidth, this->wordWidth);
     }
 
-    Bank::Bank(String name, BankArguments* arguments) :
+    Bank::Bank(const std::string_view& name, BankArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _addressWidth{arguments->addressWidth},
         _wordWidth{arguments->wordWidth},
@@ -61,17 +63,17 @@ namespace xtaro::circuit
             }
         }
 
-        debug->debug("Create a 'Bank' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Bank' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void Bank::createPorts()
     {
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort( stringFactory->get("A%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort(util::format("D%d", i), PortType::INPUT);
+            this->addPort( stringFactory->get("D%d", i), PortType::INPUT);
 
         this->addPort("wl_en", PortType::INPUT);
         this->addPort("p_en_bar", PortType::INPUT);
@@ -81,7 +83,7 @@ namespace xtaro::circuit
         this->addPort("rbl", PortType::OUTPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort(util::format("dout%d", i), PortType::OUTPUT);
+            this->addPort( stringFactory->get("dout%d", i), PortType::OUTPUT);
 
         this->addPort("vdd", PortType::INOUT);
         this->addPort("gnd", PortType::INOUT);
@@ -117,17 +119,17 @@ namespace xtaro::circuit
     void Bank::createInstances() 
     {
         // Nets' name
-        std::vector<String> blNets{};
-        std::vector<String> blgroupNets{};
-        std::vector<String> brNets{};
-        std::vector<String> brgroupNets{};
-        std::vector<String> wlNets{};
-        std::vector<String> ANets{};
+        std::vector<std::string_view> blNets{};
+        std::vector<std::string_view> blgroupNets{};
+        std::vector<std::string_view> brNets{};
+        std::vector<std::string_view> brgroupNets{};
+        std::vector<std::string_view> wlNets{};
+        std::vector<std::string_view> ANets{};
 
         for (int i = 0; i < this->_wordWidth; ++i)
         {
-            blNets.emplace_back(util::format("bl%d", i));
-            brNets.emplace_back(util::format("br%d", i));
+            blNets.emplace_back(stringFactory->get("bl%d", i));
+            brNets.emplace_back(stringFactory->get("br%d", i));
         }
 
         int muxInputSize {util::power(2, this->_columnAddressWidth)};
@@ -135,20 +137,20 @@ namespace xtaro::circuit
         {
             for (int inputIdx = 0; inputIdx < muxInputSize; ++inputIdx)
             {
-                blgroupNets.emplace_back(util::format("bl%d_%d", muxIdx, inputIdx));
-                brgroupNets.emplace_back(util::format("br%d_%d", muxIdx, inputIdx));
+                blgroupNets.emplace_back(stringFactory->get("bl%d_%d", muxIdx, inputIdx));
+                brgroupNets.emplace_back(stringFactory->get("br%d_%d", muxIdx, inputIdx));
             }
         }
         
         for (int i = 0; i < this->_rowSize; ++i)
-            wlNets.emplace_back( util::format("wl%d", i) );
+            wlNets.emplace_back( stringFactory->get("wl%d", i) );
         for (int i = 0; i < this->_addressWidth; ++i)
-            ANets.emplace_back( util::format("A%d", i) );
+            ANets.emplace_back( stringFactory->get("A%d", i) );
 
         // Create and Connect bitcell array
         Instance* bitcellArray {this->addInstance("bitcell_arr", this->_bitcellArray)};
         // Bitcell array' ports sequency: bl0 ... bln br0 ... brn ... wl0 ... wlm vdd gnd
-        std::vector<String> bitcellarrPorts{};
+        std::vector<std::string_view> bitcellarrPorts{};
         for (int i = 0; i < this->_columnSize; ++i)
             bitcellarrPorts.emplace_back(
                 this->_columnAddressWidth > 0 ? blgroupNets[i] : blNets[i]
@@ -166,7 +168,7 @@ namespace xtaro::circuit
         // Create and Connect row decoder
         Instance* rowdecoder {this->addInstance("row_deocder", this->_rowDecoder)};
         // Row decoder's ports sequency: wl_en A0 A1 ... An wl0 wl1 ... wl2^n-1 vdd gnd
-        std::vector<String> rowdecoderPorts;
+        std::vector<std::string_view> rowdecoderPorts;
         rowdecoderPorts.emplace_back("wl_en");
         for (int i = 0; i < this->_rowAddressWidth; ++i)
             rowdecoderPorts.emplace_back(ANets[i]);
@@ -195,7 +197,7 @@ namespace xtaro::circuit
                     -- br0 br1 ...
                     -- vdd gnd
             */
-            std::vector<String> columnmuxPorts{};
+            std::vector<std::string_view> columnmuxPorts{};
 
             for (int i = 0; i < this->_columnAddressWidth; ++i)
                 columnmuxPorts.emplace_back(ANets[i]);
@@ -230,7 +232,7 @@ namespace xtaro::circuit
         // Create and Connect precharge array
         Instance* precharge {this->addInstance("precharge_array", this->_prechargeArray)};
         // bl0 bl1 ... br0 br1 ... p_en_bar vdd gnd
-        std::vector<String> prechargePorts{};
+        std::vector<std::string_view> prechargePorts{};
         for (int i = 0; i < this->_wordWidth; ++i)
             prechargePorts.emplace_back(blNets[i]);
         for (int i = 0; i < this->_wordWidth; ++i)
@@ -243,13 +245,13 @@ namespace xtaro::circuit
         // Create and Connect sensa amp array
         Instance* senseamp {this->addInstance("sense_amp_array", this->_senseampArray)};
         // bl0 bl1 ... br0 br1 ... dout0 dout1 ... sa_en vdd gnd
-        std::vector<String> senseampPorts{};
+        std::vector<std::string_view> senseampPorts{};
         for (int i = 0; i < this->_wordWidth; ++i)
             senseampPorts.emplace_back(blNets[i]);
         for (int i = 0; i < this->_wordWidth; ++i)
             senseampPorts.emplace_back(brNets[i]);
         for (int i = 0; i < this->_wordWidth; ++i)
-            senseampPorts.emplace_back(util::format("dout%d", i));
+            senseampPorts.emplace_back(stringFactory->get("dout%d", i));
         senseampPorts.emplace_back("sa_en");
         senseampPorts.emplace_back("vdd");
         senseampPorts.emplace_back("gnd");
@@ -258,9 +260,9 @@ namespace xtaro::circuit
         // Create and Connect write driver array
         Instance* writedriver {this->addInstance("write_driver_array", this->_writedriverArray)};
         // bin0 bin1 ... bl0 bl1 ... br0 br1 ... we_en vdd gnd
-        std::vector<String> writedriverPorts{};
+        std::vector<std::string_view> writedriverPorts{};
         for (int i = 0; i < this->_wordWidth; ++i)
-            writedriverPorts.emplace_back(util::format("din%d", i));
+            writedriverPorts.emplace_back(stringFactory->get("din%d", i));
         for (int i = 0; i < this->_wordWidth; ++i)
             writedriverPorts.emplace_back(blNets[i]);
         for (int i = 0; i < this->_wordWidth; ++i)

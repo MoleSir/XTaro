@@ -27,7 +27,7 @@ namespace xtaro::circuit
     class RowDecoder : public Circuit
     {
     public:
-        RowDecoder(String name, RowDecoderArguments* arguments);
+        RowDecoder(const std::string_view& name, RowDecoderArguments* arguments);
         virtual ~RowDecoder() noexcept override = default;
 
     private:

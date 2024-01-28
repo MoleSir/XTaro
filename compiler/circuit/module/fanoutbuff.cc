@@ -2,6 +2,8 @@
 
 #include <module/inv.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -12,7 +14,7 @@ namespace xtaro::circuit
         return util::format("fs%d", this->fanoutSize);
     }
 
-    FanoutBuffer::FanoutBuffer(String name, FanoutBufferArguments* arguments) :
+    FanoutBuffer::FanoutBuffer(const std::string_view& name, FanoutBufferArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _fanoutSize{arguments->fanoutSize},
         _inv{nullptr}
@@ -23,7 +25,7 @@ namespace xtaro::circuit
             debug->errorWithException("Create Fanout Buffer", errorMsg);
         }
 
-        debug->debug("Create a 'Fanout Buffer' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Fanout Buffer' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
@@ -31,7 +33,7 @@ namespace xtaro::circuit
     {
         this->addPort("in", PortType::INPUT);
         for (int i = 0; i < this->_fanoutSize; ++i)
-            this->addPort(util::format("out%d", i), PortType::OUTPUT);
+            this->addPort(stringFactory->get("out%d", i), PortType::OUTPUT);
         this->addPort("vdd", PortType::INOUT);
         this->addPort("gnd", PortType::INOUT);
     }
@@ -49,9 +51,9 @@ namespace xtaro::circuit
         
         for (int i = 0; i < this->_fanoutSize; ++i)
         {
-            Instance* outInv {this->addInstance(util::format("inv%d", i), this->_inv)};
+            Instance* outInv {this->addInstance(stringFactory->get("inv%d", i), this->_inv)};
             this->connectWith(outInv, {
-                "in_bar", util::format("out%d", i), "vdd", "gnd"
+                "in_bar", stringFactory->get("out%d", i), "vdd", "gnd"
             });
         }
     }

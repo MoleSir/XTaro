@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
 #include <base/circuitenum.hh>
 #include <base/circuit.hh>
 
@@ -35,7 +34,7 @@ namespace xtaro::circuit
     class Bank : public Circuit
     {
     public:
-        Bank(String name, BankArguments* arguments);
+        Bank(const std::string_view& name, BankArguments* arguments);
         virtual ~Bank() noexcept override = default;
 
     private:

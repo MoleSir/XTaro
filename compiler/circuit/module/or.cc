@@ -3,6 +3,8 @@
 #include <module/nor.hh>
 #include <module/inv.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <config/tech.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
@@ -16,7 +18,7 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    OR::OR(String name, ORArguments* arguments) :
+    OR::OR(const std::string_view& name, ORArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
@@ -29,14 +31,14 @@ namespace xtaro::circuit
             debug->errorWithException("Create OR", errorMsg);
         }
 
-        debug->debug("Create a 'OR' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'OR' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void OR::createPorts()
     {
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
 
         this->addPort("Z", PortType::OUTPUT);
         this->addPort("vdd", PortType::INOUT);
@@ -54,9 +56,9 @@ namespace xtaro::circuit
 
     void OR::createInstances() 
     {
-        std::vector<String> nets{};
+        std::vector<std::string_view> nets{};
         for (int i = 0; i < this->_inputSize; ++i)
-            nets.emplace_back( util::format("A%d", i) );
+            nets.emplace_back( stringFactory->get("A%d", i) );
         nets.emplace_back("Z_bar");
         nets.emplace_back("vdd");
         nets.emplace_back("gnd");

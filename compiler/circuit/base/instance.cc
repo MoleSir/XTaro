@@ -20,12 +20,12 @@ namespace xtaro::circuit
         'M', 'R', 'C', 'D', 'X', 
     };
 
-    Instance::Instance(String name, Circuit* circuit) :
-        _name{std::move(name)},
+    Instance::Instance(const std::string_view& name, Circuit* circuit) :
+        _name{name},
         _circuit{circuit},
-        _ports{std::move( circuit->copyPort() )},
+        _ports{circuit->copyPort()},
         _connectCount{0} 
-    {
+    { 
     }
 
     Instance::~Instance() noexcept
@@ -34,7 +34,7 @@ namespace xtaro::circuit
             Allocator::free<Port>(port);
     }
 
-    void Instance::connectNet(const String& portName, Net* net)
+    void Instance::connectNet(const std::string_view& portName, Net* net)
     {
         Port* port = this->port(portName);
         if (port != nullptr)
@@ -59,8 +59,8 @@ namespace xtaro::circuit
         {
             std::string errorMsg {
                 util::format("The instance '%s', belongs circuit '%s'. Not all port has been connected. Connected: '%d'.", 
-                             this->_name.cstr(), 
-                             this->_circuit->name().cstr(), 
+                             this->_name.data(), 
+                             this->_circuit->name().data(), 
                              this->_connectCount)
             };
 
@@ -72,7 +72,7 @@ namespace xtaro::circuit
 
         // Instance name
         char deviceKeyword{ Instance::deviceKeywords[INT(this->_circuit->type())] }; 
-        ss << deviceKeyword << this->_name.cstr();
+        ss << deviceKeyword << this->_name.data();
    
         // Ports
         if (this->_circuit->type() == DeviceType::SUBCKT)
@@ -98,7 +98,7 @@ namespace xtaro::circuit
         }
         
         // Circuit name
-        ss << ' ' << this->_circuit->name().cstr();
+        ss << ' ' << this->_circuit->name().data();
 
         // Arguments list
         ss << ' ' << this->_circuit->argumentsList();
@@ -106,7 +106,7 @@ namespace xtaro::circuit
         return ss.str();
     }
 
-    Port* Instance::port(const String& name) const
+    Port* Instance::port(const std::string_view& name) const
     {
         for (Port* port : this->_ports)
             if (port->name() == name)

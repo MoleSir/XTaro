@@ -4,6 +4,8 @@
 #include <module/precharge.hh>
 #include <module/writedriver.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -14,7 +16,7 @@ namespace xtaro::circuit
         return util::format("bs%d", this->bitcellSize);
     }
 
-    ReplicaBank::ReplicaBank(String name, ReplicaBankArguments* arguments) :
+    ReplicaBank::ReplicaBank(const std::string_view& name, ReplicaBankArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _bitcellSize{arguments->bitcellSize},
         _bitcell{nullptr},
@@ -32,7 +34,7 @@ namespace xtaro::circuit
             debug->errorWithException("Create Replica Bank", errorMsg);
         }
 
-        debug->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Replica Bank' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
@@ -61,7 +63,7 @@ namespace xtaro::circuit
         for (int i = 0; i < this->_bitcellSize; ++i)
         {
             // bl br wl vdd gnd
-            Instance* bitcell {this->addInstance(util::format("bicell%d", i), this->_bitcell)};
+            Instance* bitcell {this->addInstance(stringFactory->get("bicell%d", i), this->_bitcell)};
             this->connectWith(bitcell, {
                 "rbl", "rbr",
                 i < LINKED_BITCELL_SIZE ? "wl_en" : "gnd",

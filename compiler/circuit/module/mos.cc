@@ -15,7 +15,7 @@ namespace xtaro::circuit
                             this->length);
     }
 
-    MOS::MOS(String name, MOSArguments* arguments):
+    MOS::MOS(const std::string_view& name, MOSArguments* arguments):
         Circuit{"", DeviceType::MOS},
         _type{arguments->type},
         _width{arguments->width},
@@ -26,7 +26,7 @@ namespace xtaro::circuit
         else
             this->_name = tech->spice["pmos"].asString();
 
-        debug->debug("Create a 'MOS' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'MOS' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

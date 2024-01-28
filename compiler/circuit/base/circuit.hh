@@ -5,8 +5,6 @@
 #include "net.hh"
 #include "port.hh"
 
-#include <stringpool/string.hh>
-
 #include <string>
 #include <map>
 #include <set>
@@ -36,7 +34,7 @@ namespace xtaro::circuit
             - type: The spice device type of this circuit. e.g, MOS, Diode, Capacitance, Resistance, SUBCKT;
             - spicefile: The spice description file of this circuit if it exits. (Default value: "").
         */
-        Circuit(String name, DeviceType type, const std::string& spicefile = "");
+        Circuit(const std::string_view& name, DeviceType type, const std::string& spicefile = "");
         Circuit(const Circuit&) = delete;
         Circuit(Circuit&&) = delete;
         Circuit& operator = (const Circuit&) = delete;
@@ -49,14 +47,14 @@ namespace xtaro::circuit
             - portName: the port's name;
             - portType: the port's type.
         */
-        void addPort(String portName, PortType portType);
+        void addPort(const std::string_view& portName, PortType portType);
 
         /*
             Add ports to this circuit.
             - portName: the ports' name;
             - portType: the ports' type.
         */
-        void addPorts(const std::vector<String>& portsName, PortType portType);
+        void addPorts(const std::vector<std::string_view>& portsName, PortType portType);
 
         /*
             Return all ports's name as a std::vector<const char*>
@@ -77,7 +75,7 @@ namespace xtaro::circuit
               e.g, "Xinv A Z vdd gnd inv";
             - circuit: The pointer to the target Circuit object of the instance.
         */
-        Instance* addInstance(String instanceName, Circuit* circuit);
+        Instance* addInstance(const std::string_view& instanceName, Circuit* circuit);
 
         /*
             Connect the 'nets' with 'instance'. The method will create each Net object corresponding the name in 'nets'.
@@ -86,18 +84,18 @@ namespace xtaro::circuit
               Please ensure the instance in this circuit, the mehtod does not check;
             - nets: vector of nets' name.
         */
-        void connectWith(Instance* instance, const std::vector<String>& nets);
+        void connectWith(Instance* instance, const std::vector<std::string_view>& nets);
 
         /*
             Add an Instance object to this circuit. And connet it with nets.
             This method equal to call 'addInstance(instanceName, citcuit)' and 'connectWith(instance, nets)'.
         */
-        Instance* addInstance(String instanceName, Circuit* circuit, const std::vector<String>& nets);
+        Instance* addInstance(const std::string_view& instanceName, Circuit* circuit, const std::vector<std::string_view>& nets);
 
         /*
             Add a Cricuit object to this circuit.
         */
-        Circuit* addCircuit(const std::string_view& circuitTypeName, CircuitArguments* arguments, String circuitName = "");
+        Circuit* addCircuit(const std::string_view& circuitTypeName, CircuitArguments* arguments, const std::string_view& circuitName = "");
 
         /*
             Write this circuit's spcice description into 'filename'.
@@ -119,7 +117,7 @@ namespace xtaro::circuit
             And finally, return Net objects as a vector.
             - netsName: the names vector of Net objects.
         */
-        std::vector<Net*> createNets(const std::vector<String>& netsName);
+        std::vector<Net*> createNets(const std::vector<std::string_view>& netsName);
 
     protected:
         void doWriteSpice(std::ofstream& file, std::set<Circuit*>& visited);
@@ -133,7 +131,7 @@ namespace xtaro::circuit
         { return ""; }
 
     public:
-        const String& name() const noexcept
+        const std::string_view& name() const noexcept
         { return this->_name; }
 
         DeviceType type() const noexcept
@@ -149,13 +147,13 @@ namespace xtaro::circuit
         { return this->_instances; }
 
     protected:
-        String _name;
+        std::string_view _name;
         DeviceType  _type;
 
         std::set<Circuit*> _circuits;
         std::vector<Instance*> _instances;
         std::vector<Port*> _ports;
-        std::map<String, Net*> _nets;
+        std::map<std::string_view, Net*> _nets;
 
         bool _isMetaCircuit;
         std::string _metaSpice;

@@ -1,5 +1,5 @@
-#include "factory.hh"
-#include "factoryimpl.hh"
+#include "circuitfactory.hh"
+#include "circuitfactoryimpl.hh"
 
 #include <base/circuit.hh>
 
@@ -10,7 +10,7 @@
 namespace xtaro::circuit
 {
 
-    CircuitFactory* factory {CircuitFactory::instance()};
+    CircuitFactory* circuitFactory {CircuitFactory::instance()};
 
     CircuitFactory::CircuitFactory() :
         _impl{std::make_unique<Impl>()}
@@ -27,7 +27,7 @@ namespace xtaro::circuit
     Circuit* CircuitFactory::create(
              const std::string_view& circuitType,
              CircuitArguments* arguments,
-             String circuitName)
+             const std::string_view& circuitName)
     {
         return this->_impl->create(circuitType, arguments, circuitName);
     }

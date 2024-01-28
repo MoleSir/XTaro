@@ -27,7 +27,7 @@ namespace xtaro::circuit
     class INV : public Circuit
     {
     public:
-        INV(String name, INVArguments* arguments);
+        INV(const std::string_view& name, INVArguments* arguments);
         virtual ~INV() noexcept override = default;
 
     private:

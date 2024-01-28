@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stringpool/string.hh>
-
 #include <string>
 #include <map>
 #include <list>
@@ -21,10 +19,10 @@ namespace xtaro::circuit
     class Port
     {
     public:
-        Port(String name, PortType type);
+        Port(const std::string_view& name, PortType type);
 
     public:
-        const String& name() const noexcept
+        const std::string_view& name() const noexcept
         { return this->_name; }
 
         PortType type() const noexcept
@@ -38,7 +36,7 @@ namespace xtaro::circuit
         { this->_net = net; } 
 
     private:
-        String _name;
+        std::string_view _name;
         PortType _type;
         Net* _net;
     };

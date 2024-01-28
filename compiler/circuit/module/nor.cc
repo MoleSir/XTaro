@@ -2,6 +2,8 @@
 
 #include <module/mos.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <config/tech.hh>
 #include <debug/debug.hh>
@@ -15,7 +17,7 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    NOR::NOR(String name, NORArguments* arguments) :
+    NOR::NOR(const std::string_view& name, NORArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
@@ -28,14 +30,14 @@ namespace xtaro::circuit
             debug->errorWithException("Create NOR", errorMsg);
         }
 
-        debug->debug("Create a 'NOR' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'NOR' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void NOR::createPorts()
     {
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
 
         this->addPort("Z", PortType::OUTPUT);
         this->addPort("vdd", PortType::INOUT);
@@ -87,27 +89,27 @@ namespace xtaro::circuit
     void NOR::createInstances() 
     {
         // PMOS
-        std::vector<String> net{};
+        std::vector<std::string_view> net{};
         for (int i = 0; i < this->_inputSize - 1; ++i)
-            net.emplace_back( util::format("net%d", i) );
+            net.emplace_back( stringFactory->get("net%d", i) );
 
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* pmos{ this->addInstance(util::format("nor_pmos%d", i), this->_nmos)};
+            Instance* pmos{ this->addInstance(stringFactory->get("nor_pmos%d", i), this->_nmos)};
 
             if (i == 0)
-                this->connectWith(pmos, {"Z", util::format("A%d", i), net[0], "vdd"});
+                this->connectWith(pmos, {"Z", stringFactory->get("A%d", i), net[0], "vdd"});
             else if (i == this->_inputSize - 1)
-                this->connectWith(pmos, {net.back(), util::format("A%d", i), "vdd", "vdd"});
+                this->connectWith(pmos, {net.back(), stringFactory->get("A%d", i), "vdd", "vdd"});
             else
-                this->connectWith(pmos, {net[i - 1], util::format("A%d", i), net[i], "vdd"});
+                this->connectWith(pmos, {net[i - 1], stringFactory->get("A%d", i), net[i], "vdd"});
         }
         
         // NMOS
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            Instance* nmos{this->addInstance(util::format("nor_nmos%d", i), this->_nmos)};
-            this->connectWith(nmos, {"Z", util::format("A%d", i), "gnd", "gnd"});
+            Instance* nmos{this->addInstance(stringFactory->get("nor_nmos%d", i), this->_nmos)};
+            this->connectWith(nmos, {"Z", stringFactory->get("A%d", i), "gnd", "gnd"});
         }
     }
 }

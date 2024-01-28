@@ -5,10 +5,10 @@
 
 namespace xtaro::circuit
 {
-    WriteDriver::WriteDriver(String name, WriteDriverArguments* arguments) :
+    WriteDriver::WriteDriver(const std::string_view& name, WriteDriverArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT, tech->writedriverSpicePath}
     {
-        debug->debug("Create a 'Write Driver' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Write Driver' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

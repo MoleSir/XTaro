@@ -3,6 +3,8 @@
 #include <module/mos.hh>
 #include <config/tech.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/util.hh>
 #include <debug/debug.hh>
 
@@ -13,13 +15,13 @@ namespace xtaro::circuit
         return util::format("dc%d", static_cast<int>(this->driveCapability));
     }
 
-    INV::INV(String name, INVArguments* arguments) :
+    INV::INV(const std::string_view& name, INVArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _nmos{nullptr},
         _pmos{nullptr}
     {
-        debug->debug("Create a 'INV' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'INV' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 

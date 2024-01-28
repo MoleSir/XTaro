@@ -1,4 +1,6 @@
-#include "factoryimpl.hh"
+#include "circuitfactoryimpl.hh"
+
+#include <factory/stringfactory.hh>
 
 #include <base/circuit.hh>
 #include <module/bitcell.hh>
@@ -27,7 +29,6 @@
 #include <module/controllogic.hh>
 #include <module/sram.hh>
 
-#include <stringpool/string.hh>
 #include <allocator/allocator.hh>
 #include <config/tech.hh>
 #include <debug/debug.hh>
@@ -75,7 +76,7 @@ namespace xtaro::circuit
     Circuit* CircuitFactory::Impl::create(
         const std::string_view& circuitTypeName, 
         CircuitArguments* arguments, 
-        String circuitName)
+        std::string_view circuitName)
     {
         // Get circuit type
         CircuitType circuitType {this->getCircuitType(circuitTypeName)};
@@ -140,24 +141,25 @@ namespace xtaro::circuit
         return nullptr;
     }
 
-    String CircuitFactory::Impl::getDefaultCircuitName(
+    std::string_view CircuitFactory::Impl::getDefaultCircuitName(
         const std::string_view& circuitTypeName,
         CircuitType circuitType) const
     {
         const auto& circuits{ this->_circuits[INT(circuitType)] };
 
         if (circuits.empty())
-            return String{circuitTypeName.data()};
-        return String{ util::format(
+            return circuitTypeName;
+        return stringFactory->get( util::format(
                             "%s_%d", 
                             circuitTypeName.data(), 
-                            circuits.size()) };
+                            circuits.size()
+        ));
     }
 
     Circuit* CircuitFactory::Impl::createNewCircuit(
              CircuitType circuitType, 
              CircuitArguments* arguments,
-             String circuitName) const
+             const std::string_view& circuitName) const
     {
         #define ALLOCATE_MODULE(ModuleClass)\
         Allocator::alloc<ModuleClass>(std::move(circuitName), dynamic_cast<ModuleClass ## Arguments*>(arguments));

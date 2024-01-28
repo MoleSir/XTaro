@@ -18,7 +18,7 @@ namespace xtaro::circuit
     class SenseAmplifier : public Circuit
     {
     public:
-        SenseAmplifier(String name, SenseAmplifierArguments* arguments);
+        SenseAmplifier(const std::string_view& name, SenseAmplifierArguments* arguments);
         virtual ~SenseAmplifier() noexcept override = default;
 
     private:

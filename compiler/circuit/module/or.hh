@@ -28,7 +28,7 @@ namespace xtaro::circuit
     class OR : public Circuit
     {
     public:
-        OR(String name, ORArguments* arguments);
+        OR(const std::string_view& name, ORArguments* arguments);
         virtual ~OR() noexcept override = default;
 
     private:

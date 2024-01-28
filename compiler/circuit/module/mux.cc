@@ -4,6 +4,8 @@
 #include <module/inv.hh>
 #include <module/trigate.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <util/math.hh>
 #include <debug/debug.hh>
@@ -15,7 +17,7 @@ namespace xtaro::circuit
         return util::format("ss%d", this->selectionSize);
     }
 
-    Mux::Mux(String name, MuxArguments* arguments) :
+    Mux::Mux(const std::string_view& name, MuxArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _selectionSize{arguments->selectionSize},
         _inputSize{util::power(2, arguments->selectionSize)},
@@ -29,19 +31,19 @@ namespace xtaro::circuit
             debug->errorWithException("Create Mux", errorMsg);
         }
 
-        debug->debug("Create a 'Mux' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'Mux' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void Mux::createPorts()
     {
         for (int i = 0; i < this->_selectionSize; ++i)
-            this->addPort(util::format("S%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("S%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("bl%d", i), PortType::INOUT);
+            this->addPort(stringFactory->get("bl%d", i), PortType::INOUT);
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("br%d", i), PortType::INOUT);
+            this->addPort(stringFactory->get("br%d", i), PortType::INOUT);
 
         this->addPort("bl", PortType::INOUT);
         this->addPort("br", PortType::INOUT);
@@ -70,12 +72,12 @@ namespace xtaro::circuit
     void Mux::createInstances() 
     {
         bool useDecoder {this->_selectionSize > 1};
-        std::vector<String> decoderOutput{};
-        std::vector<String> decoderOutputBar{};
+        std::vector<std::string_view> decoderOutput{};
+        std::vector<std::string_view> decoderOutputBar{};
         for (int i = 0; i < this->_inputSize; ++i)
         {
-            decoderOutput.emplace_back(util::format("Y%d", i));
-            decoderOutputBar.emplace_back(util::format("Y%d_bar", i));
+            decoderOutput.emplace_back(stringFactory->get("Y%d", i));
+            decoderOutputBar.emplace_back(stringFactory->get("Y%d_bar", i));
         }
 
         // Create & Connect tristate-gate instance
@@ -84,18 +86,18 @@ namespace xtaro::circuit
             for (int i = 0; i < 2; ++i)
             {
                 // in out en en_bar vdd gnd
-                Instance* blTrigate{ this->addInstance(util::format("bl_tri_gate%d", i), this->_trigate) };
-                Instance* brTrigate{ this->addInstance(util::format("br_tri_gate%d", i), this->_trigate) };
+                Instance* blTrigate{ this->addInstance(stringFactory->get("bl_tri_gate%d", i), this->_trigate) };
+                Instance* brTrigate{ this->addInstance(stringFactory->get("br_tri_gate%d", i), this->_trigate) };
 
                 this->connectWith(blTrigate, {
-                    util::format("bl%d", i), "bl", 
+                    stringFactory->get("bl%d", i), "bl", 
                     i == 0 ? "S0" : "S0_bar", 
                     i == 0 ? "S0_bar" : "S0", 
                     "vdd", "gnd"
                 });
 
                 this->connectWith(brTrigate, {
-                    util::format("br%d", i), "br", 
+                    stringFactory->get("br%d", i), "br", 
                     i == 0 ? "S0" : "S0_bar", 
                     i == 0 ? "S0_bar" : "S0", 
                     "vdd", "gnd"
@@ -107,15 +109,15 @@ namespace xtaro::circuit
             for (int i = 0; i < this->_inputSize; ++i)
             {
                 // in out en en_bar vdd gnd
-                Instance* blTrigate{ this->addInstance(util::format("bl_tri_gate%d", i), this->_trigate) };
-                Instance* brTrigate{ this->addInstance(util::format("br_tri_gate%d", i), this->_trigate) };
+                Instance* blTrigate{ this->addInstance(stringFactory->get("bl_tri_gate%d", i), this->_trigate) };
+                Instance* brTrigate{ this->addInstance(stringFactory->get("br_tri_gate%d", i), this->_trigate) };
 
                 this->connectWith(blTrigate, {
-                    util::format("bl%d", i), "bl", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
+                    stringFactory->get("bl%d", i), "bl", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
                 });
 
                 this->connectWith(brTrigate, {
-                    util::format("br%d", i), "br", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
+                    stringFactory->get("br%d", i), "br", decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
                 });
             }
         }
@@ -133,9 +135,9 @@ namespace xtaro::circuit
             // A0 A1 ... An Y0 Y1 ... Y2^n-1 vdd gnd
             Instance* decoder{ this->addInstance("decoder", this->_decoder) };
 
-            std::vector<String> decoderPorts{};
+            std::vector<std::string_view> decoderPorts{};
             for (int i = 0; i < this->_selectionSize; ++i)
-                decoderPorts.emplace_back( util::format("S%d", i) );
+                decoderPorts.emplace_back( stringFactory->get("S%d", i) );
             for (int i = 0; i < this->_inputSize; ++i)
                 decoderPorts.emplace_back( decoderOutput[i] );
             decoderPorts.emplace_back("vdd");
@@ -146,7 +148,7 @@ namespace xtaro::circuit
             // INV gates
             for (int i = 0; i < this->_inputSize; ++i)
             {
-                Instance* inv{ this->addInstance(util::format("inv%d", i), this->_inv) };
+                Instance* inv{ this->addInstance(stringFactory->get("inv%d", i), this->_inv) };
                 this->connectWith(inv, {
                     decoderOutput[i], decoderOutputBar[i], "vdd", "gnd"
                 });

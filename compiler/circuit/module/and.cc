@@ -2,11 +2,11 @@
 
 #include <module/nand.hh>
 #include <module/inv.hh>
-
-#include <stringpool/string.hh>
 #include <module/mos.hh>
-#include <config/tech.hh>
 
+#include <factory/stringfactory.hh>
+
+#include <config/tech.hh>
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -19,7 +19,7 @@ namespace xtaro::circuit
                             this->inputSize);
     }
 
-    AND::AND(String name, ANDArguments* arguments) :
+    AND::AND(const std::string_view& name, ANDArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _driveCapability{arguments->driveCapability},
         _inputSize{arguments->inputSize},
@@ -27,18 +27,20 @@ namespace xtaro::circuit
         _inv{nullptr}
     {
         if (this->_inputSize < 2)
+        {
             debug->errorWithException(
                 "Create AND", util::format("AND gate's input size '%d' < 2", this->_inputSize)
             );
+        }
 
-        debug->debug("Create a 'AND' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'AND' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
     void AND::createPorts()
     {
         for (int i = 0; i < this->_inputSize; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
 
         this->addPort("Z", PortType::OUTPUT);
         this->addPort("vdd", PortType::INOUT);
@@ -56,9 +58,9 @@ namespace xtaro::circuit
 
     void AND::createInstances() 
     {
-        std::vector<String> nets{};
+        std::vector<std::string_view> nets{};
         for (int i = 0; i < this->_inputSize; ++i)
-            nets.emplace_back( util::format("A%d", i) );
+            nets.emplace_back( stringFactory->get("A%d", i) );
         nets.emplace_back("Z_bar");
         nets.emplace_back("vdd");
         nets.emplace_back("gnd");

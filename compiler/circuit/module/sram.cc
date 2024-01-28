@@ -4,6 +4,8 @@
 #include <module/bank.hh>
 #include <module/controllogic.hh>
 
+#include <factory/stringfactory.hh>
+
 #include <util/format.hh>
 #include <debug/debug.hh>
 
@@ -14,7 +16,7 @@ namespace xtaro::circuit
         return util::format("aw%d_ww%d", this->addressWidth, this->wordWidth);
     }
 
-    SRAM::SRAM(String name, SRAMArguments* arguments) :
+    SRAM::SRAM(const std::string_view& name, SRAMArguments* arguments) :
         Circuit{name, DeviceType::SUBCKT},
         _addressWidth{arguments->addressWidth},
         _wordWidth{arguments->wordWidth},
@@ -34,7 +36,7 @@ namespace xtaro::circuit
             debug->errorWithException("Create SRAM", errorMsg);
         }
 
-        debug->debug("Create a 'SRAM' circuit: '%s'", this->_name.cstr());
+        debug->debug("Create a 'SRAM' circuit: '%s'", this->_name.data());
         this->createNetlist();
     }
 
@@ -45,13 +47,13 @@ namespace xtaro::circuit
         this->addPort("we", PortType::INPUT);
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addPort(util::format("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort(util::format("D%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("D%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort(util::format("dout%d", i), PortType::OUTPUT);
+            this->addPort(stringFactory->get("dout%d", i), PortType::OUTPUT);
         
         this->addPort("vdd", PortType::INOUT);
         this->addPort("gnd", PortType::INOUT);
@@ -71,14 +73,14 @@ namespace xtaro::circuit
     void SRAM::createInstances() 
     {
         // Ports
-        std::vector<String> addressRegPorts{};
-        std::vector<String> wordRegPorts{};
+        std::vector<std::string_view> addressRegPorts{};
+        std::vector<std::string_view> wordRegPorts{};
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            addressRegPorts.emplace_back(util::format("A%d_r", i));
+            addressRegPorts.emplace_back(stringFactory->get("A%d_r", i));
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            wordRegPorts.emplace_back(util::format("D%d_r", i));
+            wordRegPorts.emplace_back(stringFactory->get("D%d_r", i));
 
         // For each input, use an DFF to save
         this->addInstance("csb_dff", this->_dff, {"csb", "csb_r", "clk", "vdd", "gnd"});
@@ -86,20 +88,20 @@ namespace xtaro::circuit
 
         for (int i = 0; i < this->_addressWidth; ++i)
             this->addInstance(
-                util::format("A%d_dff", i), this->_dff, 
-                {util::format("A%d", i), addressRegPorts[i], "clk", "vdd", "gnd"}
+                stringFactory->get("A%d_dff", i), this->_dff, 
+                {stringFactory->get("A%d", i), addressRegPorts[i], "clk", "vdd", "gnd"}
             );
     
         for (int i = 0; i < this->_wordWidth; ++i)
             this->addInstance(
-                util::format("D%d", i), this->_dff, 
-                {util::format("D%d", i), wordRegPorts[i], "clk", "vdd", "gnd"}
+                stringFactory->get("D%d", i), this->_dff, 
+                {stringFactory->get("D%d", i), wordRegPorts[i], "clk", "vdd", "gnd"}
             );
 
         // Bank
         Instance* bank {this->addInstance("bank", this->_bank)};
 
-        std::vector<String> bankPorts{};
+        std::vector<std::string_view> bankPorts{};
         for (int i = 0; i < this->_addressWidth; ++i)
             bankPorts.emplace_back(addressRegPorts[i]);
         for (int i = 0; i < this->_wordWidth; ++i)
@@ -110,7 +112,7 @@ namespace xtaro::circuit
         bankPorts.emplace_back("we_en");
         bankPorts.emplace_back("rbl");
         for (int i = 0; i < this->_wordWidth; ++i)
-            bankPorts.emplace_back(util::format("dout%d", i));
+            bankPorts.emplace_back(stringFactory->get("dout%d", i));
         bankPorts.emplace_back("vdd");
         bankPorts.emplace_back("gnd");
         this->connectWith(bank, bankPorts);
