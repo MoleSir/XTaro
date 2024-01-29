@@ -1,6 +1,10 @@
 #include "stringfactory.hh"
 #include <util/format.hh>
 #include <cstdarg>
+#include <string>
+#include <string_view>
+#include <set>
+#include <iostream>
 
 namespace xtaro::circuit
 {

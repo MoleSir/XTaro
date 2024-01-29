@@ -14,7 +14,7 @@ namespace xtaro
             NONE,
             HELP,
             VERION,
-            INTERPRETER,
+            INTERACTIVE,
             SCRIPT,
         };
 
@@ -29,7 +29,7 @@ namespace xtaro
     private:
         static void runHelpMode(const std::vector<std::string>& arguments);
         static void runVersionMode(const std::vector<std::string>& arguments);
-        static void runInterpreterMode(const std::vector<std::string>& arguments);
+        static void runInteractiveMode(const std::vector<std::string>& arguments);
         static void runScriptMode(const std::vector<std::string>& arguments);
     };
 

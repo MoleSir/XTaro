@@ -83,3 +83,16 @@
 - Function 功能验证
 - MBIST ？
 - 获取 SPICE 仿真结果 ？
+
+
+
+
+
+## Report 10
+
+- 重构 debug 模块；
+- 重构 app 模块；
+- 新增交互模式；
+- CricuitFactory 的 Impl 方式重构；
+- 字符串池；
+- 关于 tsmc 的 mbist 

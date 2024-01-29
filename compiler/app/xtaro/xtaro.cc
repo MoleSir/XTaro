@@ -14,8 +14,8 @@ namespace xtaro
         {"--help", XTaro::Mode::HELP},
         {"-v", XTaro::Mode::VERION},
         {"--version", XTaro::Mode::VERION},
-        {"-i", XTaro::Mode::INTERPRETER},
-        {"--interactive", XTaro::Mode::INTERPRETER},
+        {"-i", XTaro::Mode::INTERACTIVE},
+        {"--interactive", XTaro::Mode::INTERACTIVE},
         {"-l", XTaro::Mode::SCRIPT},
         {"--load", XTaro::Mode::SCRIPT},
     };
@@ -25,7 +25,7 @@ namespace xtaro
     {
         if (argc == 1)
         {
-            XTaro::mode = XTaro::Mode::INTERPRETER;
+            XTaro::mode = XTaro::Mode::INTERACTIVE;
             return {};
         }
 
@@ -61,8 +61,8 @@ namespace xtaro
             return XTaro::runHelpMode(arguments);
         case XTaro::Mode::VERION:
             return XTaro::runVersionMode(arguments);
-        case XTaro::Mode::INTERPRETER:
-            return XTaro::runInterpreterMode(arguments);
+        case XTaro::Mode::INTERACTIVE:
+            return XTaro::runInteractiveMode(arguments);
         case XTaro::Mode::SCRIPT:
             return XTaro::runScriptMode(arguments);
         case XTaro::Mode::NONE:

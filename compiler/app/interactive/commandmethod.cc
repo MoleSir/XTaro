@@ -1,4 +1,4 @@
-#include "interpreterxtaro.hh"
+#include "interactivextaro.hh"
 
 #include <factory/circuitfactory.hh>
 
@@ -20,7 +20,7 @@
 namespace xtaro 
 {
 
-    void InterpreterXTaro::loadOption()
+    void InteractiveXTaro::loadOption()
     {
         if (this->_arguments.size() == 0)
         {
@@ -50,7 +50,7 @@ namespace xtaro
         }
     }
 
-    void InterpreterXTaro::catOption()
+    void InteractiveXTaro::catOption()
     {
         if (!this->checkOption()) return;
 
@@ -61,7 +61,7 @@ namespace xtaro
         std::cout << "output path:   " << option->outputPath << std::endl;
     }
 
-    void InterpreterXTaro::compile()
+    void InteractiveXTaro::compile()
     {
         if (!this->checkOption()) return;
  
@@ -83,7 +83,7 @@ namespace xtaro
         }
     }
 
-    void InterpreterXTaro::save()
+    void InteractiveXTaro::save()
     {
         if (!this->checkCompile()) return;
 
@@ -124,7 +124,7 @@ namespace xtaro
         }
     }
 
-    void InterpreterXTaro::saveSpice()
+    void InteractiveXTaro::saveSpice()
     {
         if (!this->checkCompile()) return;
 
@@ -141,7 +141,7 @@ namespace xtaro
         }
     }
 
-    void InterpreterXTaro::saveVerilog()
+    void InteractiveXTaro::saveVerilog()
     {
         if (!this->checkCompile()) return;
 
@@ -159,7 +159,7 @@ namespace xtaro
         }
     }
 
-    void InterpreterXTaro::functionTest()
+    void InteractiveXTaro::functionTest()
     {
         if (!this->checkCompile()) return;
 
@@ -207,12 +207,12 @@ namespace xtaro
         }   
     }
 
-    void InterpreterXTaro::exit()
+    void InteractiveXTaro::exit()
     {
-        throw InterpreterExit{};
+        throw InteractiveExit{};
     }
 
-    void InterpreterXTaro::clear()
+    void InteractiveXTaro::clear()
     {
     #ifdef __linux__
         util::execute("clear");
@@ -225,7 +225,7 @@ namespace xtaro
     #endif
     }
 
-    void InterpreterXTaro::setDebugLevel()
+    void InteractiveXTaro::setDebugLevel()
     {
         if (this->_arguments.size() != 1)
         {

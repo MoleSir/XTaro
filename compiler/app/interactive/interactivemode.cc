@@ -1,5 +1,5 @@
 #include "../xtaro/xtaro.hh"
-#include "interpreterxtaro.hh"
+#include "interactivextaro.hh"
 
 #include <debug/debug.hh>
 #include <util/file.hh>
@@ -10,10 +10,10 @@
 namespace xtaro 
 {
 
-    void XTaro::runInterpreterMode(const std::vector<std::string>& arguments)
+    void XTaro::runInteractiveMode(const std::vector<std::string>& arguments)
     {
         debug->init(util::absolutePath("./") + "xtaro.log");
-        InterpreterXTaro* xtaro {InterpreterXTaro::instance()};
+        InteractiveXTaro* xtaro {InteractiveXTaro::instance()};
 
         while (true)
         {
@@ -23,7 +23,7 @@ namespace xtaro
             {
                 xtaro->interprete();
             }
-            catch (const InterpreterExit& err)
+            catch (const InteractiveExit& err)
             {
                 debug->info("Exit from interpreter mode.");
                 break;

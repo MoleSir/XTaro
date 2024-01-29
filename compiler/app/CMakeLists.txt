@@ -13,11 +13,11 @@ include_directories(${PARSE_PATH}/)
 include_directories(${APP_PATH}/)
 
 file(GLOB HELP_SRC ${CMAKE_CURRENT_SOURCE_DIR}/help/*.cc)
-file(GLOB INTERPRETER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/interpreter/*.cc)
+file(GLOB INTERACTIVE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/interactive/*.cc)
 file(GLOB SCRIPT_SRC ${CMAKE_CURRENT_SOURCE_DIR}/script/*.cc)
 file(GLOB VERSION_SRC ${CMAKE_CURRENT_SOURCE_DIR}/version/*.cc)
 file(GLOB XTARO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/xtaro/*.cc)
-set(SRC ${HELP_SRC} ${INTERPRETER_SRC} ${SCRIPT_SRC} ${VERSION_SRC} ${XTARO_SRC} main.cc)
+set(SRC ${HELP_SRC} ${INTERACTIVE_SRC} ${SCRIPT_SRC} ${VERSION_SRC} ${XTARO_SRC} main.cc)
 
 add_executable(xtaro ${SRC})
 target_link_libraries(xtaro global character parse circuit)

@@ -1,4 +1,4 @@
-#include "interpreterxtaro.hh"
+#include "interactivextaro.hh"
 
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
@@ -20,41 +20,41 @@
 namespace xtaro 
 {
 
-    InterpreterXTaro::InterpreterXTaro() : 
+    InteractiveXTaro::InteractiveXTaro() : 
         _methodMap 
         {
-            {std::string{"load_option"}, std::bind(&InterpreterXTaro::loadOption, this)},
-            {std::string{"cat_option"}, std::bind(&InterpreterXTaro::catOption, this)},
+            {std::string{"load_option"}, std::bind(&InteractiveXTaro::loadOption, this)},
+            {std::string{"cat_option"}, std::bind(&InteractiveXTaro::catOption, this)},
 
-            {std::string{"compile"}, std::bind(&InterpreterXTaro::compile, this)},
+            {std::string{"compile"}, std::bind(&InteractiveXTaro::compile, this)},
 
-            {std::string{"save"}, std::bind(&InterpreterXTaro::save, this)},
-            {std::string{"saveSpice"}, std::bind(&InterpreterXTaro::saveSpice, this)},
-            {std::string{"saveVerilog"}, std::bind(&InterpreterXTaro::saveVerilog, this)},
+            {std::string{"save"}, std::bind(&InteractiveXTaro::save, this)},
+            {std::string{"saveSpice"}, std::bind(&InteractiveXTaro::saveSpice, this)},
+            {std::string{"saveVerilog"}, std::bind(&InteractiveXTaro::saveVerilog, this)},
             
-            {std::string{"function_test"}, std::bind(&InterpreterXTaro::functionTest, this)},
+            {std::string{"function_test"}, std::bind(&InteractiveXTaro::functionTest, this)},
             
-            {std::string{"exit"}, std::bind(&InterpreterXTaro::exit, this)},
-            {std::string{"clear"}, std::bind(&InterpreterXTaro::clear, this)},
+            {std::string{"exit"}, std::bind(&InteractiveXTaro::exit, this)},
+            {std::string{"clear"}, std::bind(&InteractiveXTaro::clear, this)},
 
-            {std::string{"set_debug_level"}, std::bind(&InterpreterXTaro::setDebugLevel, this)},
+            {std::string{"set_debug_level"}, std::bind(&InteractiveXTaro::setDebugLevel, this)},
         }
     {
     }
 
-    InterpreterXTaro* InterpreterXTaro::instance()
+    InteractiveXTaro* InteractiveXTaro::instance()
     {
-        static InterpreterXTaro _xtaro;
+        static InteractiveXTaro _xtaro;
         return &_xtaro;
     }
 
-    void InterpreterXTaro::interprete()
+    void InteractiveXTaro::interprete()
     {
         if (this->parse())
             this->execute();
     }
 
-    void InterpreterXTaro::getCommandLine()
+    void InteractiveXTaro::getCommandLine()
     {
         std::cout << "XTaro> ";
 
@@ -134,7 +134,7 @@ namespace xtaro
         }
     }
 
-    bool InterpreterXTaro::checkOption() const
+    bool InteractiveXTaro::checkOption() const
     {
         if (this->_loadOptionSucc == false)
         {
@@ -144,7 +144,7 @@ namespace xtaro
         return true;
     }
 
-    bool InterpreterXTaro::checkCompile() const
+    bool InteractiveXTaro::checkCompile() const
     {
         if (this->_compileSucc == false)
         {
@@ -154,7 +154,7 @@ namespace xtaro
         return true;
     }
 
-    void InterpreterXTaro::clearCurrentInput()
+    void InteractiveXTaro::clearCurrentInput()
     {
         for (std::size_t i = 0; i < this->_commandLine.size(); ++i)
         {
@@ -165,13 +165,13 @@ namespace xtaro
         this->_commandLine.clear();
     }
 
-    void InterpreterXTaro::execute()
+    void InteractiveXTaro::execute()
     {
         if (this->_method != nullptr)
             this->_method();
     }
 
-    bool InterpreterXTaro::parse()
+    bool InteractiveXTaro::parse()
     {
         if (this->_commandLine.empty()) return false;
 
@@ -204,7 +204,7 @@ namespace xtaro
     }
 
     std::vector<std::string> 
-    InterpreterXTaro::splitCommandLine()
+    InteractiveXTaro::splitCommandLine()
     {
         std::vector<std::string> tokens {};
         std::size_t begin {0};

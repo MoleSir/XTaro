@@ -13,14 +13,14 @@ namespace xtaro
         class SRAM;
     }
 
-    class InterpreterExit {};
+    class InteractiveExit {};
 
-    class InterpreterXTaro
+    class InteractiveXTaro
     {
         using CommandMethod = std::function<void(void)>; 
 
     public:
-        static InterpreterXTaro* instance();
+        static InteractiveXTaro* instance();
         void interprete();
         void getCommandLine();
 
@@ -55,12 +55,12 @@ namespace xtaro
         void clearCurrentInput();
         
     private:
-        InterpreterXTaro();
-        ~InterpreterXTaro() noexcept = default;
-        InterpreterXTaro(const InterpreterXTaro&) = delete;
-        InterpreterXTaro(InterpreterXTaro&&) noexcept = delete;
-        InterpreterXTaro& operator = (const InterpreterXTaro&) = delete;
-        InterpreterXTaro& operator = (InterpreterXTaro&&) noexcept = delete;
+        InteractiveXTaro();
+        ~InteractiveXTaro() noexcept = default;
+        InteractiveXTaro(const InteractiveXTaro&) = delete;
+        InteractiveXTaro(InteractiveXTaro&&) noexcept = delete;
+        InteractiveXTaro& operator = (const InteractiveXTaro&) = delete;
+        InteractiveXTaro& operator = (InteractiveXTaro&&) noexcept = delete;
 
     private:
         std::map<std::string, CommandMethod> _methodMap{};
