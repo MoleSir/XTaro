@@ -20,11 +20,13 @@ namespace xtaro
 
     public:
         static std::vector<std::string> parse(int argc, const char* argv[]);
+        static void showLogo();
         static void run(const std::vector<std::string>& arguments);
 
     private:
         static std::map<std::string, Mode> argvMap;
         static Mode mode;
+        static const char* logo;
 
     private:
         static void runHelpMode(const std::vector<std::string>& arguments);

@@ -36,6 +36,7 @@ namespace xtaro::circuit
         REPLICA_BANK,
         BANK,
         CONTROL_LOGIC,
+        INPUT_DFFS,
         SRAM,
         SIZE,
     };

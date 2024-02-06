@@ -27,6 +27,7 @@
 #include <module/replicabank.hh>
 #include <module/bank.hh>
 #include <module/controllogic.hh>
+#include <module/inputdffs.hh>
 #include <module/sram.hh>
 
 #include <allocator/allocator.hh>
@@ -68,6 +69,7 @@ namespace xtaro::circuit
         {std::string_view{"replica_bank"}, CircuitType::REPLICA_BANK},
         {std::string_view{"bank"}, CircuitType::BANK},
         {std::string_view{"control_logic"}, CircuitType::CONTROL_LOGIC},
+        {std::string_view{"input_dffs"}, CircuitType::INPUT_DFFS},
         {std::string_view{"sram"}, CircuitType::SRAM},
     };
 
@@ -190,6 +192,7 @@ namespace xtaro::circuit
         case CircuitType::REPLICA_BANK: return ALLOCATE_MODULE(ReplicaBank);
         case CircuitType::BANK: return ALLOCATE_MODULE(Bank);
         case CircuitType::CONTROL_LOGIC: return ALLOCATE_MODULE(ControlLogic);
+        case CircuitType::INPUT_DFFS: return ALLOCATE_MODULE(InputDFFs);
         case CircuitType::SRAM: return ALLOCATE_MODULE(SRAM);
         }
 

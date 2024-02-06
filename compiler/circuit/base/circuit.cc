@@ -76,7 +76,7 @@ namespace xtaro::circuit
         if (instance->ports().size() != netsName.size())
         {
             std::string errorMsg {
-                util::format("In circuit '%s', when connect with instance '%s', port size '%d' != Net size '%d'", 
+                util::format("In circuit '%s', when connect with instance '%s', Port size '%d' != Net size '%d'", 
                              this->_name.data(),
                              instance->name().data(),
                              instance->ports().size(), 

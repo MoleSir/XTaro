@@ -41,16 +41,13 @@ namespace xtaro::circuit
     {
         if (this->_addressWidth < 1 || this->_wordWidth < 1)
         {
-            std::string errorMsg {
-                util::format(
+            debug->errorWithException("Create Bank", util::format(
                     "Bank 's address width '%d' or word width '%d' < 1", 
                     this->_addressWidth, this->_wordWidth
-                )
-            };
-
-            debug->errorWithException("Create Bank", errorMsg);
+            ));
         }
 
+        // TODO: Better algo
         if (this->_addressWidth > 4)
         {
             while (this->_rowSize > (2 * this->_columnSize))
@@ -70,10 +67,10 @@ namespace xtaro::circuit
     void Bank::createPorts()
     {
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addPort( stringFactory->get("A%d", i), PortType::INPUT);
+            this->addPort( stringFactory->get("addr%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort( stringFactory->get("D%d", i), PortType::INPUT);
+            this->addPort( stringFactory->get("din%d", i), PortType::INPUT);
 
         this->addPort("wl_en", PortType::INPUT);
         this->addPort("p_en_bar", PortType::INPUT);
@@ -106,7 +103,7 @@ namespace xtaro::circuit
         ReplicaBankArguments rblArguments {this->_rowSize};
         this->_replicaBank = this->addCircuit("replica_bank", &rblArguments);
 
-        PrechargeArrayArguments preArguments {this->_wordWidth};
+        PrechargeArrayArguments preArguments {this->_columnSize};
         this->_prechargeArray = this->addCircuit("precharge_array", &preArguments);
 
         WriteDriverArrayArguments wriArguments {this->_wordWidth};
@@ -145,7 +142,7 @@ namespace xtaro::circuit
         for (int i = 0; i < this->_rowSize; ++i)
             wlNets.emplace_back( stringFactory->get("wl%d", i) );
         for (int i = 0; i < this->_addressWidth; ++i)
-            ANets.emplace_back( stringFactory->get("A%d", i) );
+            ANets.emplace_back( stringFactory->get("addr%d", i) );
 
         // Create and Connect bitcell array
         Instance* bitcellArray {this->addInstance("bitcell_arr", this->_bitcellArray)};
@@ -233,10 +230,18 @@ namespace xtaro::circuit
         Instance* precharge {this->addInstance("precharge_array", this->_prechargeArray)};
         // bl0 bl1 ... br0 br1 ... p_en_bar vdd gnd
         std::vector<std::string_view> prechargePorts{};
-        for (int i = 0; i < this->_wordWidth; ++i)
-            prechargePorts.emplace_back(blNets[i]);
-        for (int i = 0; i < this->_wordWidth; ++i)
-            prechargePorts.emplace_back(brNets[i]);
+        for (int i = 0; i < this->_columnSize; ++i)
+            prechargePorts.emplace_back(
+                this->_columnAddressWidth > 0 ? blgroupNets[i] : blNets[i]
+            );
+        for (int i = 0; i < this->_columnSize; ++i)
+            prechargePorts.emplace_back(
+                this->_columnAddressWidth > 0 ? brgroupNets[i] : brNets[i]
+            );
+        // for (int i = 0; i < this->_wordWidth; ++i)
+        //     prechargePorts.emplace_back(blNets[i]);
+        // for (int i = 0; i < this->_wordWidth; ++i)
+        //     prechargePorts.emplace_back(brNets[i]);
         prechargePorts.emplace_back("p_en_bar");
         prechargePorts.emplace_back("vdd");
         prechargePorts.emplace_back("gnd");
@@ -259,7 +264,7 @@ namespace xtaro::circuit
 
         // Create and Connect write driver array
         Instance* writedriver {this->addInstance("write_driver_array", this->_writedriverArray)};
-        // bin0 bin1 ... bl0 bl1 ... br0 br1 ... we_en vdd gnd
+        // din0 din1 ... bl0 bl1 ... br0 br1 ... we_en vdd gnd
         std::vector<std::string_view> writedriverPorts{};
         for (int i = 0; i < this->_wordWidth; ++i)
             writedriverPorts.emplace_back(stringFactory->get("din%d", i));

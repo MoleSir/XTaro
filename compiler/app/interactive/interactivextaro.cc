@@ -29,8 +29,8 @@ namespace xtaro
             {std::string{"compile"}, std::bind(&InteractiveXTaro::compile, this)},
 
             {std::string{"save"}, std::bind(&InteractiveXTaro::save, this)},
-            {std::string{"saveSpice"}, std::bind(&InteractiveXTaro::saveSpice, this)},
-            {std::string{"saveVerilog"}, std::bind(&InteractiveXTaro::saveVerilog, this)},
+            {std::string{"save_spice"}, std::bind(&InteractiveXTaro::saveSpice, this)},
+            {std::string{"save_verilog"}, std::bind(&InteractiveXTaro::saveVerilog, this)},
             
             {std::string{"function_test"}, std::bind(&InteractiveXTaro::functionTest, this)},
             
@@ -38,6 +38,8 @@ namespace xtaro
             {std::string{"clear"}, std::bind(&InteractiveXTaro::clear, this)},
 
             {std::string{"set_debug_level"}, std::bind(&InteractiveXTaro::setDebugLevel, this)},
+
+            {std::string{"logo"}, std::bind(&InteractiveXTaro::logo, this)},
         }
     {
     }

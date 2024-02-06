@@ -20,6 +20,14 @@ namespace xtaro
         {"--load", XTaro::Mode::SCRIPT},
     };
 
+    const char* XTaro::logo {
+        " __  __ _____\n"
+        " \\ \\/ /|_   _|__ _  _ __  ___\n" 
+        "  \\  /   | | / _` || '__|/ _ \\\n" 
+        "  /  \\   | || (_| || |  | (_) |\n"
+        " /_/\\_\\  |_| \\__,_||_|   \\___/\n"
+    };
+
     std::vector<std::string> 
     XTaro::parse(int argc, const char* argv[])
     {
@@ -53,8 +61,15 @@ namespace xtaro
         return {};
     }
 
+    void XTaro::showLogo()
+    {
+        std::cout << XTaro::logo << std::endl;   
+    }
+
     void XTaro::run(const std::vector<std::string>& arguments)
     {
+        XTaro::showLogo();
+        
         switch (XTaro::mode)
         {
         case XTaro::Mode::HELP: 

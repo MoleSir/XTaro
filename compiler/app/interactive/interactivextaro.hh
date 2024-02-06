@@ -48,6 +48,8 @@ namespace xtaro
 
         void setDebugLevel();
 
+        void logo();
+
     private:
         bool checkOption() const;
         bool checkCompile() const;

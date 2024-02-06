@@ -6,7 +6,9 @@
 
 #include <module/sram.hh>
 #include <verilog/verilog.hh>
+#include <liberty/liberty.hh>
 #include <character/function.hh>
+#include <character/charresult.hh>
 
 #include <iostream>
 #include <memory>
@@ -68,8 +70,9 @@ namespace xtaro
             verilog.writeSRAM(option->verilogPath);
             debug->info("Write verilog file successfully!");
 
-            debug->info("Begin to functional tests...");
             std::vector<PVT> pvts {this->pvtLists()};
+
+            debug->info("Begin to functional tests...");
             for (const PVT& pvt : pvts)
             {
                 debug->info(
@@ -84,6 +87,20 @@ namespace xtaro
                     debug->info("Functional test failed");
             }
             debug->info("Functional tests successfully!");
+
+            debug->info("Begin to write liberty files...");
+            for (const PVT& pvt : pvts)
+            {
+                debug->info(
+                    "Write Liberty file in 'PVT(%s, %f, %f)'", 
+                    pvt.process.c_str(), pvt.voltage, pvt.temperature
+                );
+                // TODO: Simulate !!!
+                character::CharacterResult res {};
+                parse::Liberty lib {this->_sram.get(), &res, pvt};
+                lib.write();
+            }
+            debug->info("Write Liberty files successfully!");
         }
         catch (const std::exception& err)
         {

@@ -1,6 +1,6 @@
 #include "sram.hh"
 
-#include <module/dff.hh>
+#include <module/inputdffs.hh>
 #include <module/bank.hh>
 #include <module/controllogic.hh>
 
@@ -20,20 +20,16 @@ namespace xtaro::circuit
         Circuit{name, DeviceType::SUBCKT},
         _addressWidth{arguments->addressWidth},
         _wordWidth{arguments->wordWidth},
-        _dff{nullptr},
+        _inputDffs{nullptr},
         _bank{nullptr},
         _controllogic{nullptr}
     {
         if (this->_addressWidth < 1 || this->_wordWidth < 1)
         {
-            std::string errorMsg {
-                util::format(
+            debug->errorWithException("Create SRAM", util::format(
                     "SRAM's address width '%d' or word width '%d' < 1", 
                     this->_addressWidth, this->_wordWidth
-                )
-            };
-
-            debug->errorWithException("Create SRAM", errorMsg);
+            ));
         }
 
         debug->debug("Create a 'SRAM' circuit: '%s'", this->_name.data());
@@ -47,10 +43,10 @@ namespace xtaro::circuit
         this->addPort("we", PortType::INPUT);
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addPort(stringFactory->get("A%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("addr%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addPort(stringFactory->get("D%d", i), PortType::INPUT);
+            this->addPort(stringFactory->get("din%d", i), PortType::INPUT);
 
         for (int i = 0; i < this->_wordWidth; ++i)
             this->addPort(stringFactory->get("dout%d", i), PortType::OUTPUT);
@@ -61,9 +57,10 @@ namespace xtaro::circuit
 
     void SRAM::createCircuits()
     {
-        this->_dff = this->addCircuit("dff", nullptr);
+        InputDFFsArguments inputArgs {this->_addressWidth, this->_wordWidth};
+        this->_inputDffs = this->addCircuit("input_dffs", &inputArgs);
 
-        BankArguments bankArgs{this->_addressWidth, this->_wordWidth};
+        BankArguments bankArgs {this->_addressWidth, this->_wordWidth};
         this->_bank = this->addCircuit("bank", &bankArgs);
 
         ControlLogicArguments controlArgs{};
@@ -74,29 +71,44 @@ namespace xtaro::circuit
     {
         // Ports
         std::vector<std::string_view> addressRegPorts{};
+        std::vector<std::string_view> addressPorts{};
         std::vector<std::string_view> wordRegPorts{};
+        std::vector<std::string_view> wordPorts{};
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            addressRegPorts.emplace_back(stringFactory->get("A%d_r", i));
+        {
+            addressRegPorts.emplace_back(stringFactory->get("addr%d_r", i));
+            addressPorts.emplace_back(stringFactory->get("addr%d_r", i));
+        }
 
         for (int i = 0; i < this->_wordWidth; ++i)
-            wordRegPorts.emplace_back(stringFactory->get("D%d_r", i));
+        {
+            wordRegPorts.emplace_back(stringFactory->get("din%d_r", i));
+            wordPorts.emplace_back(stringFactory->get("din%d_r", i));
+        }
 
         // For each input, use an DFF to save
-        this->addInstance("csb_dff", this->_dff, {"csb", "csb_r", "clk", "vdd", "gnd"});
-        this->addInstance("we_dff", this->_dff, {"we", "we_r", "clk", "vdd", "gnd"});
+        std::vector<std::string_view> inputDffsPorts {"clk", "csb", "we"};
+        
+        for (int i = 0; i < this->_addressWidth; ++i)
+            inputDffsPorts.emplace_back(addressRegPorts[i]);
+
+        for (int i = 0; i < this->_wordWidth; ++i)
+            inputDffsPorts.emplace_back(wordRegPorts[i]);
+
+        inputDffsPorts.emplace_back("csb_r");
+        inputDffsPorts.emplace_back("we_r");
 
         for (int i = 0; i < this->_addressWidth; ++i)
-            this->addInstance(
-                stringFactory->get("A%d_dff", i), this->_dff, 
-                {stringFactory->get("A%d", i), addressRegPorts[i], "clk", "vdd", "gnd"}
-            );
-    
+            inputDffsPorts.emplace_back(addressPorts[i]);
+
         for (int i = 0; i < this->_wordWidth; ++i)
-            this->addInstance(
-                stringFactory->get("D%d", i), this->_dff, 
-                {stringFactory->get("D%d", i), wordRegPorts[i], "clk", "vdd", "gnd"}
-            );
+            inputDffsPorts.emplace_back(wordPorts[i]);
+
+        inputDffsPorts.emplace_back("vdd");
+        inputDffsPorts.emplace_back("gnd");
+
+        this->addInstance("input_dffs", this->_inputDffs, inputDffsPorts);
 
         // Bank
         Instance* bank {this->addInstance("bank", this->_bank)};

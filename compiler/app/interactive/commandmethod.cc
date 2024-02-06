@@ -1,4 +1,5 @@
 #include "interactivextaro.hh"
+#include "../xtaro/xtaro.hh"
 
 #include <factory/circuitfactory.hh>
 
@@ -248,5 +249,10 @@ namespace xtaro
         {
             debug->error("'%s' is not a debug level~", level.c_str());
         }
+    }
+
+    void InteractiveXTaro::logo()
+    {
+        XTaro::showLogo();
     }
 }

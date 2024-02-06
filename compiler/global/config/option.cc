@@ -112,12 +112,14 @@ namespace xtaro
 
         std::filesystem::create_directories(option->sramFolderPath);
         std::filesystem::create_directories(option->simFolderPath);
+        std::filesystem::create_directories(option->libFolderPath);
     }
 
     static void buildOutputFilesName()
     {
         option->sramFolderPath = option->outputPath + "sram/";
         option->simFolderPath = option->outputPath + "simulation/";
+        option->libFolderPath = option->outputPath + "liberty/";
 
         option->spicePath = util::format("%s%s.sp", option->sramFolderPath.c_str(), option->sramName.c_str());
         option->gdsiiPath = util::format("%s%s.gds", option->sramFolderPath.c_str(), option->sramName.c_str());

@@ -86,8 +86,6 @@
 
 
 
-
-
 ## Report 10
 
 - 重构 debug 模块；
@@ -95,4 +93,14 @@
 - 新增交互模式；
 - CricuitFactory 的 Impl 方式重构；
 - 字符串池；
+- 文档
 - 关于 tsmc 的 mbist 
+
+
+
+## Report 11
+
+- *high performace memory testing design principles fault modling and self test*
+- Liberty 文件输出模块；
+- 调整部分模块结构，使电路更加模块化；
+- 分析 OpenRAM 输出大规模 SRAM 的电路结构；

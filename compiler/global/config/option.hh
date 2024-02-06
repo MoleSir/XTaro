@@ -25,6 +25,7 @@ namespace xtaro
 
         // Folder path
         std::string sramFolderPath{};
+        std::string libFolderPath{};
         std::string simFolderPath{};
 
         // File path
