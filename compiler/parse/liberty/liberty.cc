@@ -270,7 +270,7 @@ namespace xtaro::parse
             else firstFlag = false;
             ss << v;
         }
-        ss << '"';
+        ss << '"' << ')';
 
         this->writeLine(2, ss.str());   
     }
